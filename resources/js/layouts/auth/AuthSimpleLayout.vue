@@ -26,7 +26,7 @@ defineProps<{
                             <AppLogoIcon class="size-6" />
                         </span>
                         <span class="text-base font-semibold tracking-tight">
-                            SHIP <span class="text-brand-gold">DJM</span>
+                            Ship'd <span class="text-brand-gold">JM</span>
                         </span>
                     </Link>
                     <div class="space-y-1 text-center">

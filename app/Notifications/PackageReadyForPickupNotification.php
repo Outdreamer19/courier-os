@@ -32,8 +32,8 @@ class PackageReadyForPickupNotification extends Notification
             ->greeting('Hello '.$notifiable->name.',')
             ->line("Great news — package **{$reference}** is ready for pickup in Jamaica.")
             ->line("Amount due: {$currency} \${$amount} (pay online when available, or in person at pickup).")
-            ->line('Please bring a valid ID and your SHIP DJM customer reference.')
+            ->line("Please bring a valid ID and your Ship'd JM customer reference.")
             ->action('View package details', url('/portal/packages/'.$this->package->id))
-            ->line('Thank you for shipping with SHIP DJM.');
+            ->line("Thank you for shipping with Ship'd JM.");
     }
 }

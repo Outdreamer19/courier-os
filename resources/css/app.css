@@ -155,7 +155,7 @@
 }
 
 /*
-  SHIP DJM brand tokens
+  Ship'd JM brand tokens
   - Ink (deep black) for hero sections and headers
   - Gold for primary CTAs, borders, highlights
   - Green for success/status badges and subtle Jamaica accent
@@ -166,8 +166,8 @@
     /* Brand palette (raw) */
     --brand-ink: hsl(240 10% 6%);
     --brand-ink-soft: hsl(240 8% 11%);
-    --brand-gold: hsl(46 92% 54%);
-    --brand-gold-soft: hsl(48 96% 68%);
+    --brand-gold: hsl(47 98% 58%);
+    --brand-gold-soft: hsl(50 100% 74%);
     --brand-green: hsl(135 60% 32%);
     --brand-green-soft: hsl(135 50% 42%);
     --brand-green-muted: hsl(135 35% 94%);

@@ -40,6 +40,6 @@ class PreAlertStatusChangedNotification extends Notification
 
         return $mail
             ->action('View pre-alert', url('/portal/pre-alerts/'.$this->preAlert->id))
-            ->line('Thank you for shipping with SHIP DJM.');
+            ->line("Thank you for shipping with Ship'd JM.");
     }
 }

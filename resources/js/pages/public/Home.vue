@@ -28,7 +28,7 @@ const howItWorks = [
     {
         icon: UserPlus,
         title: 'Create your account',
-        body: 'Sign up in minutes and get your unique SHIP DJM reference number.',
+        body: "Sign up in minutes and get your unique Ship'd JM reference number.",
     },
     {
         icon: Clipboard,
@@ -57,7 +57,7 @@ const whyShipDjm = [
     },
     {
         title: 'Pre-alert workflow that is actually simple',
-        body: 'Submit invoice details in minutes and let the SHIP DJM team handle package matching behind the scenes.',
+        body: "Submit invoice details in minutes and let the Ship'd JM team handle package matching behind the scenes.",
         image: '/img/shipdjm-prealert-workflow.png',
         imageWebp: '/img/shipdjm-prealert-workflow.webp',
         imageAlt: 'Customer reviewing order and shipment details on laptop',
@@ -129,7 +129,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <source srcset="/img/shipdjm-hero.webp" type="image/webp" />
                 <img
                     src="/img/shipdjm-hero.png"
-                    alt="SHIP DJM customer support team helping shoppers with package forwarding"
+                    alt="Ship'd JM customer support team helping shoppers with package forwarding"
                     width="1774"
                     height="887"
                     fetchpriority="high"
@@ -141,7 +141,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 class="absolute inset-0 bg-gradient-to-r from-brand-ink/90 via-brand-ink/45 to-brand-ink/20 sm:from-brand-ink/88 sm:via-brand-ink/35 sm:to-brand-ink/15"
             />
             <div
-                class="absolute inset-0 bg-[radial-gradient(circle_at_12%_40%,rgba(30,142,62,0.28),transparent_45%),radial-gradient(circle_at_85%_35%,rgba(30,142,62,0.18),transparent_50%),radial-gradient(circle_at_50%_100%,rgba(255,210,70,0.08),transparent_40%)]"
+                class="absolute inset-0 bg-[radial-gradient(circle_at_12%_40%,rgba(30,142,62,0.28),transparent_45%),radial-gradient(circle_at_85%_35%,rgba(30,142,62,0.18),transparent_50%),radial-gradient(circle_at_50%_100%,rgba(255,220,80,0.12),transparent_40%)]"
             />
             <div class="absolute inset-y-0 left-0 w-[58%] max-w-3xl bg-gradient-to-r from-black/35 to-transparent sm:w-[52%]" />
         </div>
@@ -158,13 +158,13 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <h1
                     class="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
                 >
-                    Shop Online.
-                    <span class="text-brand-green-soft">Ship to Jamaica.</span>
+                    <span class="text-brand-gold-soft">Shop Online.</span>
+                    <span class="text-brand-green-soft"> Ship to Jamaica.</span>
                     <br />
                     Track everything in one place.
                 </h1>
                 <p class="max-w-xl text-base text-brand-cream/80 sm:text-lg">
-                    SHIP DJM helps customers in Jamaica shop from stores like
+                    Ship'd JM helps customers in Jamaica shop from stores like
                     Amazon, Walmart, SHEIN and more, then ship packages through
                     our Florida warehouse for pickup in Jamaica.
                 </p>
@@ -217,7 +217,8 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <h2
                     class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
                 >
-                    Four practical steps, start to finish
+                    Four practical steps,
+                    <span class="text-brand-gold"> start to finish</span>
                 </h2>
                 <p class="mt-4 text-muted-foreground">
                     Everything is streamlined for customers: register, shop,
@@ -231,19 +232,19 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <li
                     v-for="(step, index) in howItWorks"
                     :key="step.title"
-                    class="group relative overflow-hidden rounded-2xl border border-border bg-card p-7 transition hover:border-brand-green/50 hover:shadow-xl fade-in-item"
+                    class="group relative overflow-hidden rounded-2xl border border-border bg-card p-7 transition hover:border-brand-gold/25 hover:shadow-xl fade-in-item"
                     :style="itemDelay(index)"
                 >
                     <div
-                        class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-green/80 via-brand-green/30 to-transparent"
+                        class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-gold/60 via-brand-green/35 to-transparent"
                     />
                     <div
-                        class="flex size-12 items-center justify-center rounded-lg bg-brand-green/12 text-brand-green ring-1 ring-brand-green/25"
+                        class="flex size-12 items-center justify-center rounded-lg bg-brand-green/12 text-brand-green ring-1 ring-brand-green/25 group-hover:ring-brand-gold/30"
                     >
                         <component :is="step.icon" class="size-5" />
                     </div>
                     <p
-                        class="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+                        class="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold/80"
                     >
                         Step {{ index + 1 }}
                     </p>
@@ -265,12 +266,14 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <p
                     class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-green"
                 >
-                    Why SHIP DJM
+                    Why Ship'd JM
                 </p>
                 <h2
                     class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
                 >
-                    Built for Jamaican shoppers — not bolted on
+                    Built for
+                    <span class="text-brand-gold"> Jamaican shoppers</span>
+                    — not bolted on
                 </h2>
             </div>
             <div class="mt-12 grid gap-8 lg:grid-cols-2">
@@ -300,9 +303,9 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                             class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent"
                         />
                         <p
-                            class="absolute bottom-3 left-3 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-white/90"
+                            class="absolute bottom-3 left-3 rounded-full border border-brand-gold/30 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-brand-gold-soft"
                         >
-                            SHIP DJM advantage
+                            Ship'd JM advantage
                         </p>
                     </div>
                     <div class="space-y-3 p-6">
@@ -324,7 +327,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
             class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
         >
             <div
-                class="grid gap-10 rounded-2xl border border-brand-green/25 bg-gradient-to-br from-brand-green/10 via-brand-green-muted/40 to-brand-gold/5 p-10 lg:grid-cols-2 lg:items-center"
+                class="grid gap-10 rounded-2xl border border-brand-green/25 bg-gradient-to-br from-brand-green/10 via-brand-green-muted/40 to-brand-gold/10 p-10 lg:grid-cols-2 lg:items-center"
             >
                 <div>
                     <p class="public-section-label">
@@ -333,11 +336,13 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                     <h2
                         class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
                     >
-                        Simple, weight-based rates
+                        Simple,
+                        <span class="text-brand-gold"> weight-based</span>
+                        rates
                     </h2>
                     <p class="mt-4 text-muted-foreground">
                         Our base rate for MVP is
-                        <span class="font-semibold text-foreground">
+                        <span class="font-semibold text-brand-gold">
                             {{ ratePerLbDisplay }} per lb
                         </span>
                         on a single shipping method. Pricing for heavier
@@ -364,7 +369,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                     >
                         {{ props.rate?.name ?? 'Standard Air Shipping' }}
                     </p>
-                    <p class="mt-2 text-4xl font-semibold tracking-tight">
+                    <p class="mt-2 text-4xl font-semibold tracking-tight text-brand-gold">
                         {{ ratePerLbDisplay }}
                         <span class="text-base text-muted-foreground">
                             / lb
@@ -373,7 +378,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                     <ul class="mt-6 space-y-3 text-sm">
                         <li class="flex items-start gap-2">
                             <CircleCheck
-                                class="mt-0.5 size-4 text-brand-green"
+                                class="mt-0.5 size-4 text-brand-gold"
                             />
                             <span>One shipping method for MVP</span>
                         </li>
@@ -413,7 +418,8 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <h2
                     class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
                 >
-                    Frequently asked questions
+                    Frequently asked
+                    <span class="text-brand-gold"> questions</span>
                 </h2>
             </div>
 
@@ -421,7 +427,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <div
                     v-for="(faq, index) in faqs"
                     :key="faq.q"
-                    class="rounded-xl border border-border bg-card p-6 fade-in-item"
+                    class="rounded-xl border border-border border-l-2 border-l-brand-gold/50 bg-card p-6 fade-in-item"
                     :style="itemDelay(index, 100)"
                 >
                     <dt class="text-base font-semibold">{{ faq.q }}</dt>
@@ -436,7 +442,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
     <!-- Final CTA -->
     <section class="relative overflow-hidden bg-brand-ink text-brand-cream fade-in-section" :style="sectionDelay(5)">
         <div
-            class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(30,142,62,0.15),transparent_50%)]"
+            class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(30,142,62,0.15),transparent_50%),radial-gradient(circle_at_80%_40%,rgba(255,220,80,0.08),transparent_45%)]"
             aria-hidden="true"
         />
         <div
@@ -446,7 +452,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
             >
                 Start shipping with
-                <span class="text-brand-green-soft">SHIP DJM</span> today.
+                <span class="text-brand-gold-soft">Ship'd JM</span> today.
             </h2>
             <p
                 class="mx-auto mt-4 max-w-2xl text-base text-brand-cream/70 sm:text-lg"

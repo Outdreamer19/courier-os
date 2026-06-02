@@ -4,7 +4,7 @@
 <template>
     <img
         src="/branding/shipdjm-logo.png"
-        alt="SHIP DJM"
+        alt="Ship'd JM"
         class="h-10 w-auto max-w-[170px] object-contain"
     />
 </template>

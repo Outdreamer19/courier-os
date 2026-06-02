@@ -42,6 +42,6 @@ class PackageStatusChangedNotification extends Notification
 
         return $mail
             ->action('View package', url('/portal/packages/'.$this->package->id))
-            ->line('Thank you for shipping with SHIP DJM.');
+            ->line("Thank you for shipping with Ship'd JM.");
     }
 }

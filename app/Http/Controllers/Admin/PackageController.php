@@ -290,7 +290,7 @@ class PackageController extends Controller
             'whatsapp_url' => WhatsappLink::forPhone(
                 $package->user?->customerProfile?->whatsapp_number
                     ?? $package->user?->customerProfile?->phone,
-                'Hi, this is SHIP DJM regarding package '.$package->package_reference.'.',
+                "Hi, this is Ship'd JM regarding package ".$package->package_reference.'.',
             ),
             'status_history' => $package->relationLoaded('statusHistories')
                 ? $package->statusHistories->map(fn ($entry) => [

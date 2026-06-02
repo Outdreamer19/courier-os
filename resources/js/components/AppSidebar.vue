@@ -10,7 +10,6 @@ import {
     MapPin,
     Package,
     Receipt,
-    ShieldCheck,
     UserCircle,
     Users,
 } from 'lucide-vue-next';
@@ -70,11 +69,6 @@ const navItems = computed(() =>
 
 const footerNavItems: NavItem[] = [
     { title: 'Visit website', href: home(), icon: Globe },
-    {
-        title: 'Help & docs',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: ShieldCheck,
-    },
 ];
 </script>
 

@@ -158,7 +158,7 @@ class CustomerController extends Controller
             'whatsapp_url' => WhatsappLink::forPhone(
                 $customer->customerProfile?->whatsapp_number
                     ?? $customer->customerProfile?->phone,
-                'Hi '.$customer->name.', this is SHIP DJM support.',
+                'Hi '.$customer->name.", this is Ship'd JM support.",
             ),
         ];
     }

@@ -85,7 +85,7 @@ class PreAlertController extends Controller
                     'whatsapp_url' => WhatsappLink::forPhone(
                         $preAlert->user?->customerProfile?->whatsapp_number
                             ?? $preAlert->user?->customerProfile?->phone,
-                        'Hi, this is SHIP DJM regarding your pre-alert for '.$preAlert->merchant_name.'.',
+                        "Hi, this is Ship'd JM regarding your pre-alert for ".$preAlert->merchant_name.'.',
                     ),
                 ],
                 'package' => $preAlert->package ? [

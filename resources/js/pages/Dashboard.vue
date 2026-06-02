@@ -135,7 +135,7 @@ const formatDate = (value: string | null) => {
                         Hello, {{ user?.name ?? 'there' }}
                     </h1>
                     <p class="text-sm text-muted-foreground">
-                        Your SHIP DJM customer reference is
+                        Your Ship'd JM customer reference is
                         <span class="font-medium text-foreground">
                             {{ reference }}
                         </span>

@@ -50,7 +50,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
 </script>
 
 <template>
-    <Head title="Contact SHIP DJM" />
+    <Head title="Contact Ship'd JM" />
 
     <section class="relative overflow-hidden bg-brand-ink text-brand-cream fade-in-section" :style="sectionDelay(0)">
         <div

@@ -13,7 +13,7 @@ const sections = [
     },
     {
         heading: '3. Shipping rates',
-        body: 'The current MVP rate is JMD $500 per pound on a single shipping method. Final charges are confirmed by SHIP DJM admin once the package is weighed at the Florida warehouse. Pricing may evolve into weight tiers over time.',
+        body: "The current MVP rate is JMD $500 per pound on a single shipping method. Final charges are confirmed by Ship'd JM admin once the package is weighed at the Florida warehouse. Pricing may evolve into weight tiers over time.",
     },
     {
         heading: '4. Transit and processing times',
@@ -32,7 +32,7 @@ const sections = [
     <LegalPage
         eyebrow="Legal"
         title="Shipping Policy"
-        intro="How SHIP DJM moves packages from our Florida warehouse to pickup in Jamaica. Placeholder content for MVP."
+        intro="How Ship'd JM moves packages from our Florida warehouse to pickup in Jamaica. Placeholder content for MVP."
         :sections="sections"
     />
 </template>

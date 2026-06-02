@@ -5,15 +5,15 @@ import LegalPage from '@/pages/public/legal/LegalPage.vue';
 const sections = [
     {
         heading: '1. Damage and loss',
-        body: 'If a package arrives damaged or appears to be missing, please contact SHIP DJM support as soon as possible. We will investigate with the relevant carriers and customs authorities.',
+        body: "If a package arrives damaged or appears to be missing, please contact Ship'd JM support as soon as possible. We will investigate with the relevant carriers and customs authorities.",
     },
     {
         heading: '2. Refunds and claims',
-        body: 'Refunds for SHIP DJM shipping fees may be issued at our discretion, depending on the cause of the issue and the supporting documentation provided. Original merchant refunds (the store you bought from) must be requested directly with that merchant.',
+        body: "Refunds for Ship'd JM shipping fees may be issued at our discretion, depending on the cause of the issue and the supporting documentation provided. Original merchant refunds (the store you bought from) must be requested directly with that merchant.",
     },
     {
         heading: '3. Customs and duties',
-        body: 'Customers are responsible for any customs duties or fees imposed by the Jamaica Customs Agency. SHIP DJM may collect these on behalf of customs where required.',
+        body: "Customers are responsible for any customs duties or fees imposed by the Jamaica Customs Agency. Ship'd JM may collect these on behalf of customs where required.",
     },
     {
         heading: '4. Disputes',
@@ -28,7 +28,7 @@ const sections = [
     <LegalPage
         eyebrow="Legal"
         title="Refund and Claims Policy"
-        intro="How SHIP DJM handles damaged, missing, or disputed packages. Placeholder content for MVP."
+        intro="How Ship'd JM handles damaged, missing, or disputed packages. Placeholder content for MVP."
         :sections="sections"
     />
 </template>

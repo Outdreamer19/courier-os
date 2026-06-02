@@ -25,7 +25,7 @@ class EnsureUserIsActive
 
             return redirect()
                 ->route('login')
-                ->with('status', 'Your account has been suspended. Please contact SHIP DJM support.');
+                ->with('status', "Your account has been suspended. Please contact Ship'd JM support.");
         }
 
         return $next($request);

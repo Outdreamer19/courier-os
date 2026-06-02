@@ -32,7 +32,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
 </script>
 
 <template>
-    <Head title="About SHIP DJM" />
+    <Head title="About Ship'd JM" />
 
     <section class="relative overflow-hidden bg-brand-ink text-brand-cream fade-in-section" :style="sectionDelay(0)">
         <div
@@ -41,7 +41,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
         />
         <div class="relative mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
             <p class="public-section-label-on-dark">
-                About SHIP DJM
+                About Ship'd JM
             </p>
             <h1
                 class="mt-3 text-balance text-4xl font-semibold tracking-tight sm:text-5xl"
@@ -49,7 +49,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 Making online shopping and package forwarding effortless for Jamaicans.
             </h1>
             <p class="mt-6 max-w-2xl text-base text-brand-cream/80 sm:text-lg">
-                SHIP DJM exists because shopping from international stores
+                Ship'd JM exists because shopping from international stores
                 shouldn't be the hard part of bringing things home. We give you
                 a Florida shipping address, handle your packages with care,
                 and keep you informed every step of the way.
@@ -143,7 +143,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                         Founder message
                     </p>
                     <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">
-                        "We're building SHIP DJM to make shipping simple, clear,
+                        "We're building Ship'd JM to make shipping simple, clear,
                         and dependable for every customer in Jamaica."
                     </h2>
                     <p class="text-muted-foreground">
@@ -152,12 +152,12 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                         orders from checkout to pickup.
                     </p>
                     <p class="text-muted-foreground">
-                        Thank you for trusting SHIP DJM with your packages. We
+                        Thank you for trusting Ship'd JM with your packages. We
                         are committed to improving the experience every step of
                         the way.
                     </p>
                     <p class="text-sm font-medium text-foreground">
-                        — Founder, SHIP DJM
+                        — Founder, Ship'd JM
                     </p>
                 </div>
             </div>
