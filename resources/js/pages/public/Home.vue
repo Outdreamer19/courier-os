@@ -1,24 +1,14 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import {
-    Boxes,
     CircleCheck,
     Clipboard,
-    Compass,
     PackageCheck,
-    PackageSearch,
     Receipt,
-    ShieldCheck,
     UserPlus,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { useScrollReveal } from '@/composables/useScrollReveal';
 import { rates, register } from '@/routes';
 import type { RateSnapshot } from '@/types/auth';
@@ -62,24 +52,28 @@ const whyShipDjm = [
         title: 'Clear package visibility from day one',
         body: 'Track pre-alerts and package updates in one timeline so you always know what is happening next.',
         image: '/img/shipdjm-tracking.png',
+        imageWebp: '/img/shipdjm-tracking.webp',
         imageAlt: 'Logistics warehouse shelves with organized parcels',
     },
     {
         title: 'Pre-alert workflow that is actually simple',
         body: 'Submit invoice details in minutes and let the SHIP DJM team handle package matching behind the scenes.',
         image: '/img/shipdjm-prealert-workflow.png',
+        imageWebp: '/img/shipdjm-prealert-workflow.webp',
         imageAlt: 'Customer reviewing order and shipment details on laptop',
     },
     {
         title: 'Built for Jamaican customers, not retrofitted',
         body: 'From account references to pickup-first operations, the platform is designed around local customer reality.',
         image: '/img/shipdjm-jamaica.png',
+        imageWebp: '/img/shipdjm-jamaica.webp',
         imageAlt: 'Urban Caribbean-style street scene with vibrant tones',
     },
     {
         title: 'Support you can actually reach',
         body: 'Get timely updates by email and WhatsApp, plus responsive help when you need clarity on a shipment.',
         image: '/img/shipdjm-support.png',
+        imageWebp: '/img/shipdjm-support.webp',
         imageAlt: 'Customer support professional wearing headset and smiling',
     },
 ];
@@ -111,7 +105,15 @@ const { sectionDelay, itemDelay } = useScrollReveal();
 </script>
 
 <template>
-    <Head title="Shop Online. Ship to Jamaica." />
+    <Head title="Shop Online. Ship to Jamaica.">
+        <link
+            rel="preload"
+            as="image"
+            href="/img/shipdjm-hero.webp"
+            type="image/webp"
+            fetchpriority="high"
+        />
+    </Head>
 
     <div>
     <!-- Hero -->
@@ -123,11 +125,18 @@ const { sectionDelay, itemDelay } = useScrollReveal();
             aria-hidden="true"
             class="absolute inset-0"
         >
-            <img
-                src="/img/shipdjm-hero.png"
-                alt="SHIP DJM customer support team helping shoppers with package forwarding"
-                class="h-full w-full object-cover object-[72%_center] sm:object-[68%_center]"
-            />
+            <picture>
+                <source srcset="/img/shipdjm-hero.webp" type="image/webp" />
+                <img
+                    src="/img/shipdjm-hero.png"
+                    alt="SHIP DJM customer support team helping shoppers with package forwarding"
+                    width="1774"
+                    height="887"
+                    fetchpriority="high"
+                    decoding="async"
+                    class="h-full w-full object-cover object-[72%_center] sm:object-[68%_center]"
+                />
+            </picture>
             <div
                 class="absolute inset-0 bg-gradient-to-r from-brand-ink/90 via-brand-ink/45 to-brand-ink/20 sm:from-brand-ink/88 sm:via-brand-ink/35 sm:to-brand-ink/15"
             />
@@ -272,12 +281,21 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                     :style="itemDelay(index, 120)"
                 >
                     <div class="relative aspect-[16/10] overflow-hidden">
-                        <img
-                            :src="item.image"
-                            :alt="item.imageAlt"
-                            loading="lazy"
-                            class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        />
+                        <picture>
+                            <source
+                                :srcset="item.imageWebp"
+                                type="image/webp"
+                            />
+                            <img
+                                :src="item.image"
+                                :alt="item.imageAlt"
+                                width="1448"
+                                height="1086"
+                                loading="lazy"
+                                decoding="async"
+                                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                            />
+                        </picture>
                         <div
                             class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent"
                         />

@@ -12,10 +12,10 @@ class UsersSeeder extends Seeder
 {
     public function run(CustomerReferenceGenerator $references): void
     {
-        $admin = User::query()->updateOrCreate(
-            ['email' => 'shane1obdurate@gmail.com'],
+        User::query()->updateOrCreate(
+            ['email' => 'yashaepinnock@gmail.com'],
             [
-                'name' => 'SHIP DJM Admin',
+                'name' => 'Yasha Epinnock',
                 'password' => Hash::make('password'),
                 'role' => User::ROLE_ADMIN,
                 'status' => User::STATUS_ACTIVE,
@@ -44,8 +44,5 @@ class UsersSeeder extends Seeder
                 'parish' => 'Kingston',
             ],
         );
-
-        // Silence the unused-variable warning while keeping the admin reference visible.
-        unset($admin);
     }
 }
