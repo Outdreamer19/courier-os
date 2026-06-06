@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\BillingStatus;
 use App\Enums\Carrier;
 use App\Enums\PackageStatus;
 use App\Enums\PaymentMethod;
@@ -202,6 +203,13 @@ class PackageController extends Controller
                 fn (PaymentMethod $m) => [$m->value => $m->label()],
             ),
             'currency' => config('shipdjm.currency'),
+            'invoiceFeedEnabled' => (bool) config('invoicefeed.enabled'),
+            'billingRoutes' => [
+                'generateInvoice' => route('admin.packages.billing.generate-invoice', $package),
+                'sendInvoice' => route('admin.packages.billing.send-invoice', $package),
+                'paymentLink' => route('admin.packages.billing.payment-link', $package),
+                'syncPayment' => route('admin.packages.billing.sync-payment', $package),
+            ],
         ]);
     }
 
@@ -279,6 +287,15 @@ class PackageController extends Controller
             'weight_lbs' => $package->weight_lbs !== null ? (float) $package->weight_lbs : null,
             'declared_value' => $package->declared_value !== null ? (float) $package->declared_value : null,
             'amount_due' => (float) $package->amount_due,
+            'billing_status' => $package->billing_status?->value ?? BillingStatus::NotInvoiced->value,
+            'billing_status_label' => ($package->billing_status ?? BillingStatus::NotInvoiced)->label(),
+            'invoicefeed_invoice_number' => $package->invoicefeed_invoice_number,
+            'invoicefeed_invoice_url' => $package->invoicefeed_invoice_url,
+            'invoicefeed_public_invoice_url' => $package->invoicefeed_public_invoice_url,
+            'invoicefeed_payment_url' => $package->invoicefeed_payment_url,
+            'invoicefeed_status' => $package->invoicefeed_status,
+            'invoicefeed_synced_at' => $package->invoicefeed_synced_at?->toIso8601String(),
+            'has_invoice' => filled($package->invoicefeed_invoice_id),
             'status' => $package->status->value,
             'payment_status' => $package->payment_status->value,
             'payment_method' => $package->payment_method?->value,

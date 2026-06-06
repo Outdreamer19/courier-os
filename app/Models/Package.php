@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BillingStatus;
 use App\Enums\Carrier;
 use App\Enums\PackageStatus;
 use App\Enums\PaymentMethod;
@@ -24,6 +25,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'weight_lbs',
     'declared_value',
     'amount_due',
+    'invoicefeed_invoice_id',
+    'invoicefeed_invoice_number',
+    'invoicefeed_invoice_url',
+    'invoicefeed_public_invoice_url',
+    'invoicefeed_payment_url',
+    'invoicefeed_status',
+    'invoicefeed_synced_at',
+    'billing_status',
     'payment_status',
     'payment_method',
     'paid_at',
@@ -47,6 +56,8 @@ class Package extends Model
             'weight_lbs' => 'decimal:2',
             'declared_value' => 'decimal:2',
             'amount_due' => 'decimal:2',
+            'billing_status' => BillingStatus::class,
+            'invoicefeed_synced_at' => 'datetime',
             'payment_status' => PaymentStatus::class,
             'payment_method' => PaymentMethod::class,
             'status' => PackageStatus::class,
