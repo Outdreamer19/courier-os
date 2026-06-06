@@ -40,6 +40,12 @@ const props = defineProps<{
         declared_value: number | null;
         paid_at: string | null;
         customer_visible_notes: string | null;
+        billing_status_label: string | null;
+        invoice_status: string | null;
+        invoice_url: string | null;
+        payment_url: string | null;
+        is_paid: boolean;
+        can_pay_online: boolean;
         timeline: Array<{
             label: string;
             at: string | null;
@@ -61,7 +67,19 @@ const formatDateTime = (value: string | null) => {
     return new Date(value).toLocaleString();
 };
 
-const canPayOnline = false;
+const invoiceStatusLabel = () => {
+    if (props.package.is_paid) {
+        return 'Paid';
+    }
+
+    if (props.package.invoice_status) {
+        return props.package.invoice_status
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    return props.package.billing_status_label ?? 'Not invoiced';
+};
 </script>
 
 <template>
@@ -147,20 +165,51 @@ const canPayOnline = false;
                         </p>
                     </div>
 
-                    <Button
-                        type="button"
-                        class="w-full bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
-                        disabled
+                    <div>
+                        <p class="text-sm text-muted-foreground">
+                            Invoice status
+                        </p>
+                        <p class="font-medium">{{ invoiceStatusLabel() }}</p>
+                    </div>
+
+                    <div
+                        v-if="package.is_paid"
+                        class="inline-flex items-center gap-2 rounded-full bg-brand-green/10 px-3 py-1 text-sm font-medium text-brand-green"
                     >
-                        Pay online
-                    </Button>
-                    <p
-                        v-if="!canPayOnline"
-                        class="text-xs text-muted-foreground"
-                    >
-                        Online payments will be enabled once a payment provider
-                        is configured.
-                    </p>
+                        <CheckCircle2 class="size-4" />
+                        Paid
+                    </div>
+
+                    <div v-else class="flex flex-col gap-2">
+                        <Button
+                            v-if="package.invoice_url"
+                            as-child
+                            variant="outline"
+                            class="w-full"
+                        >
+                            <a
+                                :href="package.invoice_url"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                View Invoice
+                            </a>
+                        </Button>
+
+                        <Button
+                            v-if="package.can_pay_online && package.payment_url"
+                            as-child
+                            class="w-full bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                        >
+                            <a
+                                :href="package.payment_url"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                Pay Now
+                            </a>
+                        </Button>
+                    </div>
 
                     <div
                         class="rounded-lg border border-brand-green/30 bg-brand-green/5 p-4 text-sm leading-relaxed"

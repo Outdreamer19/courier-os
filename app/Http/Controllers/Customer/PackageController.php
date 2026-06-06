@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Package;
 use Illuminate\Http\Request;
@@ -51,6 +52,15 @@ class PackageController extends Controller
             'payment_status' => $package->payment_status->value,
             'payment_status_label' => $package->payment_status->label(),
             'amount_due' => (float) $package->amount_due,
+            'billing_status' => $package->billing_status?->value,
+            'billing_status_label' => $package->billing_status?->label(),
+            'invoice_status' => $package->invoicefeed_status,
+            'invoice_url' => $package->invoicefeed_public_invoice_url
+                ?? $package->invoicefeed_invoice_url,
+            'payment_url' => $package->invoicefeed_payment_url,
+            'is_paid' => $package->payment_status === PaymentStatus::Paid,
+            'can_pay_online' => filled($package->invoicefeed_payment_url)
+                && $package->payment_status->isOutstanding(),
             'weight_lbs' => $package->weight_lbs !== null ? (float) $package->weight_lbs : null,
             'updated_at' => $package->updated_at?->toIso8601String(),
         ];

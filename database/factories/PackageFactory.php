@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\BillingStatus;
 use App\Enums\Carrier;
 use App\Enums\PackageStatus;
 use App\Enums\PaymentStatus;
@@ -30,6 +31,7 @@ class PackageFactory extends Factory
             'weight_lbs' => fake()->randomFloat(2, 1, 25),
             'declared_value' => fake()->randomFloat(2, 20, 400),
             'amount_due' => fake()->randomFloat(2, 500, 15000),
+            'billing_status' => BillingStatus::NotInvoiced,
             'payment_status' => PaymentStatus::Unpaid,
             'status' => PackageStatus::AwaitingArrival,
         ];

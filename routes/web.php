@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\PackageBillingController;
 use App\Http\Controllers\Admin\PackageController as AdminPackageController;
 use App\Http\Controllers\Admin\PreAlertController as AdminPreAlertController;
 use App\Http\Controllers\Admin\ShippingRateController as AdminShippingRateController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Customer\ShippingAddressController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\RateCalculatorController;
+use App\Http\Controllers\Webhooks\InvoiceFeedWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,6 +51,9 @@ Route::redirect('privacy', '/legal/privacy', 301);
 Route::redirect('shipping-policy', '/legal/shipping', 301);
 Route::redirect('refund-policy', '/legal/refund', 301);
 Route::redirect('restricted-items', '/legal/restricted-items', 301);
+
+Route::post('webhooks/invoicefeed', InvoiceFeedWebhookController::class)
+    ->name('webhooks.invoicefeed');
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +94,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::resource('packages', AdminPackageController::class)
                 ->except(['show', 'destroy']);
+
+            Route::post('packages/{package}/billing/generate-invoice', [PackageBillingController::class, 'generateInvoice'])
+                ->name('packages.billing.generate-invoice');
+            Route::post('packages/{package}/billing/send-invoice', [PackageBillingController::class, 'sendInvoice'])
+                ->name('packages.billing.send-invoice');
+            Route::post('packages/{package}/billing/payment-link', [PackageBillingController::class, 'createPaymentLink'])
+                ->name('packages.billing.payment-link');
+            Route::post('packages/{package}/billing/sync-payment', [PackageBillingController::class, 'syncPaymentStatus'])
+                ->name('packages.billing.sync-payment');
 
             Route::resource('contact-messages', AdminContactMessageController::class)
                 ->only(['index', 'show', 'update'])
