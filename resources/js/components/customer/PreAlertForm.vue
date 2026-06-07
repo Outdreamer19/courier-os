@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
+import InvoiceDropZone from '@/components/customer/InvoiceDropZone.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,11 +39,6 @@ const form = useForm({
     customer_notes: props.initial?.customer_notes ?? '',
     invoice: null as File | null,
 });
-
-const onFileChange = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    form.invoice = target.files?.[0] ?? null;
-};
 
 const submit = () => {
     emit('submit', form);
@@ -141,12 +137,10 @@ const submit = () => {
             </div>
 
             <div class="grid gap-2 sm:col-span-2">
-                <Label for="invoice">Invoice / receipt (PDF, JPG, PNG, WEBP)</Label>
-                <Input
-                    id="invoice"
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png,.webp"
-                    @change="onFileChange"
+                <Label>Invoice / receipt</Label>
+                <InvoiceDropZone
+                    v-model="form.invoice"
+                    :error="form.errors.invoice"
                 />
                 <p
                     v-if="initial?.has_invoice && initial.invoice_url"
@@ -161,9 +155,8 @@ const submit = () => {
                     >
                         View current file
                     </a>
-                    — upload a new file to replace it.
+                    — drop a new file above to replace it.
                 </p>
-                <InputError :message="form.errors.invoice" />
             </div>
         </div>
 

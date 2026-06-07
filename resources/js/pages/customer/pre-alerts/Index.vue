@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { PlusCircle, Receipt } from 'lucide-vue-next';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { Eye, Pencil, PlusCircle, Receipt, XCircle } from 'lucide-vue-next';
+import EmptyState from '@/components/EmptyState.vue';
+import PaginationLinks from '@/components/PaginationLinks.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,8 +12,18 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { dashboard } from '@/routes';
-import { create, index, show } from '@/routes/portal/pre-alerts';
+import { cancel, create, edit, index, show } from '@/routes/portal/pre-alerts';
 
 defineOptions({
     layout: {
@@ -31,13 +43,14 @@ type PreAlertRow = {
     expected_delivery_date: string | null;
     created_at: string | null;
     has_invoice: boolean;
+    is_editable: boolean;
+    is_cancellable: boolean;
 };
 
 defineProps<{
     preAlerts: {
         data: PreAlertRow[];
-        links: unknown;
-        meta: unknown;
+        links: Array<{ url: string | null; label: string; active: boolean }>;
     };
 }>();
 
@@ -58,8 +71,8 @@ const formatDate = (value: string | null) => {
             <div>
                 <h1 class="text-2xl font-semibold tracking-tight">Pre-alerts</h1>
                 <p class="text-sm text-muted-foreground">
-                    Tell us what you ordered before your package arrives at our
-                    Florida warehouse.
+                    Create, edit, and cancel pre-alerts before your packages
+                    arrive at our Florida warehouse.
                 </p>
             </div>
             <Button
@@ -77,18 +90,20 @@ const formatDate = (value: string | null) => {
             <CardHeader>
                 <CardTitle>Your pre-alerts</CardTitle>
                 <CardDescription>
-                    Click a row to view details or upload an invoice.
+                    View details, edit while under review, or cancel if plans
+                    change.
                 </CardDescription>
             </CardHeader>
             <CardContent class="overflow-x-auto">
-                <table class="w-full min-w-[640px] text-left text-sm">
+                <table class="w-full min-w-[760px] text-left text-sm">
                     <thead>
                         <tr class="border-b text-muted-foreground">
                             <th class="pb-3 pr-4 font-medium">Merchant</th>
                             <th class="pb-3 pr-4 font-medium">Tracking</th>
                             <th class="pb-3 pr-4 font-medium">Status</th>
                             <th class="pb-3 pr-4 font-medium">Expected</th>
-                            <th class="pb-3 font-medium">Submitted</th>
+                            <th class="pb-3 pr-4 font-medium">Submitted</th>
+                            <th class="pb-3 font-medium text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,8 +138,72 @@ const formatDate = (value: string | null) => {
                             <td class="py-3 pr-4 text-muted-foreground">
                                 {{ formatDate(row.expected_delivery_date) }}
                             </td>
-                            <td class="py-3 text-muted-foreground">
+                            <td class="py-3 pr-4 text-muted-foreground">
                                 {{ formatDate(row.created_at) }}
+                            </td>
+                            <td class="py-3">
+                                <div
+                                    class="flex items-center justify-end gap-1"
+                                >
+                                    <Button as-child variant="ghost" size="sm">
+                                        <Link :href="show(row.id)">
+                                            <Eye class="size-4" />
+                                            View
+                                        </Link>
+                                    </Button>
+                                    <Button
+                                        v-if="row.is_editable"
+                                        as-child
+                                        variant="ghost"
+                                        size="sm"
+                                    >
+                                        <Link :href="edit(row.id)">
+                                            <Pencil class="size-4" />
+                                            Edit
+                                        </Link>
+                                    </Button>
+                                    <Dialog v-if="row.is_cancellable">
+                                        <DialogTrigger as-child>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                class="text-destructive hover:text-destructive"
+                                            >
+                                                <XCircle class="size-4" />
+                                                Cancel
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>
+                                                    Cancel this pre-alert?
+                                                </DialogTitle>
+                                                <DialogDescription>
+                                                    Your pre-alert for
+                                                    {{ row.merchant_name }} will
+                                                    be marked as cancelled.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <DialogFooter>
+                                                <DialogClose as-child>
+                                                    <Button variant="outline">
+                                                        Keep pre-alert
+                                                    </Button>
+                                                </DialogClose>
+                                                <Form
+                                                    v-bind="cancel.form(row.id)"
+                                                >
+                                                    <Button
+                                                        type="submit"
+                                                        variant="destructive"
+                                                    >
+                                                        Yes, cancel
+                                                    </Button>
+                                                </Form>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -133,20 +212,22 @@ const formatDate = (value: string | null) => {
         </Card>
 
         <Card v-else>
-            <CardContent
-                class="flex flex-col items-center justify-center gap-3 py-16 text-center"
-            >
-                <Receipt class="size-10 text-muted-foreground/50" />
-                <p class="text-sm text-muted-foreground">
-                    You haven't submitted any pre-alerts yet.
-                </p>
-                <Button
-                    as-child
-                    class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+            <CardContent>
+                <EmptyState
+                    :icon="Receipt"
+                    title="No pre-alerts yet"
+                    description="Submit a pre-alert with your invoice so we can match incoming packages to your account."
                 >
-                    <Link :href="create()">Submit your first pre-alert</Link>
-                </Button>
+                    <Button
+                        as-child
+                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                    >
+                        <Link :href="create()">Submit your first pre-alert</Link>
+                    </Button>
+                </EmptyState>
             </CardContent>
         </Card>
+
+        <PaginationLinks :links="preAlerts.links" />
     </div>
 </template>

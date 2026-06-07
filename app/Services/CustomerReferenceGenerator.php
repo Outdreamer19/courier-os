@@ -6,7 +6,7 @@ use App\Models\CustomerProfile;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Generates the next unique customer reference (e.g. DJM-000001).
+ * Generates the next unique customer reference (e.g. SJM-000001).
  *
  * Uses a row-level lock on the latest customer_profiles row to keep concurrent
  * registrations from producing duplicates. The prefix and padding width come
@@ -17,7 +17,7 @@ class CustomerReferenceGenerator
     public function next(): string
     {
         return DB::transaction(function (): string {
-            $prefix = (string) config('shipdjm.customer_reference.prefix', 'DJM');
+            $prefix = (string) config('shipdjm.customer_reference.prefix', 'SJM');
             $padding = (int) config('shipdjm.customer_reference.padding', 6);
 
             $latest = CustomerProfile::query()

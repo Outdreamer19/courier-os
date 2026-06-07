@@ -198,7 +198,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                     </div>
                     <div>
                         <dt class="text-brand-cream/60">Reference format</dt>
-                        <dd class="font-semibold">DJM-000001</dd>
+                        <dd class="font-semibold">SJM-000001</dd>
                     </div>
                 </dl>
             </div>

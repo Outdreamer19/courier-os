@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Search } from 'lucide-vue-next';
+import { Receipt, Search } from 'lucide-vue-next';
 import { ref } from 'vue';
+import EmptyState from '@/components/EmptyState.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -62,7 +63,7 @@ const applyFilters = () => {
             </Button>
         </form>
 
-        <Card>
+        <Card v-if="preAlerts.data.length">
             <CardContent class="overflow-x-auto pt-6">
                 <table class="w-full min-w-[800px] text-left text-sm">
                     <thead>
@@ -105,6 +106,16 @@ const applyFilters = () => {
                         </tr>
                     </tbody>
                 </table>
+            </CardContent>
+        </Card>
+
+        <Card v-else>
+            <CardContent>
+                <EmptyState
+                    :icon="Receipt"
+                    title="No pre-alerts found"
+                    description="Try adjusting your search or status filters."
+                />
             </CardContent>
         </Card>
     </div>

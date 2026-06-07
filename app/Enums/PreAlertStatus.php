@@ -31,8 +31,21 @@ enum PreAlertStatus: string
         return [self::Submitted, self::UnderReview];
     }
 
+    /**
+     * @return list<self>
+     */
+    public static function cancellable(): array
+    {
+        return [self::Submitted, self::UnderReview];
+    }
+
     public function isEditable(): bool
     {
         return in_array($this, self::editable(), true);
+    }
+
+    public function isCancellable(): bool
+    {
+        return in_array($this, self::cancellable(), true);
     }
 }

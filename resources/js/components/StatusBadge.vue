@@ -28,7 +28,13 @@ const variantClass = computed(() => {
         return 'border-destructive/30 bg-destructive/10 text-destructive';
     }
 
-    if (value.includes('review') || value.includes('pending') || value.includes('processing')) {
+    if (
+        value.includes('review')
+        || value.includes('pending')
+        || value.includes('processing')
+        || value === 'new'
+        || value.includes('submitted')
+    ) {
         return 'border-brand-gold/40 bg-brand-gold/10 text-brand-ink';
     }
 

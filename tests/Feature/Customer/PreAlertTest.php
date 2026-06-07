@@ -32,9 +32,20 @@ class PreAlertTest extends TestCase
     {
         $user = $this->customer();
 
+        PreAlert::factory()->create([
+            'user_id' => $user->id,
+            'status' => PreAlertStatus::Submitted,
+        ]);
+
         $this->actingAs($user)
             ->get(route('portal.pre-alerts.index'))
-            ->assertOk();
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('customer/pre-alerts/Index')
+                ->has('preAlerts.data', 1)
+                ->where('preAlerts.data.0.is_editable', true)
+                ->where('preAlerts.data.0.is_cancellable', true)
+            );
     }
 
     public function test_customer_can_submit_a_pre_alert(): void
@@ -103,6 +114,57 @@ class PreAlertTest extends TestCase
         $this->actingAs($other)
             ->get(route('portal.pre-alerts.show', $preAlert))
             ->assertForbidden();
+    }
+
+    public function test_customer_can_cancel_a_submitted_pre_alert(): void
+    {
+        $user = $this->customer();
+
+        $preAlert = PreAlert::factory()->create([
+            'user_id' => $user->id,
+            'status' => PreAlertStatus::Submitted,
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('portal.pre-alerts.cancel', $preAlert))
+            ->assertRedirect(route('portal.pre-alerts.index'));
+
+        $this->assertSame(
+            PreAlertStatus::Cancelled,
+            $preAlert->fresh()->status,
+        );
+    }
+
+    public function test_customer_cannot_cancel_pre_alert_after_matching(): void
+    {
+        $user = $this->customer();
+
+        $preAlert = PreAlert::factory()->create([
+            'user_id' => $user->id,
+            'status' => PreAlertStatus::MatchedToPackage,
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('portal.pre-alerts.cancel', $preAlert))
+            ->assertForbidden();
+    }
+
+    public function test_customer_can_download_own_pre_alert_invoice(): void
+    {
+        Storage::fake('local');
+
+        $user = $this->customer();
+        $path = UploadedFile::fake()->create('invoice.pdf', 100, 'application/pdf')
+            ->store('invoices', 'local');
+
+        $preAlert = PreAlert::factory()->create([
+            'user_id' => $user->id,
+            'invoice_path' => $path,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('portal.pre-alerts.invoice', $preAlert))
+            ->assertOk();
     }
 
     public function test_admin_cannot_access_customer_portal_routes(): void

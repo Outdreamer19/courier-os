@@ -12,6 +12,8 @@ use App\Models\PreAlert;
 use App\Models\ShippingRate;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminOperationsTest extends TestCase
@@ -30,6 +32,50 @@ class AdminOperationsTest extends TestCase
         CustomerProfile::factory()->create(['user_id' => $user->id]);
 
         return $user;
+    }
+
+    public function test_admin_can_download_pre_alert_invoice(): void
+    {
+        Storage::fake('local');
+
+        $customer = $this->customer();
+        $path = UploadedFile::fake()->create('invoice.pdf', 100, 'application/pdf')
+            ->store('invoices', 'local');
+
+        $preAlert = PreAlert::factory()->create([
+            'user_id' => $customer->id,
+            'invoice_path' => $path,
+        ]);
+
+        $response = $this->actingAs($this->admin())
+            ->get(route('admin.pre-alerts.invoice', ['pre_alert' => $preAlert]));
+
+        $response->assertOk();
+        $this->assertStringContainsString(
+            'inline',
+            (string) $response->headers->get('Content-Disposition'),
+        );
+
+        $this->actingAs($this->admin())
+            ->get(route('portal.pre-alerts.invoice', ['pre_alert' => $preAlert]))
+            ->assertForbidden();
+    }
+
+    public function test_admin_dashboard_includes_chart_data(): void
+    {
+        PreAlert::factory()->create(['status' => PreAlertStatus::Submitted]);
+        PreAlert::factory()->create(['status' => PreAlertStatus::UnderReview]);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('admin/Dashboard')
+                ->has('charts.new_users.labels', 6)
+                ->has('charts.new_users.data', 6)
+                ->has('charts.pre_alerts_by_status.labels', count(PreAlertStatus::cases()))
+                ->has('charts.pre_alerts_by_status.data', count(PreAlertStatus::cases()))
+            );
     }
 
     public function test_admin_can_access_customer_management(): void
@@ -142,6 +188,25 @@ class AdminOperationsTest extends TestCase
         $this->actingAs($this->admin())
             ->get(route('admin.contact-messages.index'))
             ->assertOk();
+    }
+
+    public function test_admin_can_delete_a_contact_message(): void
+    {
+        $message = ContactMessage::create([
+            'name' => 'Guest',
+            'email' => 'guest@test.com',
+            'subject' => 'Delete me',
+            'message' => 'Please remove',
+            'status' => ContactMessage::STATUS_NEW,
+        ]);
+
+        $this->actingAs($this->admin())
+            ->delete(route('admin.contact-messages.destroy', ['contact_message' => $message]))
+            ->assertRedirect(route('admin.contact-messages.index'));
+
+        $this->assertDatabaseMissing('contact_messages', [
+            'id' => $message->id,
+        ]);
     }
 
     public function test_customer_cannot_access_admin_routes(): void

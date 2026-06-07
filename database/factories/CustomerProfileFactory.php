@@ -20,7 +20,7 @@ class CustomerProfileFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'customer_reference' => 'DJM-'.fake()->unique()->numerify('######'),
+            'customer_reference' => config('shipdjm.customer_reference.prefix', 'SJM').'-'.fake()->unique()->numerify('######'),
             'phone' => fake()->optional()->phoneNumber(),
             'whatsapp_number' => fake()->optional()->phoneNumber(),
             'jamaica_address' => fake()->optional()->streetAddress(),

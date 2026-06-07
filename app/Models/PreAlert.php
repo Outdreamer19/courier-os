@@ -54,4 +54,9 @@ class PreAlert extends Model
     {
         return $this->status->isEditable();
     }
+
+    public function isCancellable(): bool
+    {
+        return $this->status->isCancellable();
+    }
 }

@@ -34,6 +34,13 @@ class PreAlertPolicy
             && $preAlert->isEditable();
     }
 
+    public function cancel(User $user, PreAlert $preAlert): bool
+    {
+        return $user->isCustomer()
+            && $preAlert->user_id === $user->id
+            && $preAlert->isCancellable();
+    }
+
     public function downloadInvoice(User $user, PreAlert $preAlert): bool
     {
         if ($user->isAdmin()) {

@@ -17,7 +17,7 @@ class CustomerReferenceGeneratorTest extends TestCase
         /** @var CustomerReferenceGenerator $generator */
         $generator = $this->app->make(CustomerReferenceGenerator::class);
 
-        $this->assertSame('DJM-000001', $generator->next());
+        $this->assertSame('SJM-000001', $generator->next());
     }
 
     public function test_subsequent_references_increment(): void
@@ -31,7 +31,7 @@ class CustomerReferenceGeneratorTest extends TestCase
             'customer_reference' => $generator->next(),
         ]);
 
-        $this->assertSame('DJM-000002', $generator->next());
+        $this->assertSame('SJM-000002', $generator->next());
     }
 
     public function test_registration_creates_customer_profile_with_reference(): void
@@ -47,6 +47,6 @@ class CustomerReferenceGeneratorTest extends TestCase
         $this->assertSame(User::ROLE_CUSTOMER, $user->role);
         $this->assertSame(User::STATUS_ACTIVE, $user->status);
         $this->assertNotNull($user->customerProfile);
-        $this->assertMatchesRegularExpression('/^DJM-\d{6}$/', $user->customerProfile->customer_reference);
+        $this->assertMatchesRegularExpression('/^SJM-\d{6}$/', $user->customerProfile->customer_reference);
     }
 }

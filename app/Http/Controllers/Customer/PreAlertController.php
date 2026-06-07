@@ -112,6 +112,20 @@ class PreAlertController extends Controller
         return to_route('portal.pre-alerts.show', ['pre_alert' => $preAlert]);
     }
 
+    public function cancel(Request $request, PreAlert $preAlert): RedirectResponse
+    {
+        $this->authorize('cancel', $preAlert);
+
+        $preAlert->update(['status' => PreAlertStatus::Cancelled]);
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => 'Pre-alert cancelled.',
+        ]);
+
+        return to_route('portal.pre-alerts.index');
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -126,6 +140,8 @@ class PreAlertController extends Controller
             'expected_delivery_date' => $preAlert->expected_delivery_date?->toDateString(),
             'created_at' => $preAlert->created_at?->toIso8601String(),
             'has_invoice' => $preAlert->invoice_path !== null,
+            'is_editable' => $preAlert->isEditable(),
+            'is_cancellable' => $preAlert->isCancellable(),
         ];
     }
 
@@ -143,6 +159,7 @@ class PreAlertController extends Controller
             'declared_value' => $preAlert->declared_value,
             'customer_notes' => $preAlert->customer_notes,
             'is_editable' => $preAlert->isEditable(),
+            'is_cancellable' => $preAlert->isCancellable(),
             'invoice_url' => $preAlert->invoice_path
                 ? route('portal.pre-alerts.invoice', $preAlert)
                 : null,

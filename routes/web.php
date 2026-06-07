@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PackageBillingController;
 use App\Http\Controllers\Admin\PackageController as AdminPackageController;
 use App\Http\Controllers\Admin\PreAlertController as AdminPreAlertController;
+use App\Http\Controllers\Admin\PreAlertInvoiceController as AdminPreAlertInvoiceController;
 use App\Http\Controllers\Admin\ShippingRateController as AdminShippingRateController;
 use App\Http\Controllers\Admin\WarehouseAddressController as AdminWarehouseAddressController;
 use App\Http\Controllers\ContactController;
@@ -75,6 +76,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('shipping-address', ShippingAddressController::class)->name('shipping-address');
 
             Route::resource('pre-alerts', PreAlertController::class)->except(['destroy']);
+            Route::post('pre-alerts/{pre_alert}/cancel', [PreAlertController::class, 'cancel'])
+                ->name('pre-alerts.cancel');
             Route::get('pre-alerts/{pre_alert}/invoice', PreAlertInvoiceController::class)
                 ->name('pre-alerts.invoice');
 
@@ -91,6 +94,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->except(['destroy']);
 
             Route::resource('pre-alerts', AdminPreAlertController::class)->only(['index', 'show', 'update']);
+            Route::get('pre-alerts/{pre_alert}/invoice', AdminPreAlertInvoiceController::class)
+                ->name('pre-alerts.invoice');
 
             Route::resource('packages', AdminPackageController::class)
                 ->except(['show', 'destroy']);
@@ -105,7 +110,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->name('packages.billing.sync-payment');
 
             Route::resource('contact-messages', AdminContactMessageController::class)
-                ->only(['index', 'show', 'update'])
+                ->only(['index', 'show', 'update', 'destroy'])
                 ->parameters(['contact-messages' => 'contact_message']);
 
             Route::resource('shipping-rates', AdminShippingRateController::class)
