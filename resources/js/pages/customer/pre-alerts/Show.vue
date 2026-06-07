@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { Pencil } from 'lucide-vue-next';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { Pencil, XCircle } from 'lucide-vue-next';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,8 +10,18 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { dashboard } from '@/routes';
-import { edit, index } from '@/routes/portal/pre-alerts';
+import { cancel, edit, index } from '@/routes/portal/pre-alerts';
 
 defineOptions({
     layout: {
@@ -37,6 +47,7 @@ const props = defineProps<{
         declared_value: number | null;
         customer_notes: string | null;
         is_editable: boolean;
+        is_cancellable: boolean;
         invoice_url: string | null;
         created_at: string | null;
     };
@@ -70,16 +81,47 @@ const formatDate = (value: string | null) => {
                     </span>
                 </div>
             </div>
-            <Button
-                v-if="preAlert.is_editable"
-                as-child
-                variant="outline"
-            >
-                <Link :href="edit(preAlert.id)">
-                    <Pencil class="size-4" />
-                    Edit pre-alert
-                </Link>
-            </Button>
+            <div class="flex flex-wrap gap-2">
+                <Button
+                    v-if="preAlert.is_editable"
+                    as-child
+                    variant="outline"
+                >
+                    <Link :href="edit(preAlert.id)">
+                        <Pencil class="size-4" />
+                        Edit pre-alert
+                    </Link>
+                </Button>
+                <Dialog v-if="preAlert.is_cancellable">
+                    <DialogTrigger as-child>
+                        <Button variant="outline" class="text-destructive hover:text-destructive">
+                            <XCircle class="size-4" />
+                            Cancel pre-alert
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Cancel this pre-alert?</DialogTitle>
+                            <DialogDescription>
+                                Your pre-alert for
+                                {{ preAlert.merchant_name }} will be marked as
+                                cancelled. You can submit a new pre-alert later
+                                if your shipment is still on the way.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <DialogClose as-child>
+                                <Button variant="outline">Keep pre-alert</Button>
+                            </DialogClose>
+                            <Form v-bind="cancel.form(preAlert.id)">
+                                <Button type="submit" variant="destructive">
+                                    Yes, cancel
+                                </Button>
+                            </Form>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
 
         <Card>
@@ -91,7 +133,7 @@ const formatDate = (value: string | null) => {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <dl class="grid gap-4 sm:grid-cols-2 text-sm">
+                <dl class="grid gap-4 text-sm sm:grid-cols-2">
                     <div>
                         <dt class="text-muted-foreground">Order number</dt>
                         <dd class="mt-0.5 font-medium">

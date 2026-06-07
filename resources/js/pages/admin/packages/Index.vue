@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Plus, Search } from 'lucide-vue-next';
+import { Package, Plus, Search } from 'lucide-vue-next';
 import { ref } from 'vue';
+import EmptyState from '@/components/EmptyState.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -73,7 +74,7 @@ const applyFilters = () => {
             </Button>
         </form>
 
-        <Card>
+        <Card v-if="packages.data.length">
             <CardContent class="overflow-x-auto pt-6">
                 <table class="w-full min-w-[900px] text-left text-sm">
                     <thead>
@@ -123,6 +124,23 @@ const applyFilters = () => {
                         </tr>
                     </tbody>
                 </table>
+            </CardContent>
+        </Card>
+
+        <Card v-else>
+            <CardContent>
+                <EmptyState
+                    :icon="Package"
+                    title="No packages found"
+                    description="Adjust your filters or add a package when one arrives at the warehouse."
+                >
+                    <Button
+                        as-child
+                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                    >
+                        <Link :href="create()">Add package</Link>
+                    </Button>
+                </EmptyState>
             </CardContent>
         </Card>
     </div>

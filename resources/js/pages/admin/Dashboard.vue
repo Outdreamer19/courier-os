@@ -7,10 +7,11 @@ import {
     Package,
     PackageCheck,
     Receipt,
-    UserPlus,
     Users,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
+import BarChart from '@/components/charts/BarChart.vue';
+import DoughnutChart from '@/components/charts/DoughnutChart.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,6 +47,10 @@ const props = defineProps<{
         packages_ready_for_pickup: number;
         unpaid_packages: number;
         new_contact_messages: number;
+    };
+    charts: {
+        new_users: { labels: string[]; data: number[] };
+        pre_alerts_by_status: { labels: string[]; data: number[] };
     };
     recent_contact_messages: {
         id: number;
@@ -153,6 +158,45 @@ const tiles = computed(() => [
                     </CardContent>
                 </Card>
             </Link>
+        </div>
+
+        <div class="grid gap-4 lg:grid-cols-2">
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-2">
+                        <Users class="size-4 text-brand-gold" />
+                        New customers
+                    </CardTitle>
+                    <CardDescription>
+                        Customer sign-ups over the last six months
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <BarChart
+                        :labels="charts.new_users.labels"
+                        :data="charts.new_users.data"
+                        label="New customers"
+                    />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-2">
+                        <Receipt class="size-4 text-brand-gold" />
+                        Pre-alerts by status
+                    </CardTitle>
+                    <CardDescription>
+                        Current distribution across all pre-alerts
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <DoughnutChart
+                        :labels="charts.pre_alerts_by_status.labels"
+                        :data="charts.pre_alerts_by_status.data"
+                    />
+                </CardContent>
+            </Card>
         </div>
 
         <div class="grid gap-4 lg:grid-cols-3">

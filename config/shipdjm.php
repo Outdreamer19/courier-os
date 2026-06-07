@@ -33,14 +33,14 @@ return [
     | Customer reference format
     |--------------------------------------------------------------------------
     |
-    | Customer reference numbers look like DJM-000001. The prefix and the
+    | Customer reference numbers look like SJM-000001. The prefix and the
     | zero-padding width are configurable so the format can evolve without
     | a code change.
     |
     */
 
     'customer_reference' => [
-        'prefix' => env('SHIPDJM_CUSTOMER_REFERENCE_PREFIX', 'DJM'),
+        'prefix' => env('SHIPDJM_CUSTOMER_REFERENCE_PREFIX', 'SJM'),
         'padding' => (int) env('SHIPDJM_CUSTOMER_REFERENCE_PADDING', 6),
     ],
 

@@ -4,13 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\CustomerProfile;
 use App\Models\User;
-use App\Services\CustomerReferenceGenerator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UsersSeeder extends Seeder
 {
-    public function run(CustomerReferenceGenerator $references): void
+    public function run(): void
     {
         User::query()->updateOrCreate(
             ['email' => 'yashaepinnock@gmail.com'],
@@ -37,7 +36,7 @@ class UsersSeeder extends Seeder
         CustomerProfile::query()->updateOrCreate(
             ['user_id' => $customer->id],
             [
-                'customer_reference' => $customer->customerProfile?->customer_reference ?? $references->next(),
+                'customer_reference' => 'SJM-000001',
                 'phone' => '+1 (876) 555-0100',
                 'whatsapp_number' => '+1 (876) 555-0100',
                 'jamaica_address' => '12 Hope Road',

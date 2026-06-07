@@ -13,7 +13,7 @@ const sections = [
     },
     {
         heading: '3. Customer reference',
-        body: 'Every customer receives a unique customer reference (for example DJM-000001). The reference must be used on every shipment so packages can be matched to the correct account.',
+        body: 'Every customer receives a unique customer reference (for example SJM-000001). The reference must be used on every shipment so packages can be matched to the correct account.',
     },
     {
         heading: '4. Use of the Florida warehouse',

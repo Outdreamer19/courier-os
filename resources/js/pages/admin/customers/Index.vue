@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Plus, Search } from 'lucide-vue-next';
+import { Plus, Search, Users } from 'lucide-vue-next';
 import { ref } from 'vue';
+import EmptyState from '@/components/EmptyState.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -60,7 +61,7 @@ const applySearch = () => {
             </Button>
         </form>
 
-        <Card>
+        <Card v-if="customers.data.length">
             <CardHeader>
                 <CardTitle>All customers</CardTitle>
             </CardHeader>
@@ -109,6 +110,23 @@ const applySearch = () => {
                         </tr>
                     </tbody>
                 </table>
+            </CardContent>
+        </Card>
+
+        <Card v-else>
+            <CardContent>
+                <EmptyState
+                    :icon="Users"
+                    title="No customers found"
+                    description="Try a different search term or add a new customer account."
+                >
+                    <Button
+                        as-child
+                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                    >
+                        <Link :href="create()">Add customer</Link>
+                    </Button>
+                </EmptyState>
             </CardContent>
         </Card>
     </div>

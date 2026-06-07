@@ -41,6 +41,10 @@ class DashboardController extends Controller
                     ->where('status', ContactMessage::STATUS_NEW)
                     ->count(),
             ],
+            'charts' => [
+                'new_users' => $this->newUsersChart(),
+                'pre_alerts_by_status' => $this->preAlertsByStatusChart(),
+            ],
             'recent_contact_messages' => ContactMessage::query()
                 ->latest()
                 ->limit(5)
@@ -69,5 +73,55 @@ class DashboardController extends Controller
                     'amount_due' => (float) $pkg->amount_due,
                 ]),
         ]);
+    }
+
+    /**
+     * @return array{labels: list<string>, data: list<int>}
+     */
+    private function newUsersChart(): array
+    {
+        $labels = [];
+        $data = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $start = $month->copy()->startOfMonth();
+            $end = $month->copy()->endOfMonth();
+
+            $labels[] = $start->format('M Y');
+            $data[] = User::query()
+                ->where('role', User::ROLE_CUSTOMER)
+                ->whereBetween('created_at', [$start, $end])
+                ->count();
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+        ];
+    }
+
+    /**
+     * @return array{labels: list<string>, data: list<int>}
+     */
+    private function preAlertsByStatusChart(): array
+    {
+        $counts = PreAlert::query()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $labels = [];
+        $data = [];
+
+        foreach (PreAlertStatus::cases() as $status) {
+            $labels[] = $status->label();
+            $data[] = (int) ($counts[$status->value] ?? 0);
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+        ];
     }
 }

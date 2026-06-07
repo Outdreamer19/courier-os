@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
+import { ExternalLink } from 'lucide-vue-next';
 import StatusBadge from '@/components/StatusBadge.vue';
 import WhatsAppButton from '@/components/WhatsAppButton.vue';
 import InputError from '@/components/InputError.vue';
@@ -53,15 +54,21 @@ const props = defineProps<{
             </div>
             <div class="flex items-center gap-2">
                 <WhatsAppButton :url="preAlert.customer.whatsapp_url" />
-                <a
+                <Button
                     v-if="preAlert.invoice_url"
-                    :href="preAlert.invoice_url as string"
-                    class="text-sm font-medium underline"
-                    target="_blank"
-                    rel="noopener"
+                    as-child
+                    variant="outline"
+                    size="sm"
                 >
-                    View invoice
-                </a>
+                    <a
+                        :href="preAlert.invoice_url as string"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <ExternalLink class="size-4" />
+                        View invoice
+                    </a>
+                </Button>
             </div>
         </div>
 

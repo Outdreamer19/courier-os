@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Plus } from 'lucide-vue-next';
+import { DollarSign, Plus } from 'lucide-vue-next';
+import EmptyState from '@/components/EmptyState.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -43,7 +44,7 @@ defineProps<{
             </Button>
         </div>
 
-        <Card>
+        <Card v-if="rates.length">
             <CardContent class="divide-y pt-6">
                 <div
                     v-for="rate in rates"
@@ -69,6 +70,23 @@ defineProps<{
                         </Button>
                     </div>
                 </div>
+            </CardContent>
+        </Card>
+
+        <Card v-else>
+            <CardContent>
+                <EmptyState
+                    :icon="DollarSign"
+                    title="No shipping rates yet"
+                    description="Add a rate tier so package charges can be calculated automatically."
+                >
+                    <Button
+                        as-child
+                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                    >
+                        <Link :href="create()">Add rate</Link>
+                    </Button>
+                </EmptyState>
             </CardContent>
         </Card>
     </div>

@@ -93,7 +93,7 @@ class PreAlertController extends Controller
                     'package_reference' => $preAlert->package->package_reference,
                 ] : null,
                 'invoice_url' => $preAlert->invoice_path
-                    ? route('portal.pre-alerts.invoice', ['pre_alert' => $preAlert])
+                    ? route('admin.pre-alerts.invoice', ['pre_alert' => $preAlert])
                     : null,
             ],
             'statuses' => collect(PreAlertStatus::cases())->mapWithKeys(
