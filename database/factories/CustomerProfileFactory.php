@@ -21,7 +21,9 @@ class CustomerProfileFactory extends Factory
         return [
             'user_id' => User::factory(),
             'customer_reference' => config('shipdjm.customer_reference.prefix', 'SJM').'-'.fake()->unique()->numerify('######'),
-            'phone' => fake()->optional()->phoneNumber(),
+            'trn' => fake()->numerify('#########'),
+            'date_of_birth' => fake()->dateTimeBetween('-50 years', '-19 years')->format('Y-m-d'),
+            'phone' => fake()->phoneNumber(),
             'whatsapp_number' => fake()->optional()->phoneNumber(),
             'jamaica_address' => fake()->optional()->streetAddress(),
             'parish' => fake()->optional()->randomElement([

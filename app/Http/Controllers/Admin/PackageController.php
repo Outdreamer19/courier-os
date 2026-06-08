@@ -11,9 +11,11 @@ use App\Enums\PreAlertStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePackageRequest;
 use App\Http\Requests\Admin\UpdatePackageRequest;
+use App\Models\ActivityLog;
 use App\Models\Package;
 use App\Models\PreAlert;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\PackageChargeCalculator;
 use App\Services\PackageReferenceGenerator;
 use App\Services\PackageStatusRecorder;
@@ -26,6 +28,8 @@ use Inertia\Response;
 
 class PackageController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $activityLogger) {}
+
     public function index(Request $request): Response
     {
         $this->authorize('viewAny', Package::class);
@@ -158,6 +162,13 @@ class PackageController extends Controller
                 ->update(['status' => PreAlertStatus::MatchedToPackage]);
         }
 
+        $this->activityLogger->log(
+            ActivityLog::ACTION_PACKAGE_CREATED,
+            "{$request->user()->name} created package {$package->package_reference}.",
+            $request->user(),
+            $package,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Package created.']);
 
         return to_route('admin.packages.edit', ['package' => $package]);
@@ -167,7 +178,7 @@ class PackageController extends Controller
     {
         $this->authorize('update', $package);
 
-        $package->load(['user.customerProfile', 'preAlert', 'statusHistories.changedBy']);
+        $package->load(['user.customerProfile.authorisedPickupPerson', 'preAlert', 'statusHistories.changedBy']);
 
         $customers = User::query()
             ->where('role', User::ROLE_CUSTOMER)
@@ -260,6 +271,23 @@ class PackageController extends Controller
             $request->user(),
         );
 
+        if ($oldStatus !== $package->status) {
+            $this->activityLogger->log(
+                ActivityLog::ACTION_PACKAGE_STATUS_CHANGED,
+                "{$request->user()->name} changed package {$package->package_reference} status from {$oldStatus->label()} to {$package->status->label()}.",
+                $request->user(),
+                $package,
+                ['old_status' => $oldStatus->value, 'new_status' => $package->status->value],
+            );
+        } else {
+            $this->activityLogger->log(
+                ActivityLog::ACTION_PACKAGE_UPDATED,
+                "{$request->user()->name} updated package {$package->package_reference}.",
+                $request->user(),
+                $package,
+            );
+        }
+
         if ($package->pre_alert_id) {
             PreAlert::query()
                 ->whereKey($package->pre_alert_id)
@@ -304,6 +332,12 @@ class PackageController extends Controller
             'customer_visible_notes' => $package->customer_visible_notes,
             'customer_name' => $package->user?->name,
             'customer_reference' => $package->user?->customerProfile?->customer_reference,
+            'authorised_pickup_person' => $package->user?->customerProfile?->authorisedPickupPerson ? [
+                'full_name' => $package->user->customerProfile->authorisedPickupPerson->full_name,
+                'phone' => $package->user->customerProfile->authorisedPickupPerson->phone,
+                'relationship_note' => $package->user->customerProfile->authorisedPickupPerson->relationship_note,
+                'id_number' => $package->user->customerProfile->authorisedPickupPerson->id_number,
+            ] : null,
             'whatsapp_url' => WhatsappLink::forPhone(
                 $package->user?->customerProfile?->whatsapp_number
                     ?? $package->user?->customerProfile?->phone,

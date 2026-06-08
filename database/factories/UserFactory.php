@@ -55,6 +55,20 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function owner(): static
+    {
+        return $this->state(fn () => [
+            'role' => User::ROLE_OWNER,
+        ]);
+    }
+
+    public function staff(): static
+    {
+        return $this->state(fn () => [
+            'role' => User::ROLE_STAFF,
+        ]);
+    }
+
     public function suspended(): static
     {
         return $this->state(fn () => [

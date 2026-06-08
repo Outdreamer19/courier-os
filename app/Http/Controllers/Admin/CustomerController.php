@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCustomerRequest;
 use App\Http\Requests\Admin\UpdateCustomerRequest;
+use App\Models\ActivityLog;
 use App\Models\CustomerProfile;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Services\CustomerReferenceGenerator;
 use App\Support\WhatsappLink;
 use Illuminate\Http\RedirectResponse;
@@ -18,8 +20,12 @@ use Inertia\Response;
 
 class CustomerController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $activityLogger) {}
+
     public function index(Request $request): Response
     {
+        abort_unless($request->user()?->hasAdminPermission('view_customers'), 403);
+
         $search = $request->string('search')->trim()->value();
 
         $customers = User::query()
@@ -51,11 +57,14 @@ class CustomerController extends Controller
         return Inertia::render('admin/customers/Index', [
             'customers' => $customers,
             'filters' => ['search' => $search],
+            'canManageCustomers' => $request->user()?->hasAdminPermission('manage_customers'),
         ]);
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        abort_unless($request->user()?->hasAdminPermission('manage_customers'), 403);
+
         return Inertia::render('admin/customers/Create');
     }
 
@@ -63,7 +72,9 @@ class CustomerController extends Controller
         StoreCustomerRequest $request,
         CustomerReferenceGenerator $references,
     ): RedirectResponse {
-        DB::transaction(function () use ($request, $references): void {
+        abort_unless($request->user()?->hasAdminPermission('manage_customers'), 403);
+
+        $user = DB::transaction(function () use ($request, $references): User {
             $user = User::create([
                 'name' => $request->string('name')->value(),
                 'email' => $request->string('email')->value(),
@@ -76,23 +87,39 @@ class CustomerController extends Controller
             CustomerProfile::create([
                 'user_id' => $user->id,
                 'customer_reference' => $references->next(),
+                'trn' => $request->input('trn'),
                 'phone' => $request->input('phone'),
                 'whatsapp_number' => $request->input('whatsapp_number'),
                 'jamaica_address' => $request->input('jamaica_address'),
                 'parish' => $request->input('parish'),
+                'date_of_birth' => $request->input('date_of_birth'),
             ]);
+
+            return $user;
         });
+
+        $this->activityLogger->log(
+            ActivityLog::ACTION_CUSTOMER_UPDATED,
+            "{$request->user()->name} created customer {$user->name}.",
+            $request->user(),
+            $user,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Customer created.']);
 
         return to_route('admin.customers.index');
     }
 
-    public function show(User $customer): Response
+    public function show(Request $request, User $customer): Response
     {
+        abort_unless($request->user()?->hasAdminPermission('view_customers'), 403);
         abort_unless($customer->isCustomer(), 404);
 
-        $customer->load(['customerProfile', 'preAlerts' => fn ($q) => $q->latest()->limit(10), 'packages' => fn ($q) => $q->latest()->limit(10)]);
+        $customer->load([
+            'customerProfile.authorisedPickupPerson',
+            'preAlerts' => fn ($q) => $q->latest()->limit(10),
+            'packages' => fn ($q) => $q->latest()->limit(10),
+        ]);
 
         return Inertia::render('admin/customers/Show', [
             'customer' => $this->customerPayload($customer),
@@ -108,11 +135,13 @@ class CustomerController extends Controller
                 'status_label' => $pkg->status->label(),
                 'amount_due' => (float) $pkg->amount_due,
             ]),
+            'canManageCustomers' => $request->user()?->hasAdminPermission('manage_customers'),
         ]);
     }
 
-    public function edit(User $customer): Response
+    public function edit(Request $request, User $customer): Response
     {
+        abort_unless($request->user()?->hasAdminPermission('manage_customers'), 403);
         abort_unless($customer->isCustomer(), 404);
 
         $customer->load('customerProfile');
@@ -124,6 +153,7 @@ class CustomerController extends Controller
 
     public function update(UpdateCustomerRequest $request, User $customer): RedirectResponse
     {
+        abort_unless($request->user()?->hasAdminPermission('manage_customers'), 403);
         abort_unless($customer->isCustomer(), 404);
 
         $customer->fill($request->only(['name', 'email', 'status']));
@@ -131,7 +161,21 @@ class CustomerController extends Controller
 
         $customer->customerProfile()->updateOrCreate(
             ['user_id' => $customer->id],
-            $request->only(['phone', 'whatsapp_number', 'jamaica_address', 'parish']),
+            $request->only([
+                'trn',
+                'phone',
+                'whatsapp_number',
+                'jamaica_address',
+                'parish',
+                'date_of_birth',
+            ]),
+        );
+
+        $this->activityLogger->log(
+            ActivityLog::ACTION_CUSTOMER_UPDATED,
+            "{$request->user()->name} updated customer {$customer->name}.",
+            $request->user(),
+            $customer,
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Customer updated.']);
@@ -144,17 +188,27 @@ class CustomerController extends Controller
      */
     private function customerPayload(User $customer): array
     {
+        $pickupPerson = $customer->customerProfile?->authorisedPickupPerson;
+
         return [
             'id' => $customer->id,
             'name' => $customer->name,
             'email' => $customer->email,
             'status' => $customer->status,
             'customer_reference' => $customer->customerProfile?->customer_reference,
+            'trn' => $customer->customerProfile?->trn,
             'phone' => $customer->customerProfile?->phone,
             'whatsapp_number' => $customer->customerProfile?->whatsapp_number,
             'jamaica_address' => $customer->customerProfile?->jamaica_address,
             'parish' => $customer->customerProfile?->parish,
+            'date_of_birth' => $customer->customerProfile?->date_of_birth?->toDateString(),
             'created_at' => $customer->created_at?->toIso8601String(),
+            'authorised_pickup_person' => $pickupPerson ? [
+                'full_name' => $pickupPerson->full_name,
+                'phone' => $pickupPerson->phone,
+                'relationship_note' => $pickupPerson->relationship_note,
+                'id_number' => $pickupPerson->id_number,
+            ] : null,
             'whatsapp_url' => WhatsappLink::forPhone(
                 $customer->customerProfile?->whatsapp_number
                     ?? $customer->customerProfile?->phone,

@@ -7,7 +7,9 @@ use App\Enums\PreAlertStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\StorePreAlertRequest;
 use App\Http\Requests\Customer\UpdatePreAlertRequest;
+use App\Models\ActivityLog;
 use App\Models\PreAlert;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +18,8 @@ use Inertia\Response;
 
 class PreAlertController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $activityLogger) {}
+
     public function index(Request $request): Response
     {
         $this->authorize('viewAny', PreAlert::class);
@@ -53,6 +57,13 @@ class PreAlertController extends Controller
         }
 
         $preAlert = PreAlert::create($data);
+
+        $this->activityLogger->log(
+            ActivityLog::ACTION_PRE_ALERT_CREATED,
+            "{$request->user()->name} submitted a pre-alert for {$preAlert->merchant_name}.",
+            $request->user(),
+            $preAlert,
+        );
 
         Inertia::flash('toast', [
             'type' => 'success',
@@ -104,6 +115,13 @@ class PreAlertController extends Controller
 
         $preAlert->update($data);
 
+        $this->activityLogger->log(
+            ActivityLog::ACTION_PRE_ALERT_UPDATED,
+            "{$request->user()->name} updated pre-alert for {$preAlert->merchant_name}.",
+            $request->user(),
+            $preAlert,
+        );
+
         Inertia::flash('toast', [
             'type' => 'success',
             'message' => 'Pre-alert updated.',
@@ -117,6 +135,13 @@ class PreAlertController extends Controller
         $this->authorize('cancel', $preAlert);
 
         $preAlert->update(['status' => PreAlertStatus::Cancelled]);
+
+        $this->activityLogger->log(
+            ActivityLog::ACTION_PRE_ALERT_CANCELLED,
+            "{$request->user()->name} cancelled pre-alert for {$preAlert->merchant_name}.",
+            $request->user(),
+            $preAlert,
+        );
 
         Inertia::flash('toast', [
             'type' => 'success',

@@ -50,15 +50,15 @@ class BusinessOperationsTest extends TestCase
         $this->assertSame('Tier A', $tiers[0]['name']);
     }
 
-    public function test_admin_can_manage_shipping_rates(): void
+    public function test_owner_can_manage_shipping_rates(): void
     {
-        $admin = User::factory()->admin()->create();
+        $owner = User::factory()->owner()->create();
 
-        $this->actingAs($admin)
+        $this->actingAs($owner)
             ->get(route('admin.shipping-rates.index'))
             ->assertOk();
 
-        $this->actingAs($admin)
+        $this->actingAs($owner)
             ->post(route('admin.shipping-rates.store'), [
                 'name' => 'Heavy tier',
                 'method' => 'standard',
@@ -73,12 +73,12 @@ class BusinessOperationsTest extends TestCase
         $this->assertDatabaseHas('shipping_rates', ['name' => 'Heavy tier']);
     }
 
-    public function test_admin_can_update_warehouse_address(): void
+    public function test_owner_can_update_warehouse_address(): void
     {
-        $admin = User::factory()->admin()->create();
+        $owner = User::factory()->owner()->create();
         $warehouse = WarehouseAddress::factory()->create(['is_active' => true]);
 
-        $this->actingAs($admin)
+        $this->actingAs($owner)
             ->put(route('admin.warehouse.update', ['warehouse' => $warehouse]), [
                 'name' => 'Updated Warehouse',
                 'address_line_1' => '99 New Road',

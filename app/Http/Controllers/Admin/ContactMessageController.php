@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateContactMessageRequest;
+use App\Models\ActivityLog;
 use App\Models\ContactMessage;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,6 +14,8 @@ use Inertia\Response;
 
 class ContactMessageController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $activityLogger) {}
+
     public function index(Request $request): Response
     {
         $status = $request->string('status')->toString();
@@ -100,8 +104,17 @@ class ContactMessageController extends Controller
         return to_route('admin.contact-messages.show', ['contact_message' => $contactMessage]);
     }
 
-    public function destroy(ContactMessage $contactMessage): RedirectResponse
+    public function destroy(Request $request, ContactMessage $contactMessage): RedirectResponse
     {
+        abort_unless($request->user()?->hasAdminPermission('delete_records'), 403);
+
+        $this->activityLogger->log(
+            ActivityLog::ACTION_RECORD_DELETED,
+            "{$request->user()->name} deleted contact message from {$contactMessage->name}.",
+            $request->user(),
+            $contactMessage,
+        );
+
         $contactMessage->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Message deleted.']);

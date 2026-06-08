@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\PreAlertStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdatePreAlertRequest;
+use App\Models\ActivityLog;
 use App\Models\PreAlert;
 use App\Notifications\PreAlertStatusChangedNotification;
+use App\Services\ActivityLogger;
 use App\Support\WhatsappLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +17,8 @@ use Inertia\Response;
 
 class PreAlertController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $activityLogger) {}
+
     public function index(Request $request): Response
     {
         $this->authorize('viewAny', PreAlert::class);
@@ -116,6 +120,21 @@ class PreAlertController extends Controller
                 $oldStatus,
                 $preAlert->status,
             ));
+
+            $this->activityLogger->log(
+                ActivityLog::ACTION_PRE_ALERT_STATUS_CHANGED,
+                "{$request->user()->name} changed pre-alert status for {$preAlert->merchant_name} from {$oldStatus->label()} to {$preAlert->status->label()}.",
+                $request->user(),
+                $preAlert,
+                ['old_status' => $oldStatus->value, 'new_status' => $preAlert->status->value],
+            );
+        } else {
+            $this->activityLogger->log(
+                ActivityLog::ACTION_PRE_ALERT_UPDATED,
+                "{$request->user()->name} updated pre-alert for {$preAlert->merchant_name}.",
+                $request->user(),
+                $preAlert,
+            );
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Pre-alert updated.']);

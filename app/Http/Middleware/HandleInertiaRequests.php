@@ -37,8 +37,18 @@ class HandleInertiaRequests extends Middleware
                     'role' => $user->role,
                     'status' => $user->status,
                     'is_admin' => $user->isAdmin(),
+                    'is_owner' => $user->isOwner(),
                     'is_customer' => $user->isCustomer(),
                     'customer_reference' => $user->customerReference(),
+                    'admin_permissions' => $user->isAdmin() ? [
+                        'manage_admins' => $user->hasAdminPermission('manage_admins'),
+                        'view_activity_logs' => $user->hasAdminPermission('view_activity_logs'),
+                        'manage_system_settings' => $user->hasAdminPermission('manage_system_settings'),
+                        'manage_customers' => $user->hasAdminPermission('manage_customers'),
+                        'manage_contact_messages' => $user->hasAdminPermission('manage_contact_messages'),
+                        'delete_records' => $user->hasAdminPermission('delete_records'),
+                        'manage_billing' => $user->hasAdminPermission('manage_billing'),
+                    ] : null,
                 ] : null,
             ],
             'brand' => [

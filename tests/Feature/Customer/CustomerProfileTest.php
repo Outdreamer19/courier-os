@@ -26,10 +26,12 @@ class CustomerProfileTest extends TestCase
             ->patch(route('portal.profile.update'), [
                 'name' => 'Updated Name',
                 'email' => $user->email,
+                'trn' => '123456789',
                 'phone' => '+1 (876) 555-9999',
                 'whatsapp_number' => '+1 (876) 555-9998',
                 'jamaica_address' => '1 Main Street',
                 'parish' => 'St. Andrew',
+                'date_of_birth' => '1990-01-15',
             ])
             ->assertRedirect(route('portal.profile.edit'));
 

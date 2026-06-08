@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import {
     Boxes,
     CircleDollarSign,
+    ClipboardList,
     Globe,
     Headset,
     LayoutGrid,
@@ -10,6 +11,7 @@ import {
     MapPin,
     Package,
     Receipt,
+    Shield,
     UserCircle,
     Users,
 } from 'lucide-vue-next';
@@ -29,6 +31,8 @@ import {
 } from '@/components/ui/sidebar';
 import { contact, dashboard, home } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
+import { index as activityLogsIndex } from '@/routes/admin/activity-logs';
+import { index as adminUsersIndex } from '@/routes/admin/admin-users';
 import { index as adminContactIndex } from '@/routes/admin/contact-messages';
 import { index as adminCustomersIndex } from '@/routes/admin/customers';
 import { index as adminPackagesIndex } from '@/routes/admin/packages';
@@ -42,7 +46,9 @@ import { shippingAddress } from '@/routes/portal';
 import type { NavItem } from '@/types';
 
 const page = usePage();
-const isAdmin = computed(() => Boolean(page.props.auth?.user?.is_admin));
+const user = computed(() => page.props.auth?.user);
+const isAdmin = computed(() => Boolean(user.value?.is_admin));
+const permissions = computed(() => user.value?.admin_permissions);
 
 const customerNavItems: NavItem[] = [
     { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
@@ -53,18 +59,54 @@ const customerNavItems: NavItem[] = [
     { title: 'Support', href: contact(), icon: Headset },
 ];
 
-const adminNavItems: NavItem[] = [
-    { title: 'Overview', href: adminDashboard(), icon: LayoutGrid },
-    { title: 'Customers', href: adminCustomersIndex(), icon: Users },
-    { title: 'Pre-alerts', href: adminPreAlertsIndex(), icon: Receipt },
-    { title: 'Packages', href: adminPackagesIndex(), icon: Package },
-    { title: 'Contact inbox', href: adminContactIndex(), icon: Mail },
-    { title: 'Shipping rates', href: adminRatesIndex(), icon: CircleDollarSign },
-    { title: 'Warehouse', href: adminWarehouseIndex(), icon: Boxes },
-];
+const adminNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        { title: 'Overview', href: adminDashboard(), icon: LayoutGrid },
+        { title: 'Customers', href: adminCustomersIndex(), icon: Users },
+        { title: 'Pre-alerts', href: adminPreAlertsIndex(), icon: Receipt },
+        { title: 'Packages', href: adminPackagesIndex(), icon: Package },
+    ];
+
+    if (permissions.value?.manage_contact_messages) {
+        items.push({
+            title: 'Contact inbox',
+            href: adminContactIndex(),
+            icon: Mail,
+        });
+    }
+
+    if (permissions.value?.manage_system_settings) {
+        items.push(
+            {
+                title: 'Shipping rates',
+                href: adminRatesIndex(),
+                icon: CircleDollarSign,
+            },
+            { title: 'Warehouse', href: adminWarehouseIndex(), icon: Boxes },
+        );
+    }
+
+    if (permissions.value?.manage_admins) {
+        items.push({
+            title: 'Admin users',
+            href: adminUsersIndex(),
+            icon: Shield,
+        });
+    }
+
+    if (permissions.value?.view_activity_logs) {
+        items.push({
+            title: 'Activity logs',
+            href: activityLogsIndex(),
+            icon: ClipboardList,
+        });
+    }
+
+    return items;
+});
 
 const navItems = computed(() =>
-    isAdmin.value ? adminNavItems : customerNavItems,
+    isAdmin.value ? adminNavItems.value : customerNavItems,
 );
 
 const footerNavItems: NavItem[] = [
