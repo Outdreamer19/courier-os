@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -10,6 +12,7 @@ use App\Http\Controllers\Admin\PreAlertInvoiceController as AdminPreAlertInvoice
 use App\Http\Controllers\Admin\ShippingRateController as AdminShippingRateController;
 use App\Http\Controllers\Admin\WarehouseAddressController as AdminWarehouseAddressController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Customer\AuthorisedPickupPersonController;
 use App\Http\Controllers\Customer\CustomerProfileController;
 use App\Http\Controllers\Customer\PackageController;
 use App\Http\Controllers\Customer\PreAlertController;
@@ -72,6 +75,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->group(function () {
             Route::get('profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
             Route::patch('profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+            Route::patch('authorised-pickup-person', [AuthorisedPickupPersonController::class, 'update'])
+                ->name('authorised-pickup-person.update');
 
             Route::get('shipping-address', ShippingAddressController::class)->name('shipping-address');
 
@@ -86,7 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('admin')
         ->name('admin.')
-        ->middleware('role:admin')
+        ->middleware('role:owner,admin,staff')
         ->group(function () {
             Route::get('/', AdminDashboardController::class)->name('dashboard');
 
@@ -101,27 +106,45 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->except(['show', 'destroy']);
 
             Route::post('packages/{package}/billing/generate-invoice', [PackageBillingController::class, 'generateInvoice'])
+                ->middleware('admin.permission:manage_billing')
                 ->name('packages.billing.generate-invoice');
             Route::post('packages/{package}/billing/send-invoice', [PackageBillingController::class, 'sendInvoice'])
+                ->middleware('admin.permission:manage_billing')
                 ->name('packages.billing.send-invoice');
             Route::post('packages/{package}/billing/payment-link', [PackageBillingController::class, 'createPaymentLink'])
+                ->middleware('admin.permission:manage_billing')
                 ->name('packages.billing.payment-link');
             Route::post('packages/{package}/billing/sync-payment', [PackageBillingController::class, 'syncPaymentStatus'])
+                ->middleware('admin.permission:manage_billing')
                 ->name('packages.billing.sync-payment');
 
             Route::resource('contact-messages', AdminContactMessageController::class)
                 ->only(['index', 'show', 'update', 'destroy'])
-                ->parameters(['contact-messages' => 'contact_message']);
+                ->parameters(['contact-messages' => 'contact_message'])
+                ->middleware('admin.permission:manage_contact_messages');
 
             Route::resource('shipping-rates', AdminShippingRateController::class)
-                ->except(['show', 'destroy']);
+                ->except(['show', 'destroy'])
+                ->middleware('admin.permission:manage_system_settings');
 
             Route::get('warehouse', [AdminWarehouseAddressController::class, 'index'])
+                ->middleware('admin.permission:manage_system_settings')
                 ->name('warehouse.index');
             Route::get('warehouse/{warehouse}/edit', [AdminWarehouseAddressController::class, 'edit'])
+                ->middleware('admin.permission:manage_system_settings')
                 ->name('warehouse.edit');
             Route::put('warehouse/{warehouse}', [AdminWarehouseAddressController::class, 'update'])
+                ->middleware('admin.permission:manage_system_settings')
                 ->name('warehouse.update');
+
+            Route::resource('admin-users', AdminUserController::class)
+                ->except(['show', 'destroy'])
+                ->parameters(['admin-users' => 'admin_user'])
+                ->middleware('admin.permission:manage_admins');
+
+            Route::get('activity-logs', [ActivityLogController::class, 'index'])
+                ->middleware('admin.permission:view_activity_logs')
+                ->name('activity-logs.index');
         });
 });
 

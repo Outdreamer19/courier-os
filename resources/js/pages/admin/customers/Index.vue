@@ -22,6 +22,7 @@ defineOptions({
 const props = defineProps<{
     customers: { data: Array<Record<string, unknown>> };
     filters: { search: string | null };
+    canManageCustomers: boolean;
 }>();
 
 const search = ref(props.filters.search ?? '');
@@ -43,6 +44,7 @@ const applySearch = () => {
                 </p>
             </div>
             <Button
+                v-if="canManageCustomers"
                 as-child
                 class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
             >

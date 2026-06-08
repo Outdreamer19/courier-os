@@ -193,12 +193,8 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                         </dd>
                     </div>
                     <div>
-                        <dt class="text-brand-cream/60">Delivery</dt>
-                        <dd class="font-semibold">Pickup only · for now</dd>
-                    </div>
-                    <div>
-                        <dt class="text-brand-cream/60">Reference format</dt>
-                        <dd class="font-semibold">SJM-000001</dd>
+                        <dt class="text-brand-cream/60">Collection</dt>
+                        <dd class="font-semibold">Pickup available · Selected-area delivery</dd>
                     </div>
                 </dl>
             </div>

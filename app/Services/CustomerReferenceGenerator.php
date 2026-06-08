@@ -6,41 +6,49 @@ use App\Models\CustomerProfile;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Generates the next unique customer reference (e.g. SJM-000001).
+ * Generates unique customer references (e.g. SJM-483927).
  *
- * Uses a row-level lock on the latest customer_profiles row to keep concurrent
- * registrations from producing duplicates. The prefix and padding width come
- * from config/shipdjm.php so the format can be changed without code changes.
+ * New references use a random numeric suffix so customer count is not
+ * obvious from the reference alone. Existing sequential references are
+ * left unchanged.
  */
 class CustomerReferenceGenerator
 {
+    private const MAX_ATTEMPTS = 50;
+
     public function next(): string
     {
         return DB::transaction(function (): string {
             $prefix = (string) config('shipdjm.customer_reference.prefix', 'SJM');
-            $padding = (int) config('shipdjm.customer_reference.padding', 6);
+            $length = (int) config('shipdjm.customer_reference.random_length', 6);
 
-            $latest = CustomerProfile::query()
-                ->where('customer_reference', 'like', $prefix.'-%')
-                ->lockForUpdate()
-                ->orderByDesc('id')
-                ->first();
+            CustomerProfile::query()->lockForUpdate()->latest('id')->value('id');
 
-            $nextNumber = 1;
+            for ($attempt = 0; $attempt < self::MAX_ATTEMPTS; $attempt++) {
+                $suffix = $this->randomSuffix($length);
+                $reference = sprintf('%s-%s', $prefix, $suffix);
 
-            if ($latest) {
-                $suffix = substr($latest->customer_reference, strlen($prefix) + 1);
-
-                if (ctype_digit($suffix)) {
-                    $nextNumber = ((int) $suffix) + 1;
+                if (! $this->referenceExists($reference)) {
+                    return $reference;
                 }
             }
 
-            return sprintf(
-                '%s-%s',
-                $prefix,
-                str_pad((string) $nextNumber, $padding, '0', STR_PAD_LEFT),
-            );
+            throw new \RuntimeException('Unable to generate a unique customer reference.');
         });
+    }
+
+    private function randomSuffix(int $length): string
+    {
+        $min = (int) str_pad('1', $length, '0');
+        $max = (int) str_repeat('9', $length);
+
+        return (string) random_int($min, $max);
+    }
+
+    private function referenceExists(string $reference): bool
+    {
+        return CustomerProfile::query()
+            ->where('customer_reference', $reference)
+            ->exists();
     }
 }

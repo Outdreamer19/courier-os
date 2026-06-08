@@ -1,6 +1,16 @@
-export type UserRole = 'admin' | 'customer';
+export type UserRole = 'owner' | 'admin' | 'staff' | 'customer';
 
 export type UserStatus = 'active' | 'suspended';
+
+export type AdminPermissions = {
+    manage_admins: boolean;
+    view_activity_logs: boolean;
+    manage_system_settings: boolean;
+    manage_customers: boolean;
+    manage_contact_messages: boolean;
+    delete_records: boolean;
+    manage_billing: boolean;
+};
 
 export type User = {
     id: number;
@@ -12,8 +22,10 @@ export type User = {
     role: UserRole;
     status: UserStatus;
     is_admin: boolean;
+    is_owner: boolean;
     is_customer: boolean;
     customer_reference: string | null;
+    admin_permissions: AdminPermissions | null;
     created_at?: string;
     updated_at?: string;
     [key: string]: unknown;

@@ -5,24 +5,28 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { dashboard as adminDashboard } from '@/routes/admin';
-import { create, index, store } from '@/routes/admin/customers';
+import { create, index, store } from '@/routes/admin/admin-users';
 
 defineOptions({
     layout: {
         breadcrumbs: [
             { title: 'Admin', href: adminDashboard() },
-            { title: 'Customers', href: index() },
+            { title: 'Admin users', href: index() },
             { title: 'Add', href: create() },
         ],
     },
 });
+
+defineProps<{
+    roles: Record<string, string>;
+}>();
 </script>
 
 <template>
-    <Head title="Admin · Add customer" />
+    <Head title="Add admin user" />
 
     <div class="flex flex-col gap-6 p-4 lg:p-6">
-        <h1 class="text-2xl font-semibold tracking-tight">Add customer</h1>
+        <h1 class="text-2xl font-semibold">Add admin user</h1>
 
         <Form
             v-bind="store.form()"
@@ -45,34 +49,23 @@ defineOptions({
                 <InputError :message="errors.password" />
             </div>
             <div class="grid gap-2">
-                <Label for="trn">TRN</Label>
-                <Input id="trn" name="trn" required />
-                <InputError :message="errors.trn" />
-            </div>
-            <div class="grid gap-2">
-                <Label for="phone">Phone</Label>
-                <Input id="phone" name="phone" required />
-                <InputError :message="errors.phone" />
-            </div>
-            <div class="grid gap-2">
-                <Label for="jamaica_address">Address</Label>
-                <textarea
-                    id="jamaica_address"
-                    name="jamaica_address"
-                    rows="3"
+                <Label for="role">Role</Label>
+                <select
+                    id="role"
+                    name="role"
+                    class="flex h-9 w-full rounded-md border border-input px-3 text-sm"
                     required
-                    class="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs"
-                />
-                <InputError :message="errors.jamaica_address" />
-            </div>
-            <div class="grid gap-2">
-                <Label for="date_of_birth">Date of birth</Label>
-                <Input id="date_of_birth" name="date_of_birth" type="date" required />
-                <InputError :message="errors.date_of_birth" />
-            </div>
-            <div class="grid gap-2">
-                <Label for="parish">Parish</Label>
-                <Input id="parish" name="parish" />
+                >
+                    <option
+                        v-for="(label, value) in roles"
+                        :key="value"
+                        :value="value"
+                        :disabled="value === 'owner'"
+                    >
+                        {{ label }}
+                    </option>
+                </select>
+                <InputError :message="errors.role" />
             </div>
             <div class="grid gap-2">
                 <Label for="status">Status</Label>
@@ -91,7 +84,7 @@ defineOptions({
                     class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
                     :disabled="processing"
                 >
-                    Create customer
+                    Create admin user
                 </Button>
                 <Button as-child variant="outline">
                     <Link :href="index()">Cancel</Link>

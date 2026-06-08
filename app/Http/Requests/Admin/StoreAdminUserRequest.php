@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Concerns\CustomerProfileValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -10,9 +9,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class StoreCustomerRequest extends FormRequest
+class StoreAdminUserRequest extends FormRequest
 {
-    use CustomerProfileValidationRules, ProfileValidationRules;
+    use ProfileValidationRules;
 
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
@@ -21,21 +20,9 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             ...$this->profileRules(),
-            ...$this->customerProfileRules(required: true),
             'password' => ['required', 'string', Password::default()],
-            'whatsapp_number' => ['nullable', 'string', 'max:32'],
-            'parish' => ['nullable', 'string', 'max:96'],
+            'role' => ['required', Rule::in([User::ROLE_ADMIN, User::ROLE_STAFF])],
             'status' => ['required', Rule::in([User::STATUS_ACTIVE, User::STATUS_SUSPENDED])],
-        ];
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'date_of_birth.before_or_equal' => 'Customer must be at least 18 years old.',
         ];
     }
 }

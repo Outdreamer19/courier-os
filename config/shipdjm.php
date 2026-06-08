@@ -42,6 +42,7 @@ return [
     'customer_reference' => [
         'prefix' => env('SHIPDJM_CUSTOMER_REFERENCE_PREFIX', 'SJM'),
         'padding' => (int) env('SHIPDJM_CUSTOMER_REFERENCE_PADDING', 6),
+        'random_length' => (int) env('SHIPDJM_CUSTOMER_REFERENCE_RANDOM_LENGTH', 6),
     ],
 
     /*

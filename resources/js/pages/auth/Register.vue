@@ -62,11 +62,67 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
+                <Label for="trn">TRN (Tax Registration Number)</Label>
+                <Input
+                    id="trn"
+                    type="text"
+                    required
+                    :tabindex="3"
+                    name="trn"
+                    placeholder="Your Jamaica TRN"
+                />
+                <InputError :message="errors.trn" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="phone">Phone number</Label>
+                <Input
+                    id="phone"
+                    type="tel"
+                    required
+                    :tabindex="4"
+                    autocomplete="tel"
+                    name="phone"
+                    placeholder="+1 (876) 555-0100"
+                />
+                <InputError :message="errors.phone" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="jamaica_address">Address</Label>
+                <textarea
+                    id="jamaica_address"
+                    name="jamaica_address"
+                    rows="3"
+                    required
+                    :tabindex="5"
+                    class="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs"
+                    placeholder="Your Jamaica address"
+                />
+                <InputError :message="errors.jamaica_address" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="date_of_birth">Date of birth</Label>
+                <Input
+                    id="date_of_birth"
+                    type="date"
+                    required
+                    :tabindex="6"
+                    name="date_of_birth"
+                />
+                <InputError :message="errors.date_of_birth" />
+                <p class="text-xs text-muted-foreground">
+                    You must be at least 18 years old to register.
+                </p>
+            </div>
+
+            <div class="grid gap-2">
                 <Label for="password">Password</Label>
                 <PasswordInput
                     id="password"
                     required
-                    :tabindex="3"
+                    :tabindex="7"
                     autocomplete="new-password"
                     name="password"
                     placeholder="Password"
@@ -80,7 +136,7 @@ defineOptions({
                 <PasswordInput
                     id="password_confirmation"
                     required
-                    :tabindex="4"
+                    :tabindex="8"
                     autocomplete="new-password"
                     name="password_confirmation"
                     placeholder="Confirm password"
@@ -92,7 +148,7 @@ defineOptions({
             <Button
                 type="submit"
                 class="mt-2 w-full"
-                tabindex="5"
+                tabindex="9"
                 :disabled="processing"
                 data-test="register-user-button"
             >
@@ -106,7 +162,7 @@ defineOptions({
             <TextLink
                 :href="login()"
                 class="underline underline-offset-4"
-                :tabindex="6"
+                :tabindex="10"
                 >Log in</TextLink
             >
         </div>

@@ -23,10 +23,12 @@ defineProps<{
         name: string;
         email: string;
         status: string;
+        trn: string | null;
         phone: string | null;
         whatsapp_number: string | null;
         jamaica_address: string | null;
         parish: string | null;
+        date_of_birth: string | null;
         customer_reference: string;
     };
 }>();
@@ -65,12 +67,24 @@ defineProps<{
                 <InputError :message="errors.email" />
             </div>
             <div class="grid gap-2">
+                <Label for="trn">TRN</Label>
+                <Input
+                    id="trn"
+                    name="trn"
+                    :default-value="customer.trn ?? ''"
+                    required
+                />
+                <InputError :message="errors.trn" />
+            </div>
+            <div class="grid gap-2">
                 <Label for="phone">Phone</Label>
                 <Input
                     id="phone"
                     name="phone"
                     :default-value="customer.phone ?? ''"
+                    required
                 />
+                <InputError :message="errors.phone" />
             </div>
             <div class="grid gap-2">
                 <Label for="whatsapp_number">WhatsApp</Label>
@@ -81,12 +95,35 @@ defineProps<{
                 />
             </div>
             <div class="grid gap-2">
+                <Label for="jamaica_address">Address</Label>
+                <textarea
+                    id="jamaica_address"
+                    name="jamaica_address"
+                    rows="3"
+                    required
+                    class="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs"
+                    :default-value="customer.jamaica_address ?? ''"
+                />
+                <InputError :message="errors.jamaica_address" />
+            </div>
+            <div class="grid gap-2">
                 <Label for="parish">Parish</Label>
                 <Input
                     id="parish"
                     name="parish"
                     :default-value="customer.parish ?? ''"
                 />
+            </div>
+            <div class="grid gap-2">
+                <Label for="date_of_birth">Date of birth</Label>
+                <Input
+                    id="date_of_birth"
+                    name="date_of_birth"
+                    type="date"
+                    :default-value="customer.date_of_birth ?? ''"
+                    required
+                />
+                <InputError :message="errors.date_of_birth" />
             </div>
             <div class="grid gap-2">
                 <Label for="status">Status</Label>

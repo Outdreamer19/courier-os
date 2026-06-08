@@ -16,7 +16,7 @@ class UsersSeeder extends Seeder
             [
                 'name' => 'Yasha Epinnock',
                 'password' => Hash::make('password'),
-                'role' => User::ROLE_ADMIN,
+                'role' => User::ROLE_OWNER,
                 'status' => User::STATUS_ACTIVE,
                 'email_verified_at' => now(),
             ],
@@ -37,6 +37,8 @@ class UsersSeeder extends Seeder
             ['user_id' => $customer->id],
             [
                 'customer_reference' => 'SJM-000001',
+                'trn' => '123456789',
+                'date_of_birth' => '1990-01-15',
                 'phone' => '+1 (876) 555-0100',
                 'whatsapp_number' => '+1 (876) 555-0100',
                 'jamaica_address' => '12 Hope Road',

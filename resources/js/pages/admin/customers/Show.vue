@@ -20,7 +20,25 @@ defineOptions({
 });
 
 defineProps<{
-    customer: Record<string, unknown>;
+    customer: Record<string, unknown> & {
+        id: number;
+        name: string;
+        email: string;
+        status: string;
+        customer_reference: string;
+        trn?: string | null;
+        phone?: string | null;
+        jamaica_address?: string | null;
+        parish?: string | null;
+        date_of_birth?: string | null;
+        authorised_pickup_person?: {
+            full_name: string;
+            phone: string;
+            relationship_note: string | null;
+            id_number: string | null;
+        } | null;
+        whatsapp_url?: string | null;
+    };
     preAlerts: Array<{ id: number; merchant_name: string; status_label: string }>;
     packages: Array<{
         id: number;
@@ -28,6 +46,7 @@ defineProps<{
         status_label: string;
         amount_due: number;
     }>;
+    canManageCustomers: boolean;
 }>();
 </script>
 
@@ -43,17 +62,90 @@ defineProps<{
                 </p>
                 <StatusBadge
                     class="mt-2"
-                    :status="customer.status as string"
-                    :label="customer.status as string"
+                    :status="customer.status"
+                    :label="customer.status"
                 />
             </div>
             <div class="flex gap-2">
-                <WhatsAppButton :url="customer.whatsapp_url as string | null" />
-                <Button as-child variant="outline">
-                    <Link :href="editCustomer(customer.id as number)">Edit</Link>
+                <WhatsAppButton :url="customer.whatsapp_url ?? null" />
+                <Button v-if="canManageCustomers" as-child variant="outline">
+                    <Link :href="editCustomer(customer.id)">Edit</Link>
                 </Button>
             </div>
         </div>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Customer details</CardTitle>
+            </CardHeader>
+            <CardContent class="grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                    <p class="text-muted-foreground">TRN</p>
+                    <p class="font-medium">{{ customer.trn || '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-muted-foreground">Phone</p>
+                    <p class="font-medium">{{ customer.phone || '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-muted-foreground">Date of birth</p>
+                    <p class="font-medium">{{ customer.date_of_birth || '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-muted-foreground">Parish</p>
+                    <p class="font-medium">{{ customer.parish || '—' }}</p>
+                </div>
+                <div class="sm:col-span-2">
+                    <p class="text-muted-foreground">Address</p>
+                    <p class="font-medium">{{ customer.jamaica_address || '—' }}</p>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Authorised pickup person</CardTitle>
+            </CardHeader>
+            <CardContent class="text-sm">
+                <template v-if="customer.authorised_pickup_person">
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <div>
+                            <p class="text-muted-foreground">Name</p>
+                            <p class="font-medium">
+                                {{ customer.authorised_pickup_person.full_name }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-muted-foreground">Phone</p>
+                            <p class="font-medium">
+                                {{ customer.authorised_pickup_person.phone }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-muted-foreground">Relationship / note</p>
+                            <p class="font-medium">
+                                {{
+                                    customer.authorised_pickup_person
+                                        .relationship_note || '—'
+                                }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-muted-foreground">ID / TRN</p>
+                            <p class="font-medium">
+                                {{
+                                    customer.authorised_pickup_person.id_number ||
+                                    '—'
+                                }}
+                            </p>
+                        </div>
+                    </div>
+                </template>
+                <p v-else class="text-muted-foreground">
+                    No authorised pickup person on file.
+                </p>
+            </CardContent>
+        </Card>
 
         <div class="grid gap-4 lg:grid-cols-2">
             <Card>
@@ -78,11 +170,16 @@ defineProps<{
             <Card>
                 <CardHeader class="flex flex-row items-center justify-between">
                     <CardTitle>Recent packages</CardTitle>
-                    <Button as-child size="sm" variant="outline">
+                    <Button
+                        v-if="canManageCustomers"
+                        as-child
+                        size="sm"
+                        variant="outline"
+                    >
                         <Link
                             :href="
                                 createPackage({
-                                    query: { user_id: customer.id as number },
+                                    query: { user_id: customer.id },
                                 })
                             "
                         >

@@ -92,6 +92,10 @@ class AdminOperationsTest extends TestCase
                 'name' => 'New Customer',
                 'email' => 'new@shipdjm.test',
                 'password' => 'password',
+                'trn' => '123456789',
+                'phone' => '+1 (876) 555-0100',
+                'jamaica_address' => '1 Main Street',
+                'date_of_birth' => '1990-01-15',
                 'status' => User::STATUS_ACTIVE,
             ])
             ->assertRedirect(route('admin.customers.index'));
