@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\UpdateCustomerProfileRequest;
 use App\Models\ActivityLog;
+use App\Models\AuthorisedPickupPerson;
 use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class CustomerProfileController extends Controller
     {
         $user = $request->user();
         $profile = $user?->customerProfile;
-        $profile?->load('authorisedPickupPerson');
+        $profile?->load('authorisedPickupPeople');
 
         return Inertia::render('customer/Profile', [
             'profile' => [
@@ -31,12 +32,11 @@ class CustomerProfileController extends Controller
                 'date_of_birth' => $profile?->date_of_birth?->toDateString(),
                 'customer_reference' => $profile?->customer_reference,
             ],
-            'authorisedPickupPerson' => $profile?->authorisedPickupPerson ? [
-                'full_name' => $profile->authorisedPickupPerson->full_name,
-                'phone' => $profile->authorisedPickupPerson->phone,
-                'relationship_note' => $profile->authorisedPickupPerson->relationship_note,
-                'id_number' => $profile->authorisedPickupPerson->id_number,
-            ] : null,
+            'authorisedPickupPeople' => $profile?->authorisedPickupPeople
+                ->map(fn (AuthorisedPickupPerson $person) => $person->toSummaryArray())
+                ->values()
+                ->all(),
+            'maxAuthorisedPickupPeople' => AuthorisedPickupPerson::MAX_PER_CUSTOMER,
         ]);
     }
 

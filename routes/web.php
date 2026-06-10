@@ -75,8 +75,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->group(function () {
             Route::get('profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
             Route::patch('profile', [CustomerProfileController::class, 'update'])->name('profile.update');
-            Route::patch('authorised-pickup-person', [AuthorisedPickupPersonController::class, 'update'])
-                ->name('authorised-pickup-person.update');
+            Route::post('authorised-pickup-people', [AuthorisedPickupPersonController::class, 'store'])
+                ->name('authorised-pickup-people.store');
+            Route::delete('authorised-pickup-people/{authorised_pickup_person}', [AuthorisedPickupPersonController::class, 'destroy'])
+                ->name('authorised-pickup-people.destroy');
 
             Route::get('shipping-address', ShippingAddressController::class)->name('shipping-address');
 

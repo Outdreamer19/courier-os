@@ -121,43 +121,40 @@ const formatDateTime = (value: string | null) => {
         </div>
 
         <section
-            v-if="package.authorised_pickup_person"
+            v-if="(package.authorised_pickup_people as Array<Record<string, string>> | undefined)?.length"
             class="max-w-2xl space-y-3 rounded-lg border border-brand-gold/30 bg-brand-gold/5 p-4"
         >
-            <h2 class="font-medium">Authorised pickup person</h2>
+            <h2 class="font-medium">Authorised pickup people</h2>
             <p class="text-sm text-muted-foreground">
-                This person is allowed to collect the package on behalf of the
+                These people are allowed to collect the package on behalf of the
                 account holder.
             </p>
-            <dl class="grid gap-3 text-sm sm:grid-cols-2">
-                <div>
-                    <dt class="text-muted-foreground">Name</dt>
-                    <dd class="font-medium">
-                        {{ package.authorised_pickup_person.full_name }}
-                    </dd>
-                </div>
-                <div>
-                    <dt class="text-muted-foreground">Phone</dt>
-                    <dd class="font-medium">
-                        {{ package.authorised_pickup_person.phone }}
-                    </dd>
-                </div>
-                <div>
-                    <dt class="text-muted-foreground">Relationship / note</dt>
-                    <dd class="font-medium">
-                        {{
-                            package.authorised_pickup_person.relationship_note ||
-                            '—'
-                        }}
-                    </dd>
-                </div>
-                <div>
-                    <dt class="text-muted-foreground">ID / TRN</dt>
-                    <dd class="font-medium">
-                        {{ package.authorised_pickup_person.id_number || '—' }}
-                    </dd>
-                </div>
-            </dl>
+            <div
+                v-for="person in package.authorised_pickup_people as Array<Record<string, string>>"
+                :key="person.id as string"
+                class="rounded-md border border-brand-gold/20 bg-background/60 p-3"
+            >
+                <dl class="grid gap-3 text-sm sm:grid-cols-2">
+                    <div>
+                        <dt class="text-muted-foreground">Name</dt>
+                        <dd class="font-medium">{{ person.full_name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-muted-foreground">Phone</dt>
+                        <dd class="font-medium">{{ person.phone }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-muted-foreground">Relationship / note</dt>
+                        <dd class="font-medium">
+                            {{ person.relationship_note || '—' }}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-muted-foreground">ID / TRN</dt>
+                        <dd class="font-medium">{{ person.id_number || '—' }}</dd>
+                    </div>
+                </dl>
+            </div>
         </section>
 
         <form class="max-w-2xl space-y-6" @submit.prevent="submit">
