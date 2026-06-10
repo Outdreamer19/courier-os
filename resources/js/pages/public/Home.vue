@@ -149,12 +149,6 @@ const { sectionDelay, itemDelay } = useScrollReveal();
             class="relative mx-auto w-full max-w-7xl pl-2 pr-6 pt-6 pb-14 sm:pl-3 sm:pt-8 lg:pl-4 lg:pt-10"
         >
             <div class="max-w-2xl space-y-5 text-left sm:space-y-6">
-                <span
-                    class="inline-flex items-center gap-2 rounded-full border border-brand-green/40 bg-brand-green/15 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-brand-green-soft"
-                >
-                    <span class="size-1.5 rounded-full bg-brand-green-soft"></span>
-                    Customer-first logistics support
-                </span>
                 <h1
                     class="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
                 >

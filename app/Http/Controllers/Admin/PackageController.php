@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePackageRequest;
 use App\Http\Requests\Admin\UpdatePackageRequest;
 use App\Models\ActivityLog;
+use App\Models\AuthorisedPickupPerson;
 use App\Models\Package;
 use App\Models\PreAlert;
 use App\Models\User;
@@ -178,7 +179,7 @@ class PackageController extends Controller
     {
         $this->authorize('update', $package);
 
-        $package->load(['user.customerProfile.authorisedPickupPerson', 'preAlert', 'statusHistories.changedBy']);
+        $package->load(['user.customerProfile.authorisedPickupPeople', 'preAlert', 'statusHistories.changedBy']);
 
         $customers = User::query()
             ->where('role', User::ROLE_CUSTOMER)
@@ -332,12 +333,10 @@ class PackageController extends Controller
             'customer_visible_notes' => $package->customer_visible_notes,
             'customer_name' => $package->user?->name,
             'customer_reference' => $package->user?->customerProfile?->customer_reference,
-            'authorised_pickup_person' => $package->user?->customerProfile?->authorisedPickupPerson ? [
-                'full_name' => $package->user->customerProfile->authorisedPickupPerson->full_name,
-                'phone' => $package->user->customerProfile->authorisedPickupPerson->phone,
-                'relationship_note' => $package->user->customerProfile->authorisedPickupPerson->relationship_note,
-                'id_number' => $package->user->customerProfile->authorisedPickupPerson->id_number,
-            ] : null,
+            'authorised_pickup_people' => $package->user?->customerProfile?->authorisedPickupPeople
+                ->map(fn (AuthorisedPickupPerson $person) => $person->toSummaryArray())
+                ->values()
+                ->all() ?? [],
             'whatsapp_url' => WhatsappLink::forPhone(
                 $package->user?->customerProfile?->whatsapp_number
                     ?? $package->user?->customerProfile?->phone,

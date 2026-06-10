@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'user_id',
@@ -39,8 +39,8 @@ class CustomerProfile extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function authorisedPickupPerson(): HasOne
+    public function authorisedPickupPeople(): HasMany
     {
-        return $this->hasOne(AuthorisedPickupPerson::class);
+        return $this->hasMany(AuthorisedPickupPerson::class);
     }
 }

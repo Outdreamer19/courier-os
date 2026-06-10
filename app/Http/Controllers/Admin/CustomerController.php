@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCustomerRequest;
 use App\Http\Requests\Admin\UpdateCustomerRequest;
 use App\Models\ActivityLog;
+use App\Models\AuthorisedPickupPerson;
 use App\Models\CustomerProfile;
 use App\Models\User;
 use App\Services\ActivityLogger;
@@ -116,7 +117,7 @@ class CustomerController extends Controller
         abort_unless($customer->isCustomer(), 404);
 
         $customer->load([
-            'customerProfile.authorisedPickupPerson',
+            'customerProfile.authorisedPickupPeople',
             'preAlerts' => fn ($q) => $q->latest()->limit(10),
             'packages' => fn ($q) => $q->latest()->limit(10),
         ]);
@@ -188,8 +189,6 @@ class CustomerController extends Controller
      */
     private function customerPayload(User $customer): array
     {
-        $pickupPerson = $customer->customerProfile?->authorisedPickupPerson;
-
         return [
             'id' => $customer->id,
             'name' => $customer->name,
@@ -203,12 +202,10 @@ class CustomerController extends Controller
             'parish' => $customer->customerProfile?->parish,
             'date_of_birth' => $customer->customerProfile?->date_of_birth?->toDateString(),
             'created_at' => $customer->created_at?->toIso8601String(),
-            'authorised_pickup_person' => $pickupPerson ? [
-                'full_name' => $pickupPerson->full_name,
-                'phone' => $pickupPerson->phone,
-                'relationship_note' => $pickupPerson->relationship_note,
-                'id_number' => $pickupPerson->id_number,
-            ] : null,
+            'authorised_pickup_people' => $customer->customerProfile?->authorisedPickupPeople
+                ->map(fn (AuthorisedPickupPerson $person) => $person->toSummaryArray())
+                ->values()
+                ->all() ?? [],
             'whatsapp_url' => WhatsappLink::forPhone(
                 $customer->customerProfile?->whatsapp_number
                     ?? $customer->customerProfile?->phone,

@@ -31,12 +31,13 @@ defineProps<{
         jamaica_address?: string | null;
         parish?: string | null;
         date_of_birth?: string | null;
-        authorised_pickup_person?: {
+        authorised_pickup_people?: Array<{
+            id: number;
             full_name: string;
             phone: string;
             relationship_note: string | null;
             id_number: string | null;
-        } | null;
+        }>;
         whatsapp_url?: string | null;
     };
     preAlerts: Array<{ id: number; merchant_name: string; status_label: string }>;
@@ -104,45 +105,38 @@ defineProps<{
 
         <Card>
             <CardHeader>
-                <CardTitle>Authorised pickup person</CardTitle>
+                <CardTitle>Authorised pickup people</CardTitle>
             </CardHeader>
-            <CardContent class="text-sm">
-                <template v-if="customer.authorised_pickup_person">
-                    <div class="grid gap-3 sm:grid-cols-2">
-                        <div>
-                            <p class="text-muted-foreground">Name</p>
-                            <p class="font-medium">
-                                {{ customer.authorised_pickup_person.full_name }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-muted-foreground">Phone</p>
-                            <p class="font-medium">
-                                {{ customer.authorised_pickup_person.phone }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-muted-foreground">Relationship / note</p>
-                            <p class="font-medium">
-                                {{
-                                    customer.authorised_pickup_person
-                                        .relationship_note || '—'
-                                }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-muted-foreground">ID / TRN</p>
-                            <p class="font-medium">
-                                {{
-                                    customer.authorised_pickup_person.id_number ||
-                                    '—'
-                                }}
-                            </p>
-                        </div>
+            <CardContent class="space-y-4 text-sm">
+                <div
+                    v-for="person in customer.authorised_pickup_people ?? []"
+                    :key="person.id"
+                    class="grid gap-3 rounded-md border p-3 sm:grid-cols-2"
+                >
+                    <div>
+                        <p class="text-muted-foreground">Name</p>
+                        <p class="font-medium">{{ person.full_name }}</p>
                     </div>
-                </template>
-                <p v-else class="text-muted-foreground">
-                    No authorised pickup person on file.
+                    <div>
+                        <p class="text-muted-foreground">Phone</p>
+                        <p class="font-medium">{{ person.phone }}</p>
+                    </div>
+                    <div>
+                        <p class="text-muted-foreground">Relationship / note</p>
+                        <p class="font-medium">
+                            {{ person.relationship_note || '—' }}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-muted-foreground">ID / TRN</p>
+                        <p class="font-medium">{{ person.id_number || '—' }}</p>
+                    </div>
+                </div>
+                <p
+                    v-if="!(customer.authorised_pickup_people ?? []).length"
+                    class="text-muted-foreground"
+                >
+                    No authorised pickup people on file.
                 </p>
             </CardContent>
         </Card>
