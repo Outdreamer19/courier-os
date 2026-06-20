@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Cashier\Billable;
 
 #[Fillable([
     'name',
@@ -23,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
 ])]
 class Tenant extends Model
 {
+    use Billable;
+
     /** @use HasFactory<TenantFactory> */
     use HasFactory;
 
