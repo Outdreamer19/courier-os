@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Central\BillingController;
+use App\Http\Controllers\Central\PlatformAdmin\DashboardController as PlatformDashboardController;
+use App\Http\Controllers\Central\PlatformAdmin\TenantController as PlatformTenantController;
 use App\Http\Controllers\Central\TenantSignupController;
 use App\Http\Controllers\Webhooks\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
@@ -30,4 +32,13 @@ Route::name('central.')->group(function () {
         Route::get('success/{tenant}', [BillingController::class, 'success'])->name('success');
         Route::get('cancelled', [BillingController::class, 'cancel'])->name('cancel');
     });
+
+    Route::middleware(['auth', 'platform'])
+        ->prefix('platform')
+        ->name('platform.')
+        ->group(function () {
+            Route::get('/', PlatformDashboardController::class)->name('dashboard');
+            Route::get('tenants', [PlatformTenantController::class, 'index'])->name('tenants.index');
+            Route::patch('tenants/{tenant}', [PlatformTenantController::class, 'update'])->name('tenants.update');
+        });
 });

@@ -26,6 +26,8 @@ class User extends Authenticatable implements PasskeyUser
 
     public const ROLE_OWNER = 'owner';
 
+    public const ROLE_PLATFORM_OWNER = 'platform_owner';
+
     public const ROLE_ADMIN = 'admin';
 
     public const ROLE_STAFF = 'staff';
@@ -76,6 +78,11 @@ class User extends Authenticatable implements PasskeyUser
     public function isOwner(): bool
     {
         return $this->role === self::ROLE_OWNER;
+    }
+
+    public function isPlatformOwner(): bool
+    {
+        return $this->role === self::ROLE_PLATFORM_OWNER;
     }
 
     public function isStaff(): bool
