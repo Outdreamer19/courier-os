@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\WarehouseAddressFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
 ])]
 class WarehouseAddress extends Model
 {
+    use BelongsToTenant;
+
     /** @use HasFactory<WarehouseAddressFactory> */
     use HasFactory;
 

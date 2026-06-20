@@ -7,6 +7,7 @@ use App\Enums\Carrier;
 use App\Enums\PackageStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\PackageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,6 +48,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Package extends Model
 {
+    use BelongsToTenant;
+
     /** @use HasFactory<PackageFactory> */
     use HasFactory;
 

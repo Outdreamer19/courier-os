@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Model;
 ])]
 class ContactMessage extends Model
 {
+    use BelongsToTenant;
+
     public const STATUS_NEW = 'new';
 
     public const STATUS_READ = 'read';

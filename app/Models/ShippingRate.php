@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Database\Factories\ShippingRateFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
 ])]
 class ShippingRate extends Model
 {
+    use BelongsToTenant;
+
     /** @use HasFactory<ShippingRateFactory> */
     use HasFactory;
 
