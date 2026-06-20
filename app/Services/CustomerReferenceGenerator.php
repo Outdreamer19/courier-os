@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\CustomerProfile;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -10,16 +11,18 @@ use Illuminate\Support\Facades\DB;
  *
  * New references use a random numeric suffix so customer count is not
  * obvious from the reference alone. Existing sequential references are
- * left unchanged.
+ * left unchanged. The prefix is resolved from the current tenant.
  */
 class CustomerReferenceGenerator
 {
     private const MAX_ATTEMPTS = 50;
 
+    public function __construct(private readonly TenantConfig $config) {}
+
     public function next(): string
     {
         return DB::transaction(function (): string {
-            $prefix = (string) config('shipdjm.customer_reference.prefix', 'SJM');
+            $prefix = $this->config->customerReferencePrefix();
             $length = (int) config('shipdjm.customer_reference.random_length', 6);
 
             CustomerProfile::query()->lockForUpdate()->latest('id')->value('id');

@@ -3,17 +3,21 @@
 namespace App\Services;
 
 use App\Models\Package;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Generates the next unique package reference (e.g. PKG-000001).
+ * The prefix is resolved from the current tenant.
  */
 class PackageReferenceGenerator
 {
+    public function __construct(private readonly TenantConfig $config) {}
+
     public function next(): string
     {
         return DB::transaction(function (): string {
-            $prefix = (string) config('shipdjm.package_reference.prefix', 'PKG');
+            $prefix = $this->config->packageReferencePrefix();
             $padding = (int) config('shipdjm.package_reference.padding', 6);
 
             $latest = Package::query()

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\WarehouseAddress;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -24,6 +25,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $brand = app(TenantConfig::class);
 
         return [
             ...parent::share($request),
@@ -52,8 +54,11 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'brand' => [
-                'currency' => config('shipdjm.currency'),
-                'default_rate_per_lb' => config('shipdjm.default_rate_per_lb'),
+                'name' => $brand->name(),
+                'currency' => $brand->currency(),
+                'logo_path' => $brand->logoPath(),
+                'primary_color' => $brand->brandPrimaryColor(),
+                'default_rate_per_lb' => $brand->defaultRatePerLb(),
             ],
             'warehouse' => fn () => $this->activeWarehouseSnapshot(),
             'flash' => [
