@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureAdminPermission;
+use App\Http\Middleware\EnsureTenantSubscribed;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\EnsureUserRole;
 use App\Http\Middleware\HandleAppearance;
@@ -42,6 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => EnsureUserRole::class,
             'admin.permission' => EnsureAdminPermission::class,
             'active' => EnsureUserIsActive::class,
+            'tenant.subscribed' => EnsureTenantSubscribed::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
