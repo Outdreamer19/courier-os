@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Central\BillingController;
 use App\Http\Controllers\Central\TenantSignupController;
+use App\Http\Controllers\Webhooks\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::name('central.')->group(function () {
+    Route::post('stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
+        ->name('cashier.webhook');
+
     Route::get('signup', [TenantSignupController::class, 'show'])->name('signup.show');
     Route::post('signup', [TenantSignupController::class, 'store'])
         ->middleware('throttle:10,1')

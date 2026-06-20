@@ -70,6 +70,11 @@ class Tenant extends Model
         return $this->status === self::STATUS_PENDING;
     }
 
+    public function isCancelled(): bool
+    {
+        return $this->status === self::STATUS_CANCELLED;
+    }
+
     /**
      * Resolve a tenant by its subdomain or custom domain.
      */
