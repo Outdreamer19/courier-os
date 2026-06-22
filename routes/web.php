@@ -66,7 +66,7 @@ Route::post('webhooks/invoicefeed', InvoiceFeedWebhookController::class)
 | The /dashboard route is the post-login landing page for every role. Admins
 | are bounced to /admin and customers see the customer dashboard.
 */
-Route::middleware(['auth', 'verified', 'tenant.subscribed'])->group(function () {
+Route::middleware(['auth', 'verified', 'tenant.member', 'tenant.subscribed'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     Route::prefix('portal')

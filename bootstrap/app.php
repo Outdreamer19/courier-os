@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureAdminPermission;
 use App\Http\Middleware\EnsurePlatformOwner;
 use App\Http\Middleware\EnsureTenantSubscribed;
+use App\Http\Middleware\EnsureUserBelongsToTenant;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\EnsureUserRole;
 use App\Http\Middleware\HandleAppearance;
@@ -45,6 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.permission' => EnsureAdminPermission::class,
             'active' => EnsureUserIsActive::class,
             'tenant.subscribed' => EnsureTenantSubscribed::class,
+            'tenant.member' => EnsureUserBelongsToTenant::class,
             'platform' => EnsurePlatformOwner::class,
         ]);
     })
