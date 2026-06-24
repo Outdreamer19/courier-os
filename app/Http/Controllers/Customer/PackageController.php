@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Package;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,7 +24,7 @@ class PackageController extends Controller
 
         return Inertia::render('customer/packages/Index', [
             'packages' => $packages,
-            'currency' => config('shipdjm.currency'),
+            'currency' => app(TenantConfig::class)->currency(),
         ]);
     }
 
@@ -33,7 +34,7 @@ class PackageController extends Controller
 
         return Inertia::render('customer/packages/Show', [
             'package' => $this->detailPayload($package),
-            'currency' => config('shipdjm.currency'),
+            'currency' => app(TenantConfig::class)->currency(),
         ]);
     }
 

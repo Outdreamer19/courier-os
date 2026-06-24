@@ -58,7 +58,10 @@ export type RateSnapshot = {
 };
 
 export type BrandConfig = {
+    name: string;
     currency: string;
+    logo_path: string | null;
+    primary_color: string | null;
     default_rate_per_lb: number;
 };
 

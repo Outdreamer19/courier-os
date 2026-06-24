@@ -28,3 +28,4 @@ yarn-error.log
 /.vscode
 /.zed
 .env.courieros.local
+courieros.bundle

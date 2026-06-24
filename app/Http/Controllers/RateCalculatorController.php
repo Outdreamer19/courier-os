@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\ShippingRatePresenter;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class RateCalculatorController extends Controller
         if ($weight <= 0) {
             return response()->json([
                 'amount' => 0,
-                'currency' => config('shipdjm.currency'),
+                'currency' => app(TenantConfig::class)->currency(),
                 'rate' => null,
             ]);
         }

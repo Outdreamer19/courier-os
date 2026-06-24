@@ -21,6 +21,7 @@ use App\Services\PackageChargeCalculator;
 use App\Services\PackageReferenceGenerator;
 use App\Services\PackageStatusRecorder;
 use App\Support\PackageStatusTimeline;
+use App\Support\Tenancy\TenantConfig;
 use App\Support\WhatsappLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -80,7 +81,7 @@ class PackageController extends Controller
             'paymentStatuses' => collect(PaymentStatus::cases())->mapWithKeys(
                 fn (PaymentStatus $s) => [$s->value => $s->label()],
             ),
-            'currency' => config('shipdjm.currency'),
+            'currency' => app(TenantConfig::class)->currency(),
         ]);
     }
 
@@ -124,7 +125,7 @@ class PackageController extends Controller
             ),
             'defaultUserId' => $request->integer('user_id') ?: null,
             'defaultPreAlertId' => $request->integer('pre_alert_id') ?: null,
-            'currency' => config('shipdjm.currency'),
+            'currency' => app(TenantConfig::class)->currency(),
         ]);
     }
 
@@ -214,7 +215,7 @@ class PackageController extends Controller
             'paymentMethods' => collect(PaymentMethod::cases())->mapWithKeys(
                 fn (PaymentMethod $m) => [$m->value => $m->label()],
             ),
-            'currency' => config('shipdjm.currency'),
+            'currency' => app(TenantConfig::class)->currency(),
             'invoiceFeedEnabled' => (bool) config('invoicefeed.enabled'),
             'billingRoutes' => [
                 'generateInvoice' => route('admin.packages.billing.generate-invoice', $package),

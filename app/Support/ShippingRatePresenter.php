@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\ShippingRate;
 use App\Services\PackageChargeCalculator;
+use App\Support\Tenancy\TenantConfig;
 
 class ShippingRatePresenter
 {
@@ -46,7 +47,7 @@ class ShippingRatePresenter
 
         return [
             'amount' => $this->calculator->calculate($weightLbs),
-            'currency' => $rate?->currency ?? config('shipdjm.currency'),
+            'currency' => $rate?->currency ?? app(TenantConfig::class)->currency(),
             'rate' => $rate ? $this->formatRate($rate) : null,
         ];
     }
@@ -75,7 +76,7 @@ class ShippingRatePresenter
      */
     private function fallbackRate(): array
     {
-        $currency = config('shipdjm.currency');
+        $currency = app(TenantConfig::class)->currency();
         $perLb = (float) config('shipdjm.default_rate_per_lb', 500);
 
         return [

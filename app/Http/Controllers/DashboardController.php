@@ -6,6 +6,7 @@ use App\Models\Package;
 use App\Models\PreAlert;
 use App\Models\User;
 use App\Support\CustomerWarehouseAddress;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -72,7 +73,7 @@ class DashboardController extends Controller
                 'active_packages' => $user?->packages()->active()->count() ?? 0,
                 'pre_alerts' => $user?->preAlerts()->count() ?? 0,
                 'amount_due' => $amountDue,
-                'currency' => config('shipdjm.currency'),
+                'currency' => app(TenantConfig::class)->currency(),
             ],
             'recentPreAlerts' => $recentPreAlerts,
             'recentPackages' => $recentPackages,

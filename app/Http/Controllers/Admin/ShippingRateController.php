@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreShippingRateRequest;
 use App\Http\Requests\Admin\UpdateShippingRateRequest;
 use App\Models\ShippingRate;
 use App\Support\ShippingRatePresenter;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -25,14 +26,14 @@ class ShippingRateController extends Controller
 
         return Inertia::render('admin/shipping-rates/Index', [
             'rates' => $rates,
-            'currency' => config('shipdjm.currency'),
+            'currency' => app(TenantConfig::class)->currency(),
         ]);
     }
 
     public function create(): Response
     {
         return Inertia::render('admin/shipping-rates/Create', [
-            'currency' => config('shipdjm.currency'),
+            'currency' => app(TenantConfig::class)->currency(),
         ]);
     }
 
