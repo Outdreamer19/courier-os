@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PackageBillingController;
 use App\Http\Controllers\Admin\PackageController as AdminPackageController;
 use App\Http\Controllers\Admin\PreAlertController as AdminPreAlertController;
 use App\Http\Controllers\Admin\PreAlertInvoiceController as AdminPreAlertInvoiceController;
+use App\Http\Controllers\Admin\ReportsController as AdminReportsController;
 use App\Http\Controllers\Admin\ShippingRateController as AdminShippingRateController;
 use App\Http\Controllers\Admin\WarehouseAddressController as AdminWarehouseAddressController;
 use App\Http\Controllers\ContactController;
@@ -147,6 +148,9 @@ Route::middleware(['auth', 'verified', 'tenant.member', 'tenant.subscribed'])->g
             Route::get('activity-logs', [ActivityLogController::class, 'index'])
                 ->middleware('admin.permission:view_activity_logs')
                 ->name('activity-logs.index');
+
+            Route::get('reports', [AdminReportsController::class, 'index'])->name('reports.index');
+            Route::get('reports/export', [AdminReportsController::class, 'export'])->name('reports.export');
         });
 });
 

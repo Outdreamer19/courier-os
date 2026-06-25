@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import {
+    BarChart2,
     Boxes,
     CircleDollarSign,
     ClipboardList,
@@ -32,6 +33,7 @@ import {
 import { contact, dashboard, home } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as activityLogsIndex } from '@/routes/admin/activity-logs';
+import { index as reportsIndex } from '@/routes/admin/reports';
 import { index as adminUsersIndex } from '@/routes/admin/admin-users';
 import { index as adminContactIndex } from '@/routes/admin/contact-messages';
 import { index as adminCustomersIndex } from '@/routes/admin/customers';
@@ -65,6 +67,7 @@ const adminNavItems = computed<NavItem[]>(() => {
         { title: 'Customers', href: adminCustomersIndex(), icon: Users },
         { title: 'Pre-alerts', href: adminPreAlertsIndex(), icon: Receipt },
         { title: 'Packages', href: adminPackagesIndex(), icon: Package },
+        { title: 'Reports', href: reportsIndex(), icon: BarChart2 },
     ];
 
     if (permissions.value?.manage_contact_messages) {
