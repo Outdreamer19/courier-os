@@ -3,15 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Support\ShippingRatePresenter;
+use App\Support\Tenancy\TenantManager;
+use Illuminate\Contracts\View\View;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PublicPageController extends Controller
 {
-    public function __construct(private readonly ShippingRatePresenter $rates) {}
+    public function __construct(
+        private readonly ShippingRatePresenter $rates,
+        private readonly TenantManager $tenants,
+    ) {}
 
-    public function home(): Response
+    /**
+     * Tenants with a bespoke marketing page (built outside the shared
+     * Inertia public site) get their subdomain mapped to a dedicated
+     * Blade view here instead of the generic Home page.
+     *
+     * @var array<string, string>
+     */
+    private const CUSTOM_HOME_VIEWS = [
+        'today' => 'tenants.today-shipping',
+    ];
+
+    public function home(): Response|View
     {
+        $tenant = $this->tenants->current();
+
+        if ($tenant && isset(self::CUSTOM_HOME_VIEWS[$tenant->subdomain])) {
+            return view(self::CUSTOM_HOME_VIEWS[$tenant->subdomain]);
+        }
+
         return Inertia::render('public/Home', [
             'rate' => $this->rates->primaryRate(),
             'rateTiers' => $this->rates->activeTiers(),

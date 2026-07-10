@@ -30,7 +30,7 @@ defineProps<{
                 class="inline-flex min-w-9 items-center justify-center rounded-md px-3 py-1.5 text-sm transition-colors"
                 :class="
                     link.active
-                        ? 'bg-brand-gold text-brand-ink font-medium'
+                        ? 'bg-brand-gold text-white font-medium'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 "
                 v-html="link.label"

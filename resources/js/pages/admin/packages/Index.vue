@@ -7,6 +7,7 @@ import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { formatMoney } from '@/lib/money';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { create, edit, index } from '@/routes/admin/packages';
 
@@ -48,7 +49,7 @@ const applyFilters = () => {
             <h1 class="text-2xl font-semibold tracking-tight">Packages</h1>
             <Button
                 as-child
-                class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                class="bg-brand-gold text-white hover:bg-brand-gold-soft"
             >
                 <Link :href="create()">
                     <Plus class="size-4" />
@@ -112,9 +113,7 @@ const applyFilters = () => {
                                 />
                             </td>
                             <td class="py-3 pr-4">
-                                {{ currency }} ${{
-                                    (row.amount_due as number).toLocaleString()
-                                }}
+                                {{ formatMoney(row.amount_due as number, currency) }}
                             </td>
                             <td class="py-3 text-right">
                                 <Button as-child variant="ghost" size="sm">
@@ -136,7 +135,7 @@ const applyFilters = () => {
                 >
                     <Button
                         as-child
-                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                        class="bg-brand-gold text-white hover:bg-brand-gold-soft"
                     >
                         <Link :href="create()">Add package</Link>
                     </Button>

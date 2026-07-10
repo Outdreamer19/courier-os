@@ -66,7 +66,7 @@ defineProps<{ currency: string }>();
             <div class="flex gap-3">
                 <Button
                     type="submit"
-                    class="bg-brand-gold text-brand-ink"
+                    class="bg-brand-gold text-white"
                     :disabled="processing"
                 >
                     Save rate

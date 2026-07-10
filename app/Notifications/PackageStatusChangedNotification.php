@@ -2,8 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Channels\WhatsApp\WhatsAppMessage;
 use App\Enums\PackageStatus;
 use App\Models\Package;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -23,7 +25,13 @@ class PackageStatusChangedNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        $channels = ['mail'];
+
+        if (app(TenantConfig::class)->hasWhatsAppApi()) {
+            $channels[] = 'whatsapp';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -42,6 +50,17 @@ class PackageStatusChangedNotification extends Notification
 
         return $mail
             ->action('View package', url('/portal/packages/'.$this->package->id))
-            ->line("Thank you for shipping with Ship'd JM.");
+            ->line('Thank you for shipping with '.app(TenantConfig::class)->name().'.');
+    }
+
+    public function toWhatsApp(object $notifiable): WhatsAppMessage
+    {
+        return WhatsAppMessage::template(
+            (string) config('services.whatsapp.templates.package_status_changed', 'package_status_update'),
+        )->bodyParams([
+            $notifiable->name,
+            $this->package->package_reference,
+            $this->newStatus->label(),
+        ]);
     }
 }

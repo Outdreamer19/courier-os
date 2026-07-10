@@ -41,6 +41,23 @@ class TenantConfig
         return $this->tenants->current()?->whatsapp_number;
     }
 
+    public function whatsappApiToken(): ?string
+    {
+        return $this->tenants->current()?->whatsapp_api_token
+            ?? (config('services.whatsapp.api_token') ?: null);
+    }
+
+    public function whatsappPhoneNumberId(): ?string
+    {
+        return $this->tenants->current()?->whatsapp_phone_number_id
+            ?? (config('services.whatsapp.phone_number_id') ?: null);
+    }
+
+    public function hasWhatsAppApi(): bool
+    {
+        return filled($this->whatsappApiToken()) && filled($this->whatsappPhoneNumberId());
+    }
+
     public function logoPath(): ?string
     {
         return $this->tenants->current()?->logo_path;
@@ -49,6 +66,11 @@ class TenantConfig
     public function brandPrimaryColor(): ?string
     {
         return $this->tenants->current()?->brand_primary_color;
+    }
+
+    public function brandAccentColor(): ?string
+    {
+        return $this->tenants->current()?->brand_accent_color;
     }
 
     public function defaultRatePerLb(): float

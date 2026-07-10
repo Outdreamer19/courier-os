@@ -88,7 +88,7 @@ defineOptions({
             <div class="flex gap-3">
                 <Button
                     type="submit"
-                    class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                    class="bg-brand-gold text-white hover:bg-brand-gold-soft"
                     :disabled="processing"
                 >
                     Create customer

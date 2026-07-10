@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\CustomerProfile;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +21,7 @@ class UsersSeeder extends Seeder
             ],
         );
 
-        $customer = User::query()->updateOrCreate(
+        User::query()->updateOrCreate(
             ['email' => 'customer@shipdjm.test'],
             [
                 'name' => 'Demo Customer',
@@ -33,17 +32,5 @@ class UsersSeeder extends Seeder
             ],
         );
 
-        CustomerProfile::query()->updateOrCreate(
-            ['user_id' => $customer->id],
-            [
-                'customer_reference' => 'SJM-000001',
-                'trn' => '123456789',
-                'date_of_birth' => '1990-01-15',
-                'phone' => '+1 (876) 555-0100',
-                'whatsapp_number' => '+1 (876) 555-0100',
-                'jamaica_address' => '12 Hope Road',
-                'parish' => 'Kingston',
-            ],
-        );
     }
 }

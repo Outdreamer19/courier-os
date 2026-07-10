@@ -12,6 +12,7 @@ import {
 import { computed } from 'vue';
 import BarChart from '@/components/charts/BarChart.vue';
 import DoughnutChart from '@/components/charts/DoughnutChart.vue';
+import LineChart from '@/components/charts/LineChart.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,8 +26,8 @@ import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as contactIndex, show as showContact } from '@/routes/admin/contact-messages';
 import { index as customersIndex } from '@/routes/admin/customers';
 import { index as packagesIndex } from '@/routes/admin/packages';
-import { index as preAlertsIndex, show as showPreAlert } from '@/routes/admin/pre-alerts';
 import { edit as editPackage } from '@/routes/admin/packages';
+import { index as preAlertsIndex, show as showPreAlert } from '@/routes/admin/pre-alerts';
 
 defineOptions({
     layout: {
@@ -50,6 +51,7 @@ const props = defineProps<{
     };
     charts: {
         new_users: { labels: string[]; data: number[] };
+        packages_over_time: { labels: string[]; data: number[] };
         pre_alerts_by_status: { labels: string[]; data: number[] };
     };
     recent_contact_messages: {
@@ -132,27 +134,27 @@ const tiles = computed(() => [
             </p>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <Link
                 v-for="tile in tiles"
                 :key="tile.title"
                 :href="tile.href"
                 class="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-                <Card class="h-full transition-colors hover:bg-muted/30">
+                <Card class="h-full gap-2 py-4 transition-colors hover:bg-muted/30">
                     <CardHeader
-                        class="flex flex-row items-center justify-between space-y-0 pb-2"
+                        class="flex flex-row items-center justify-between space-y-0 px-4"
                     >
-                        <CardTitle class="text-sm font-medium text-muted-foreground">
+                        <CardTitle class="text-xs font-medium text-muted-foreground">
                             {{ tile.title }}
                         </CardTitle>
-                        <component :is="tile.icon" class="size-4 text-brand-gold" />
+                        <component :is="tile.icon" class="size-3.5 text-brand-gold" />
                     </CardHeader>
-                    <CardContent>
-                        <p class="text-3xl font-semibold tracking-tight">
+                    <CardContent class="px-4">
+                        <p class="text-2xl font-semibold tracking-tight">
                             {{ tile.value }}
                         </p>
-                        <p class="mt-1 text-xs text-muted-foreground">
+                        <p class="mt-0.5 text-xs text-muted-foreground">
                             {{ tile.helper }}
                         </p>
                     </CardContent>
@@ -160,7 +162,7 @@ const tiles = computed(() => [
             </Link>
         </div>
 
-        <div class="grid gap-4 lg:grid-cols-2">
+        <div class="grid gap-4 lg:grid-cols-3">
             <Card>
                 <CardHeader>
                     <CardTitle class="flex items-center gap-2">
@@ -176,6 +178,26 @@ const tiles = computed(() => [
                         :labels="charts.new_users.labels"
                         :data="charts.new_users.data"
                         label="New customers"
+                    />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle class="flex items-center gap-2">
+                        <Package class="size-4 text-brand-gold" />
+                        Packages received
+                    </CardTitle>
+                    <CardDescription>
+                        Packages logged over the last six months
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <LineChart
+                        :labels="charts.packages_over_time.labels"
+                        :data="charts.packages_over_time.data"
+                        label="Packages"
+                        color="#06B6D4"
                     />
                 </CardContent>
             </Card>

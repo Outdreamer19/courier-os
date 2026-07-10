@@ -18,8 +18,11 @@ use Laravel\Cashier\Billable;
     'customer_reference_prefix',
     'package_reference_prefix',
     'whatsapp_number',
+    'whatsapp_api_token',
+    'whatsapp_phone_number_id',
     'logo_path',
     'brand_primary_color',
+    'brand_accent_color',
     'trial_ends_at',
 ])]
 class Tenant extends Model
@@ -47,7 +50,14 @@ class Tenant extends Model
     {
         return [
             'trial_ends_at' => 'datetime',
+            'whatsapp_api_token' => 'encrypted',
         ];
+    }
+
+    /** Whether this tenant has Meta Cloud API credentials configured. */
+    public function hasWhatsAppApi(): bool
+    {
+        return filled($this->whatsapp_api_token) && filled($this->whatsapp_phone_number_id);
     }
 
     public function scopeActive(Builder $query): Builder

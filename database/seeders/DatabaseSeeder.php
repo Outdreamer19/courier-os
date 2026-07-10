@@ -13,6 +13,9 @@ class DatabaseSeeder extends Seeder
             ShippingRateSeeder::class,
             UsersSeeder::class,
             DemoDataSeeder::class,
+            // Multi-tenant demo data, including the richer "Today Shipping &
+            // Logistics" tenant used to showcase the owner dashboard.
+            TodayShippingDataSeeder::class,
         ]);
     }
 }

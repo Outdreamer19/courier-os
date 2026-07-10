@@ -62,6 +62,7 @@ export type BrandConfig = {
     currency: string;
     logo_path: string | null;
     primary_color: string | null;
+    accent_color: string | null;
     default_rate_per_lb: number;
 };
 

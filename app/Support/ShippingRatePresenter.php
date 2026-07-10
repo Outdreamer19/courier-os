@@ -67,6 +67,7 @@ class ShippingRatePresenter
             'handling_fee' => $rate->handling_fee !== null ? (float) $rate->handling_fee : null,
             'min_weight_lbs' => $rate->min_weight_lbs !== null ? (float) $rate->min_weight_lbs : null,
             'max_weight_lbs' => $rate->max_weight_lbs !== null ? (float) $rate->max_weight_lbs : null,
+            'is_active' => $rate->is_active,
             'tier_label' => $this->tierLabel($rate),
         ];
     }
@@ -89,6 +90,7 @@ class ShippingRatePresenter
             'handling_fee' => null,
             'min_weight_lbs' => null,
             'max_weight_lbs' => null,
+            'is_active' => true,
             'tier_label' => 'All weights',
         ];
     }

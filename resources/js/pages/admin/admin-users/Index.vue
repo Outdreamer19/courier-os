@@ -44,7 +44,7 @@ defineProps<{
                     Manage who can access the admin portal and their roles.
                 </p>
             </div>
-            <Button as-child class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft">
+            <Button as-child class="bg-brand-gold text-white hover:bg-brand-gold-soft">
                 <Link :href="create()">Add admin user</Link>
             </Button>
         </div>

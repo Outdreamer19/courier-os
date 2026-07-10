@@ -29,6 +29,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { chartBarColors, chartGridColor } from '@/lib/chartColors';
+import { formatMoney } from '@/lib/money';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { index as reportsIndex, exportMethod as reportsExport } from '@/routes/admin/reports';
 import { computed } from 'vue';
@@ -59,8 +60,7 @@ const props = defineProps<{
     }>;
 }>();
 
-const formatMoney = (amount: number) =>
-    new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+const fmt = (amount: number) => formatMoney(amount, props.currency);
 
 const volumeChartData = computed(() => ({
     labels: props.packageVolumeByMonth.labels,
@@ -117,8 +117,7 @@ const volumeChartOptions = {
                 <CardHeader class="pb-2">
                     <CardDescription>Total revenue (12 mo)</CardDescription>
                     <CardTitle class="text-3xl">
-                        {{ currency }}
-                        {{ formatMoney(revenueByMonth.data.reduce((a, b) => a + b, 0)) }}
+                        {{ fmt(revenueByMonth.data.reduce((a, b) => a + b, 0)) }}
                     </CardTitle>
                 </CardHeader>
             </Card>
@@ -136,7 +135,7 @@ const volumeChartOptions = {
                 <CardHeader class="pb-2">
                     <CardDescription>Outstanding balance</CardDescription>
                     <CardTitle class="text-3xl text-amber-600 dark:text-amber-400">
-                        {{ currency }} {{ formatMoney(unpaidTotal) }}
+                        {{ fmt(unpaidTotal) }}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -206,7 +205,7 @@ const volumeChartOptions = {
                             <TableCell class="text-muted-foreground">{{ customer.email }}</TableCell>
                             <TableCell class="text-right">{{ customer.package_count }}</TableCell>
                             <TableCell class="pr-6 text-right font-mono">
-                                {{ formatMoney(customer.total_paid) }}
+                                {{ fmt(customer.total_paid) }}
                             </TableCell>
                         </TableRow>
                     </TableBody>

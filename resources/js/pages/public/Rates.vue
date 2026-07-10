@@ -166,7 +166,7 @@ watch(weight, (value) => {
                         >
                             <Info class="mt-0.5 size-4 shrink-0 text-brand-green" />
                             <p>
-                                Final charges are confirmed by Ship'd JM admin
+                                Final charges are confirmed by TODAY Shipping admin
                                 after the package is weighed at the Florida
                                 warehouse. Declared value is collected for
                                 customs and insurance purposes — it does not
@@ -246,7 +246,7 @@ watch(weight, (value) => {
                             Ready to ship?
                         </h3>
                         <p class="mt-1 text-sm text-muted-foreground">
-                            Create your free Ship'd JM account to get your
+                            Create your free TODAY Shipping account to get your
                             Florida shipping address.
                         </p>
                         <div class="mt-4 flex gap-2">

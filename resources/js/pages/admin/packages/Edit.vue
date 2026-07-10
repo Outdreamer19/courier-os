@@ -6,6 +6,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { formatMoney } from '@/lib/money';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { edit, index, update } from '@/routes/admin/packages';
 
@@ -228,7 +229,7 @@ const formatDateTime = (value: string | null) => {
                     <div>
                         <dt class="text-muted-foreground">Invoice total</dt>
                         <dd class="mt-0.5 font-medium">
-                            {{ currency }} ${{ package.amount_due.toLocaleString() }}
+                            {{ formatMoney(package.amount_due, currency) }}
                         </dd>
                     </div>
                     <div>
@@ -409,7 +410,7 @@ const formatDateTime = (value: string | null) => {
             <div class="flex gap-3">
                 <Button
                     type="submit"
-                    class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                    class="bg-brand-gold text-white hover:bg-brand-gold-soft"
                     :disabled="form.processing"
                 >
                     Save package

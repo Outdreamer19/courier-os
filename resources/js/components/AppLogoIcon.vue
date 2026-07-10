@@ -14,8 +14,8 @@ defineProps<Props>();
 
 <template>
     <img
-        src="/branding/shipdjm-icon.png"
-        alt="Ship'd JM icon"
+        src="/branding/today-shipping-icon.png"
+        alt="TODAY Shipping icon"
         :class="className"
         v-bind="$attrs"
     />

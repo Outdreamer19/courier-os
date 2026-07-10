@@ -50,11 +50,11 @@ const mobileOpen = ref(false);
                 <Link
                     :href="home()"
                     class="group flex items-center gap-3"
-                    aria-label="Ship'd JM home"
+                    aria-label="TODAY Shipping home"
                 >
                     <img
-                        src="/branding/shipdjm-logo.png"
-                        alt="Ship'd JM"
+                        src="/branding/today-shipping-logo.png"
+                        alt="TODAY Shipping"
                         class="h-10 w-auto object-contain"
                     />
                 </Link>
@@ -145,7 +145,7 @@ const mobileOpen = ref(false);
                     <p
                         class="text-lg font-semibold tracking-tight"
                     >
-                        Ship'd <span class="text-brand-green-soft">JM</span>
+                        TODAY <span class="text-brand-green-soft">Shipping</span>
                     </p>
                     <p class="text-sm text-brand-cream/70">
                         Jamaica-based package forwarding. Shop the world, ship
@@ -235,7 +235,7 @@ const mobileOpen = ref(false);
                 <div
                     class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-brand-cream/60 sm:flex-row sm:px-6 lg:px-8"
                 >
-                    <p>© {{ new Date().getFullYear() }} Ship'd JM. All rights reserved.</p>
+                    <p>© {{ new Date().getFullYear() }} TODAY Shipping. All rights reserved.</p>
                     <p>
                         Built for Jamaica · Pickup only · JMD shipping rates ·
                         Digital partner:

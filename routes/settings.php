@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\BrandingController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -24,4 +25,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');
+});
+
+Route::middleware(['auth', 'admin.permission:manage_system_settings'])->group(function () {
+    Route::get('settings/branding', [BrandingController::class, 'edit'])->name('branding.edit');
+    Route::patch('settings/branding', [BrandingController::class, 'update'])->name('branding.update');
+    Route::post('settings/branding/logo', [BrandingController::class, 'uploadLogo'])->name('branding.logo.store');
+    Route::delete('settings/branding/logo', [BrandingController::class, 'destroyLogo'])->name('branding.logo.destroy');
 });

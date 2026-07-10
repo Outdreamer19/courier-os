@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\WarehouseAddress;
 use App\Support\Tenancy\TenantConfig;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -56,8 +57,11 @@ class HandleInertiaRequests extends Middleware
             'brand' => [
                 'name' => $brand->name(),
                 'currency' => $brand->currency(),
-                'logo_path' => $brand->logoPath(),
+                'logo_path' => $brand->logoPath()
+                    ? Storage::disk('public')->url($brand->logoPath())
+                    : null,
                 'primary_color' => $brand->brandPrimaryColor(),
+                'accent_color' => $brand->brandAccentColor(),
                 'default_rate_per_lb' => $brand->defaultRatePerLb(),
             ],
             'warehouse' => fn () => $this->activeWarehouseSnapshot(),

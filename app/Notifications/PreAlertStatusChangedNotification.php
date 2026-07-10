@@ -2,8 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Channels\WhatsApp\WhatsAppMessage;
 use App\Enums\PreAlertStatus;
 use App\Models\PreAlert;
+use App\Support\Tenancy\TenantConfig;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -23,7 +25,13 @@ class PreAlertStatusChangedNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        $channels = ['mail'];
+
+        if (app(TenantConfig::class)->hasWhatsAppApi()) {
+            $channels[] = 'whatsapp';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -40,6 +48,17 @@ class PreAlertStatusChangedNotification extends Notification
 
         return $mail
             ->action('View pre-alert', url('/portal/pre-alerts/'.$this->preAlert->id))
-            ->line("Thank you for shipping with Ship'd JM.");
+            ->line('Thank you for shipping with '.app(TenantConfig::class)->name().'.');
+    }
+
+    public function toWhatsApp(object $notifiable): WhatsAppMessage
+    {
+        return WhatsAppMessage::template(
+            (string) config('services.whatsapp.templates.package_status_changed', 'package_status_update'),
+        )->bodyParams([
+            $notifiable->name,
+            $this->preAlert->merchant_name,
+            $this->newStatus->label(),
+        ]);
     }
 }

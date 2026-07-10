@@ -50,7 +50,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
 </script>
 
 <template>
-    <Head title="Contact Ship'd JM" />
+    <Head title="Contact TODAY Shipping" />
 
     <section class="relative overflow-hidden bg-brand-ink text-brand-cream fade-in-section" :style="sectionDelay(0)">
         <div
@@ -174,7 +174,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                             <div>
                                 <p class="font-medium">Email</p>
                                 <p class="text-muted-foreground">
-                                    support@shipdjm.com (placeholder)
+                                    support@todayshipping.com (placeholder)
                                 </p>
                             </div>
                         </div>

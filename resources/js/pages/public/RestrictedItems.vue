@@ -17,7 +17,7 @@ const sections = [
     },
     {
         heading: 'Help us update this list',
-        body: "If you are unsure whether an item is allowed, please contact Ship'd JM support before placing an order. Once a final restricted-items list is approved, it will be published here and editable by the admin team.",
+        body: 'If you are unsure whether an item is allowed, please contact TODAY Shipping support before placing an order. Once a final restricted-items list is approved, it will be published here and editable by the admin team.',
     },
 ];
 </script>

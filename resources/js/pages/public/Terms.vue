@@ -5,7 +5,7 @@ import LegalPage from '@/pages/public/legal/LegalPage.vue';
 const sections = [
     {
         heading: '1. Acceptance of terms',
-        body: "By creating an account or using Ship'd JM services, you agree to these terms and any future updates. If you do not agree, please do not use the service.",
+        body: "By creating an account or using TODAY Shipping services, you agree to these terms and any future updates. If you do not agree, please do not use the service.",
     },
     {
         heading: '2. Account responsibilities',
@@ -17,11 +17,11 @@ const sections = [
     },
     {
         heading: '4. Use of the Florida warehouse',
-        body: "The Florida warehouse address provided through Ship'd JM is for receiving customer packages only. Misuse of the address, including illegal or restricted items, will result in account suspension.",
+        body: "The Florida warehouse address provided through TODAY Shipping is for receiving customer packages only. Misuse of the address, including illegal or restricted items, will result in account suspension.",
     },
     {
         heading: '5. Limitation of liability',
-        body: "Ship'd JM is not responsible for delays caused by carriers, customs authorities, or events outside our reasonable control. We will, however, use all reasonable means to resolve issues quickly.",
+        body: "TODAY Shipping is not responsible for delays caused by carriers, customs authorities, or events outside our reasonable control. We will, however, use all reasonable means to resolve issues quickly.",
     },
     {
         heading: '6. Changes',
@@ -36,7 +36,7 @@ const sections = [
     <LegalPage
         eyebrow="Legal"
         title="Terms and Conditions"
-        intro="Please review these terms before using Ship'd JM. This is placeholder content for MVP."
+        intro="Please review these terms before using TODAY Shipping. This is placeholder content for MVP."
         :sections="sections"
     />
 </template>

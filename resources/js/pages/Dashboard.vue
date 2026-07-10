@@ -11,6 +11,7 @@ import {
     Receipt,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { formatMoney } from '@/lib/money';
 import CopyButton from '@/components/CopyButton.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
@@ -83,9 +84,9 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user ?? null);
 const reference = computed(() => props.profile?.customer_reference ?? '—');
 
-const formattedAmountDue = computed(() => {
-    return `${props.stats.currency} $${props.stats.amount_due.toLocaleString()}`;
-});
+const formattedAmountDue = computed(() =>
+    formatMoney(props.stats.amount_due, props.stats.currency),
+);
 
 const statCards = computed(() => [
     {
@@ -135,7 +136,7 @@ const formatDate = (value: string | null) => {
                         Hello, {{ user?.name ?? 'there' }}
                     </h1>
                     <p class="text-sm text-muted-foreground">
-                        Your Ship'd JM customer reference is
+                        Your TODAY Shipping customer reference is
                         <span class="font-medium text-foreground">
                             {{ reference }}
                         </span>
@@ -150,7 +151,7 @@ const formatDate = (value: string | null) => {
                     />
                     <Button
                         as-child
-                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                        class="bg-brand-gold text-white hover:bg-brand-gold-soft"
                     >
                         <Link :href="contact()">
                             <Headset class="size-4" />
@@ -264,7 +265,7 @@ const formatDate = (value: string | null) => {
                 <CardContent class="space-y-3">
                     <Button
                         as-child
-                        class="w-full justify-start bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                        class="w-full justify-start bg-brand-gold text-white hover:bg-brand-gold-soft"
                     >
                         <Link :href="createPreAlert()">
                             <PlusCircle class="size-4" />
@@ -334,7 +335,7 @@ const formatDate = (value: string | null) => {
                         <Button
                             as-child
                             size="sm"
-                            class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                            class="bg-brand-gold text-white hover:bg-brand-gold-soft"
                         >
                             <Link :href="createPreAlert()">Submit one now</Link>
                         </Button>
@@ -370,9 +371,7 @@ const formatDate = (value: string | null) => {
                                     {{ item.package_reference }}
                                 </Link>
                                 <p class="text-xs text-muted-foreground">
-                                    {{ stats.currency }} ${{
-                                        item.amount_due.toLocaleString()
-                                    }}
+                                    {{ formatMoney(item.amount_due, stats.currency) }}
                                     due
                                 </p>
                             </div>

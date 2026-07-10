@@ -30,8 +30,8 @@
             }
         </style>
 
-        <link rel="icon" href="/branding/shipdjm-icon.png" type="image/png">
-        <link rel="apple-touch-icon" href="/branding/shipdjm-icon.png">
+        <link rel="icon" href="/branding/today-shipping-icon.png" type="image/png">
+        <link rel="apple-touch-icon" href="/branding/today-shipping-icon.png">
 
         @fonts
 

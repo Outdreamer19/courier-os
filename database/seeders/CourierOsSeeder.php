@@ -66,6 +66,20 @@ class CourierOsSeeder extends Seeder
             'warehouse' => 'Island Express Miami Hub',
         ]);
 
+        $this->seedTenant($manager, [
+            'name' => 'Today Shipping & Logistics',
+            'subdomain' => 'today',
+            'currency' => 'JMD',
+            'prefix' => 'TSL',
+            'owner_email' => 'owner@today.test',
+            'customer_email' => 'customer@today.test',
+            'customer_name' => 'Andre Campbell',
+            'warehouse' => 'Today Shipping Miami Warehouse',
+            'brand_primary_color' => '#D0202E',
+            'rate_per_lb' => 750,
+            'minimum_charge' => 750,
+        ]);
+
         $manager->forget();
     }
 
@@ -85,6 +99,7 @@ class CourierOsSeeder extends Seeder
                 'customer_reference_prefix' => $config['prefix'],
                 'package_reference_prefix' => 'PKG',
                 'whatsapp_number' => '+1 (876) 555-0000',
+                'brand_primary_color' => $config['brand_primary_color'] ?? null,
             ],
         );
 
@@ -121,8 +136,8 @@ class CourierOsSeeder extends Seeder
             [
                 'method' => 'standard',
                 'currency' => $config['currency'],
-                'rate_per_lb' => $config['currency'] === 'JMD' ? 500 : 4,
-                'minimum_charge' => $config['currency'] === 'JMD' ? 500 : 4,
+                'rate_per_lb' => $config['rate_per_lb'] ?? ($config['currency'] === 'JMD' ? 500 : 4),
+                'minimum_charge' => $config['minimum_charge'] ?? ($config['currency'] === 'JMD' ? 500 : 4),
                 'is_active' => true,
             ],
         );

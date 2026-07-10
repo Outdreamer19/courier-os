@@ -154,4 +154,13 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->customerProfile?->customer_reference;
     }
+
+    /**
+     * Route WhatsApp notifications to the customer's registered WhatsApp number.
+     * Returns null if no number is set, which causes the channel to skip delivery.
+     */
+    public function routeNotificationForWhatsapp(): ?string
+    {
+        return $this->customerProfile?->whatsapp_number;
+    }
 }

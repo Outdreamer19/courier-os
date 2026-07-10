@@ -32,7 +32,7 @@ const sections = [
     <LegalPage
         eyebrow="Legal"
         title="Privacy Policy"
-        intro="How Ship'd JM collects, uses, and protects your information. Placeholder content for MVP."
+        intro="How TODAY Shipping collects, uses, and protects your information. Placeholder content for MVP."
         :sections="sections"
     />
 </template>

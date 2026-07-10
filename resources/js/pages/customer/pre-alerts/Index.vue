@@ -77,7 +77,7 @@ const formatDate = (value: string | null) => {
             </div>
             <Button
                 as-child
-                class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                class="bg-brand-gold text-white hover:bg-brand-gold-soft"
             >
                 <Link :href="create()">
                     <PlusCircle class="size-4" />
@@ -220,7 +220,7 @@ const formatDate = (value: string | null) => {
                 >
                     <Button
                         as-child
-                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                        class="bg-brand-gold text-white hover:bg-brand-gold-soft"
                     >
                         <Link :href="create()">Submit your first pre-alert</Link>
                     </Button>

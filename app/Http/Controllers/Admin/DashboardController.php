@@ -43,6 +43,7 @@ class DashboardController extends Controller
             ],
             'charts' => [
                 'new_users' => $this->newUsersChart(),
+                'packages_over_time' => $this->packagesOverTimeChart(),
                 'pre_alerts_by_status' => $this->preAlertsByStatusChart(),
             ],
             'recent_contact_messages' => ContactMessage::query()
@@ -91,6 +92,31 @@ class DashboardController extends Controller
             $labels[] = $start->format('M Y');
             $data[] = User::query()
                 ->where('role', User::ROLE_CUSTOMER)
+                ->whereBetween('created_at', [$start, $end])
+                ->count();
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+        ];
+    }
+
+    /**
+     * @return array{labels: list<string>, data: list<int>}
+     */
+    private function packagesOverTimeChart(): array
+    {
+        $labels = [];
+        $data = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $start = $month->copy()->startOfMonth();
+            $end = $month->copy()->endOfMonth();
+
+            $labels[] = $start->format('M Y');
+            $data[] = Package::query()
                 ->whereBetween('created_at', [$start, $end])
                 ->count();
         }

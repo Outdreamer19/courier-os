@@ -60,7 +60,7 @@ const props = defineProps<{
 const replyMailto = () => {
     const subject = encodeURIComponent(`Re: ${props.message.subject}`);
     const body = encodeURIComponent(
-        `Hi ${props.message.name},\n\nThank you for contacting Ship'd JM.\n\n`,
+        `Hi ${props.message.name},\n\nThank you for contacting TODAY Shipping.\n\n`,
     );
 
     return `mailto:${props.message.email}?subject=${subject}&body=${body}`;
@@ -251,7 +251,7 @@ const formatDate = (value: string | null) => {
                     </div>
                     <Button
                         type="submit"
-                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                        class="bg-brand-gold text-white hover:bg-brand-gold-soft"
                         :disabled="processing"
                     >
                         Save changes

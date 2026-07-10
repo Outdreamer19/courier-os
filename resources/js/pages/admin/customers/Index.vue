@@ -46,7 +46,7 @@ const applySearch = () => {
             <Button
                 v-if="canManageCustomers"
                 as-child
-                class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                class="bg-brand-gold text-white hover:bg-brand-gold-soft"
             >
                 <Link :href="create()">
                     <Plus class="size-4" />
@@ -124,7 +124,7 @@ const applySearch = () => {
                 >
                     <Button
                         as-child
-                        class="bg-brand-gold text-brand-ink hover:bg-brand-gold-soft"
+                        class="bg-brand-gold text-white hover:bg-brand-gold-soft"
                     >
                         <Link :href="create()">Add customer</Link>
                     </Button>

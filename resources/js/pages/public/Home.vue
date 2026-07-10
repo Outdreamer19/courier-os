@@ -28,7 +28,7 @@ const howItWorks = [
     {
         icon: UserPlus,
         title: 'Create your account',
-        body: "Sign up in minutes and get your unique Ship'd JM reference number.",
+        body: 'Sign up in minutes and get your unique TODAY Shipping reference number.',
     },
     {
         icon: Clipboard,
@@ -57,7 +57,7 @@ const whyShipDjm = [
     },
     {
         title: 'Pre-alert workflow that is actually simple',
-        body: "Submit invoice details in minutes and let the Ship'd JM team handle package matching behind the scenes.",
+        body: 'Submit invoice details in minutes and let the TODAY Shipping team handle package matching behind the scenes.',
         image: '/img/shipdjm-prealert-workflow.png',
         imageWebp: '/img/shipdjm-prealert-workflow.webp',
         imageAlt: 'Customer reviewing order and shipment details on laptop',
@@ -129,7 +129,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <source srcset="/img/shipdjm-hero.webp" type="image/webp" />
                 <img
                     src="/img/shipdjm-hero.png"
-                    alt="Ship'd JM customer support team helping shoppers with package forwarding"
+                    alt="TODAY Shipping customer support team helping shoppers with package forwarding"
                     width="1774"
                     height="887"
                     fetchpriority="high"
@@ -158,7 +158,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                     Track everything in one place.
                 </h1>
                 <p class="max-w-xl text-base text-brand-cream/80 sm:text-lg">
-                    Ship'd JM helps customers in Jamaica shop from stores like
+                    TODAY Shipping helps customers in Jamaica shop from stores like
                     Amazon, Walmart, SHEIN and more, then ship packages through
                     our Florida warehouse for pickup in Jamaica.
                 </p>
@@ -256,7 +256,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 <p
                     class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-green"
                 >
-                    Why Ship'd JM
+                    Why TODAY Shipping
                 </p>
                 <h2
                     class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
@@ -295,7 +295,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                         <p
                             class="absolute bottom-3 left-3 rounded-full border border-brand-gold/30 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-brand-gold-soft"
                         >
-                            Ship'd JM advantage
+                            TODAY Shipping advantage
                         </p>
                     </div>
                     <div class="space-y-3 p-6">
@@ -442,7 +442,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
             >
                 Start shipping with
-                <span class="text-brand-gold-soft">Ship'd JM</span> today.
+                <span class="text-brand-gold-soft">TODAY Shipping</span>.
             </h2>
             <p
                 class="mx-auto mt-4 max-w-2xl text-base text-brand-cream/70 sm:text-lg"
