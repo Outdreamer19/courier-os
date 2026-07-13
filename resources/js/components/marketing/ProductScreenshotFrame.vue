@@ -16,7 +16,9 @@ withDefaults(
     <div
         class="overflow-hidden rounded-2xl border border-marketing-border bg-white shadow-[0_20px_60px_-25px_rgba(33,13,2,0.35)]"
     >
-        <div class="flex items-center gap-1.5 border-b border-marketing-border bg-marketing-eggshell/60 px-4 py-2.5">
+        <div
+            class="flex items-center gap-1.5 border-b border-marketing-border bg-marketing-eggshell/60 px-4 py-2.5"
+        >
             <span class="size-2.5 rounded-full bg-marketing-orange/50" />
             <span class="size-2.5 rounded-full bg-marketing-amber/60" />
             <span class="size-2.5 rounded-full bg-marketing-olive/40" />

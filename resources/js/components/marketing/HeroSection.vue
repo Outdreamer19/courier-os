@@ -3,8 +3,16 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import ProductScreenshotFrame from './ProductScreenshotFrame.vue';
 
 const tabs = [
-    { key: 'admin', label: 'Admin Dashboard', screenshotLabel: 'Admin dashboard screenshot' },
-    { key: 'portal', label: 'Customer Portal', screenshotLabel: 'Customer portal screenshot' },
+    {
+        key: 'admin',
+        label: 'Admin Dashboard',
+        screenshotLabel: 'Admin dashboard screenshot',
+    },
+    {
+        key: 'portal',
+        label: 'Customer Portal',
+        screenshotLabel: 'Customer portal screenshot',
+    },
 ];
 
 const active = ref(0);
@@ -20,24 +28,33 @@ onUnmounted(() => clearInterval(timer));
 </script>
 
 <template>
-    <section id="top" class="relative overflow-hidden bg-marketing-cream fade-in-section">
-        <div class="mx-auto max-w-5xl px-4 pt-20 pb-16 text-center sm:px-6 lg:px-8">
+    <section
+        id="top"
+        class="fade-in-section relative overflow-hidden bg-marketing-cream"
+    >
+        <div
+            class="mx-auto max-w-5xl px-4 pt-20 pb-16 text-center sm:px-6 lg:px-8"
+        >
             <span
                 class="inline-flex items-center gap-2 rounded-full border border-marketing-border bg-white px-4 py-1.5 text-xs font-medium text-marketing-ink shadow-sm"
             >
-                <span class="rounded-full bg-marketing-orange px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                <span
+                    class="rounded-full bg-marketing-orange px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase"
+                >
                     New
                 </span>
                 Now onboarding Caribbean courier businesses
             </span>
 
-            <h1 class="mx-auto mt-6 max-w-3xl text-balance text-5xl font-semibold leading-[1.05] tracking-tight text-marketing-ink sm:text-6xl">
+            <h1
+                class="mx-auto mt-6 max-w-3xl text-5xl leading-[1.05] font-semibold tracking-tight text-balance text-marketing-ink sm:text-6xl"
+            >
                 Run Your Courier Business Like a Platform
             </h1>
 
             <p class="mx-auto mt-5 max-w-xl text-lg text-marketing-ink-muted">
-                Pre-alerts, package tracking, billing, and customer updates — on your own branded site.
-                Launch in minutes, not months.
+                Pre-alerts, package tracking, billing, and customer updates — on
+                your own branded site. Launch in minutes, not months.
             </p>
 
             <div class="mt-8 flex flex-wrap items-center justify-center gap-3">

@@ -14,10 +14,19 @@ const mobileOpen = ref(false);
 </script>
 
 <template>
-    <header class="sticky top-0 z-40 border-b border-marketing-border bg-marketing-cream/85 backdrop-blur">
-        <div class="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-8">
-            <a href="#top" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-marketing-ink">
-                <span class="flex size-8 items-center justify-center rounded-lg bg-marketing-ink text-sm font-bold text-marketing-amber">
+    <header
+        class="sticky top-0 z-40 border-b border-marketing-border bg-marketing-cream/85 backdrop-blur"
+    >
+        <div
+            class="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-8"
+        >
+            <a
+                href="#top"
+                class="flex items-center gap-2 text-lg font-semibold tracking-tight text-marketing-ink"
+            >
+                <span
+                    class="flex size-8 items-center justify-center rounded-lg bg-marketing-ink text-sm font-bold text-marketing-amber"
+                >
                     C
                 </span>
                 CourierOS
@@ -35,7 +44,10 @@ const mobileOpen = ref(false);
             </nav>
 
             <div class="hidden items-center gap-2 md:flex">
-                <Link :href="login()" class="rounded-md px-3 py-2 text-sm font-medium text-marketing-ink/80 hover:text-marketing-ink">
+                <Link
+                    :href="login()"
+                    class="rounded-md px-3 py-2 text-sm font-medium text-marketing-ink/80 hover:text-marketing-ink"
+                >
                     Login
                 </Link>
                 <a
@@ -57,7 +69,10 @@ const mobileOpen = ref(false);
             </button>
         </div>
 
-        <div v-if="mobileOpen" class="border-t border-marketing-border md:hidden">
+        <div
+            v-if="mobileOpen"
+            class="border-t border-marketing-border md:hidden"
+        >
             <div class="mx-auto max-w-7xl space-y-1 px-4 py-3">
                 <a
                     v-for="link in links"
@@ -69,10 +84,16 @@ const mobileOpen = ref(false);
                     {{ link.name }}
                 </a>
                 <div class="flex gap-2 pt-2">
-                    <Link :href="login()" class="flex-1 rounded-md border border-marketing-border px-3 py-2 text-center text-sm font-medium">
+                    <Link
+                        :href="login()"
+                        class="flex-1 rounded-md border border-marketing-border px-3 py-2 text-center text-sm font-medium"
+                    >
                         Login
                     </Link>
-                    <a href="/signup" class="flex-1 rounded-md bg-marketing-amber px-3 py-2 text-center text-sm font-semibold text-marketing-ink">
+                    <a
+                        href="/signup"
+                        class="flex-1 rounded-md bg-marketing-amber px-3 py-2 text-center text-sm font-semibold text-marketing-ink"
+                    >
                         Get Started
                     </a>
                 </div>

@@ -13,10 +13,17 @@ const utility = [
 
 <template>
     <footer class="border-t border-marketing-border bg-marketing-cream">
-        <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8">
+        <div
+            class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8"
+        >
             <div class="space-y-3">
-                <p class="flex items-center gap-2 text-lg font-semibold tracking-tight text-marketing-ink">
-                    <span class="flex size-7 items-center justify-center rounded-md bg-marketing-ink text-xs font-bold text-marketing-amber">C</span>
+                <p
+                    class="flex items-center gap-2 text-lg font-semibold tracking-tight text-marketing-ink"
+                >
+                    <span
+                        class="flex size-7 items-center justify-center rounded-md bg-marketing-ink text-xs font-bold text-marketing-amber"
+                        >C</span
+                    >
                     CourierOS
                 </p>
                 <p class="text-sm text-marketing-ink-muted">
@@ -24,30 +31,55 @@ const utility = [
                 </p>
             </div>
             <div>
-                <p class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-marketing-ink-muted">Pages</p>
+                <p
+                    class="mb-3 text-xs font-semibold tracking-[0.18em] text-marketing-ink-muted uppercase"
+                >
+                    Pages
+                </p>
                 <ul class="space-y-2 text-sm">
                     <li v-for="link in pages" :key="link.name">
-                        <a :href="link.href" class="text-marketing-ink-muted transition hover:text-marketing-ink">{{ link.name }}</a>
+                        <a
+                            :href="link.href"
+                            class="text-marketing-ink-muted transition hover:text-marketing-ink"
+                            >{{ link.name }}</a
+                        >
                     </li>
                 </ul>
             </div>
             <div>
-                <p class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-marketing-ink-muted">Utility</p>
+                <p
+                    class="mb-3 text-xs font-semibold tracking-[0.18em] text-marketing-ink-muted uppercase"
+                >
+                    Utility
+                </p>
                 <ul class="space-y-2 text-sm">
                     <li v-for="link in utility" :key="link.name">
-                        <a :href="link.href" class="text-marketing-ink-muted transition hover:text-marketing-ink">{{ link.name }}</a>
+                        <a
+                            :href="link.href"
+                            class="text-marketing-ink-muted transition hover:text-marketing-ink"
+                            >{{ link.name }}</a
+                        >
                     </li>
                 </ul>
             </div>
             <div>
-                <p class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-marketing-ink-muted">Get started</p>
-                <a href="/signup" class="inline-block rounded-lg bg-marketing-amber px-5 py-2.5 text-sm font-semibold text-marketing-ink">
+                <p
+                    class="mb-3 text-xs font-semibold tracking-[0.18em] text-marketing-ink-muted uppercase"
+                >
+                    Get started
+                </p>
+                <a
+                    href="/signup"
+                    class="inline-block rounded-lg bg-marketing-amber px-5 py-2.5 text-sm font-semibold text-marketing-ink"
+                >
                     Start Free Trial
                 </a>
             </div>
         </div>
         <div class="border-t border-marketing-border">
-            <p class="mx-auto max-w-6xl px-4 py-4 text-xs text-marketing-ink-muted sm:px-6 lg:px-8">
+            <p
+                class="mx-auto max-w-6xl px-4 py-4 text-xs text-marketing-ink-muted sm:px-6 lg:px-8"
+            >
                 © {{ new Date().getFullYear() }} CourierOS. All rights reserved.
             </p>
         </div>

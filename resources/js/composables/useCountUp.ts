@@ -12,7 +12,11 @@ interface UseCountUpOptions {
  * the viewport. Respects prefers-reduced-motion by jumping straight to the
  * target value.
  */
-export function useCountUp({ target, duration = 1400, decimals = 0 }: UseCountUpOptions): {
+export function useCountUp({
+    target,
+    duration = 1400,
+    decimals = 0,
+}: UseCountUpOptions): {
     elementRef: Ref<HTMLElement | null>;
     value: Ref<number>;
 } {
