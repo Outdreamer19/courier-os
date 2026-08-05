@@ -447,7 +447,7 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
 <!-- ============ NAV ============ -->
 <nav id="nav">
   <a class="brand" href="#top">
-    <img class="brand-logo" src="{{ asset('logo.png') }}" alt="TODAY Shipping &amp; Logistics"
+    <img class="brand-logo" src="{{ asset('images/tenants/today-shipping/logo.png') }}" alt="TODAY Shipping &amp; Logistics"
          onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
     <span class="brand-fallback" style="display:none;align-items:center;gap:.6rem">
       <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg></span>
@@ -470,7 +470,7 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
 <!-- ============ HERO ============ -->
 <div class="hero-wrap">
 <header class="hero">
-  <h1>Shop <span class="r">Anywhere</span><span class="chip red" id="chipBox" style="background:none;box-shadow:none;border-radius:0;animation:chipFloat 3.4s var(--ease) infinite;"><img src="{{ asset('parcel.png') }}" alt="Parcel" style="width:100%;height:100%;object-fit:contain;"></span>Delivered<br><span class="g">Right</span><span class="chip" id="chipDoor"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M4 21h16"/><path d="M14.5 12v.01"/></svg></span>To Your Doorstep</h1>
+  <h1>Shop <span class="r">Anywhere</span><span class="chip red" id="chipBox" style="background:none;box-shadow:none;border-radius:0;animation:chipFloat 3.4s var(--ease) infinite;"><img src="{{ asset('images/tenants/today-shipping/parcel.png') }}" alt="Parcel" style="width:100%;height:100%;object-fit:contain;"></span>Delivered<br><span class="g">Right</span><span class="chip" id="chipDoor"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M4 21h16"/><path d="M14.5 12v.01"/></svg></span>To Your Doorstep</h1>
   <p class="lead load">Shop from your favourite US stores. We handle shipping, customs, and delivery — so your purchases arrive safely in Jamaica.</p>
   <div class="cta load">
     <a class="pill pill-red" href="{{ route('register') }}">Create Account
@@ -778,7 +778,7 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
   <div class="f-inner">
     <div>
       <a class="brand" href="#top">
-        <img class="brand-logo" src="{{ asset('logo.png') }}" alt="TODAY Shipping &amp; Logistics"
+        <img class="brand-logo" src="{{ asset('images/tenants/today-shipping/logo.png') }}" alt="TODAY Shipping &amp; Logistics"
              onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
         <span class="brand-fallback" style="display:none;align-items:center;gap:.6rem">
           <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg></span>

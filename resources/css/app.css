@@ -71,6 +71,19 @@
     --color-brand-green-soft: var(--brand-green-soft);
     --color-brand-green-muted: var(--brand-green-muted);
     --color-brand-cream: var(--brand-cream);
+
+    --color-marketing-cream: var(--marketing-cream);
+    --color-marketing-ink: var(--marketing-ink);
+    --color-marketing-ink-muted: var(--marketing-ink-muted);
+    --color-marketing-amber: var(--marketing-amber);
+    --color-marketing-orange: var(--marketing-orange);
+    --color-marketing-orange-deep: var(--marketing-orange-deep);
+    --color-marketing-olive: var(--marketing-olive);
+    --color-marketing-periwinkle: var(--marketing-periwinkle);
+    --color-marketing-lavender: var(--marketing-lavender);
+    --color-marketing-eggshell: var(--marketing-eggshell);
+    --color-marketing-border: var(--marketing-border);
+    --font-marketing: 'Inter', 'Inter Placeholder', ui-sans-serif, sans-serif;
 }
 
 /*
@@ -152,6 +165,29 @@
     .public-section-label-on-dark {
         @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand-green-soft;
     }
+
+    @keyframes marketing-marquee {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    .marketing-marquee-track {
+        animation: marketing-marquee 32s linear infinite;
+    }
+
+    .marketing-marquee-track:hover {
+        animation-play-state: paused;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .marketing-marquee-track {
+            animation: none;
+        }
+    }
 }
 
 /*
@@ -174,6 +210,20 @@
     --brand-green-soft: hsl(135 50% 42%);
     --brand-green-muted: hsl(135 35% 94%);
     --brand-cream: hsl(40 30% 97%);
+
+    /* Marketing (CourierOS central site) tokens — isolated from the tenant/shadcn
+       theme above; only consumed by resources/js/components/marketing/*. */
+    --marketing-cream: #fffbf5;
+    --marketing-ink: #210d02;
+    --marketing-ink-muted: rgba(79, 77, 73, 0.72);
+    --marketing-amber: #fcd519;
+    --marketing-orange: #fa8f1f;
+    --marketing-orange-deep: #fa7b31;
+    --marketing-olive: #aa8322;
+    --marketing-periwinkle: #c6dffa;
+    --marketing-lavender: #d6cdf0;
+    --marketing-eggshell: #efecdf;
+    --marketing-border: rgba(33, 13, 2, 0.08);
 
     /* shadcn-style semantic tokens */
     --background: hsl(40 30% 99%);

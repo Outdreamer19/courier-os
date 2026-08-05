@@ -34,6 +34,16 @@ class PublicPageController extends Controller
             return view(self::CUSTOM_HOME_VIEWS[$tenant->subdomain]);
         }
 
+        if (! $this->tenants->hasTenant()) {
+            return Inertia::render('central/Home', [
+                'pricing' => [
+                    'monthly' => 79,
+                    'setup' => 349,
+                    'currency' => 'USD',
+                ],
+            ]);
+        }
+
         return Inertia::render('public/Home', [
             'rate' => $this->rates->primaryRate(),
             'rateTiers' => $this->rates->activeTiers(),

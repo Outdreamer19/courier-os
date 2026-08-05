@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Tenant;
+use App\Support\Tenancy\TenantManager;
 use Database\Seeders\ShippingRateSeeder;
 use Database\Seeders\WarehouseAddressSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,11 +14,19 @@ class InertiaSharedDataTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config(['courieros.central_domain' => 'localhost']);
+        $tenant = Tenant::factory()->create(['subdomain' => 'shipd']);
+        app(TenantManager::class)->set($tenant);
+    }
+
     public function test_home_page_receives_active_rate_snapshot(): void
     {
         $this->seed([WarehouseAddressSeeder::class, ShippingRateSeeder::class]);
 
-        $this->get(route('home'))
+        $this->get('http://shipd.localhost/')
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('public/Home')
                 ->where('rate.currency', config('shipdjm.currency'))
@@ -31,7 +41,7 @@ class InertiaSharedDataTest extends TestCase
     {
         $this->seed([WarehouseAddressSeeder::class]);
 
-        $this->get(route('home'))
+        $this->get('http://shipd.localhost/')
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->where('warehouse.city', 'Miami')
                 ->where('warehouse.state', 'FL')

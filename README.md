@@ -91,6 +91,11 @@ npm run build               # production build (required before php artisan test
 
 Run after `php artisan migrate:fresh --seed` and `npm run build`.
 
+### Central marketing site (courieros.co, logged out)
+- [ ] `/` on the central domain (not a tenant subdomain) renders the CourierOS marketing page — sticky nav, hero, pricing ($79/mo + $349 setup), FAQ accordion, footer.
+- [ ] `/` on a tenant subdomain still renders that tenant's own public home page (regression check).
+- [ ] `/signup` renders full-bleed with no dashboard sidebar around it.
+
 ### Public site (logged out)
 - [ ] `/` renders hero, three-step "how it works", rate preview, FAQ, and final CTA.
 - [ ] `/about` renders mission, expectations, and values copy.
