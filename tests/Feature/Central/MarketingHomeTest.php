@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Central;
 
+use App\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -34,7 +35,7 @@ class MarketingHomeTest extends TestCase
 
     public function test_tenant_subdomain_still_renders_the_tenant_home_page(): void
     {
-        \App\Models\Tenant::factory()->create([
+        Tenant::factory()->create([
             'subdomain' => 'acme',
         ]);
 

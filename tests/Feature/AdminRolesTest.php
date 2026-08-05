@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\ContactMessage;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -94,12 +95,12 @@ class AdminRolesTest extends TestCase
 
         $this->actingAs($staff)
             ->delete(route('admin.contact-messages.destroy', [
-                'contact_message' => \App\Models\ContactMessage::create([
+                'contact_message' => ContactMessage::create([
                     'name' => 'Guest',
                     'email' => 'guest@test.com',
                     'subject' => 'Hello',
                     'message' => 'Need help',
-                    'status' => \App\Models\ContactMessage::STATUS_NEW,
+                    'status' => ContactMessage::STATUS_NEW,
                 ]),
             ]))
             ->assertForbidden();

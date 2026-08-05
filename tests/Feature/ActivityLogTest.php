@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\PreAlertStatus;
 use App\Models\ActivityLog;
 use App\Models\CustomerProfile;
 use App\Models\PreAlert;
@@ -44,7 +45,7 @@ class ActivityLogTest extends TestCase
 
         $this->actingAs($admin)
             ->put(route('admin.pre-alerts.update', ['pre_alert' => $preAlert]), [
-                'status' => \App\Enums\PreAlertStatus::UnderReview->value,
+                'status' => PreAlertStatus::UnderReview->value,
                 'admin_notes' => 'Reviewing invoice',
             ])
             ->assertRedirect();

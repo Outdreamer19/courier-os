@@ -6,14 +6,13 @@ use App\Concerns\CustomerProfileValidationRules;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\ActivityLog;
-use App\Models\AuthorisedPickupPerson;
 use App\Models\CustomerProfile;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use App\Services\CustomerReferenceGenerator;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
 class CreateNewUser implements CreatesNewUsers
@@ -40,7 +39,7 @@ class CreateNewUser implements CreatesNewUsers
 
         $validator->after(function ($validator) use ($input): void {
             if (! empty($input['date_of_birth'])) {
-                $dob = \Carbon\Carbon::parse($input['date_of_birth']);
+                $dob = Carbon::parse($input['date_of_birth']);
 
                 if ($dob->greaterThan(now()->subYears(18))) {
                     $validator->errors()->add(

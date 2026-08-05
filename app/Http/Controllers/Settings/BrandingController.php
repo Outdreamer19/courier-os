@@ -16,7 +16,6 @@ use Inertia\Response;
  * colour, and logo upload. Only accessible to users with the
  * manage_system_settings permission (i.e. tenant owners).
  */
-
 class BrandingController extends Controller
 {
     public function __construct(private readonly TenantManager $tenants) {}
