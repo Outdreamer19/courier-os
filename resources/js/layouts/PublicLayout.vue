@@ -2,13 +2,23 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { Facebook, Instagram, Menu, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import AppLogo from '@/components/AppLogo.vue';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
-import { home, about, rates, contact, dashboard, login, register } from '@/routes';
+import {
+    home,
+    about,
+    rates,
+    contact,
+    dashboard,
+    login,
+    register,
+} from '@/routes';
 import { terms, privacy, shipping, refund, restricted } from '@/routes/legal';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user ?? null);
+const brandName = computed(() => page.props.brand?.name ?? 'CourierOS');
 
 const navLinks = [
     { name: 'About', href: about() },
@@ -50,13 +60,9 @@ const mobileOpen = ref(false);
                 <Link
                     :href="home()"
                     class="group flex items-center gap-3"
-                    aria-label="TODAY Shipping home"
+                    :aria-label="`${brandName} home`"
                 >
-                    <img
-                        src="/branding/today-shipping-logo.png"
-                        alt="TODAY Shipping"
-                        class="h-10 w-auto object-contain"
-                    />
+                    <AppLogo />
                 </Link>
 
                 <nav class="hidden items-center gap-1 md:flex">
@@ -80,10 +86,7 @@ const mobileOpen = ref(false);
                         <Button as-child variant="ghost">
                             <Link :href="login()">Log in</Link>
                         </Button>
-                        <Button
-                            as-child
-                            class="public-cta"
-                        >
+                        <Button as-child class="public-cta">
                             <Link :href="register()">Create account</Link>
                         </Button>
                     </template>
@@ -121,10 +124,7 @@ const mobileOpen = ref(false);
                             <Button as-child variant="outline" class="flex-1">
                                 <Link :href="login()">Log in</Link>
                             </Button>
-                            <Button
-                                as-child
-                                class="flex-1 public-cta"
-                            >
+                            <Button as-child class="public-cta flex-1">
                                 <Link :href="register()">Create account</Link>
                             </Button>
                         </template>
@@ -137,15 +137,15 @@ const mobileOpen = ref(false);
             <slot />
         </main>
 
-        <footer class="border-t border-brand-green/30 bg-brand-ink text-brand-cream">
+        <footer
+            class="border-t border-brand-green/30 bg-brand-ink text-brand-cream"
+        >
             <div
                 class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8"
             >
                 <div class="space-y-3">
-                    <p
-                        class="text-lg font-semibold tracking-tight"
-                    >
-                        TODAY <span class="text-brand-green-soft">Shipping</span>
+                    <p class="text-lg font-semibold tracking-tight">
+                        {{ brandName }}
                     </p>
                     <p class="text-sm text-brand-cream/70">
                         Jamaica-based package forwarding. Shop the world, ship
@@ -154,7 +154,7 @@ const mobileOpen = ref(false);
                 </div>
                 <div>
                     <p
-                        class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand-green-soft"
+                        class="mb-3 text-xs font-semibold tracking-[0.18em] text-brand-green-soft uppercase"
                     >
                         Explore
                     </p>
@@ -171,7 +171,7 @@ const mobileOpen = ref(false);
                 </div>
                 <div>
                     <p
-                        class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand-green-soft"
+                        class="mb-3 text-xs font-semibold tracking-[0.18em] text-brand-green-soft uppercase"
                     >
                         Legal
                     </p>
@@ -188,22 +188,22 @@ const mobileOpen = ref(false);
                 </div>
                 <div>
                     <p
-                        class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand-green-soft"
+                        class="mb-3 text-xs font-semibold tracking-[0.18em] text-brand-green-soft uppercase"
                     >
                         Get started
                     </p>
                     <p class="mb-3 text-sm text-brand-cream/70">
-                        Create your free account to receive a customer
-                        reference and Florida shipping address.
+                        Create your free account to receive a customer reference
+                        and Florida shipping address.
                     </p>
-                    <Button
-                        as-child
-                        class="public-cta"
-                    >
+                    <Button as-child class="public-cta">
                         <Link :href="register()">Create account</Link>
                     </Button>
                     <div class="mt-4 flex items-center gap-2">
-                        <template v-for="social in socialLinks" :key="social.name">
+                        <template
+                            v-for="social in socialLinks"
+                            :key="social.name"
+                        >
                             <a
                                 :href="social.href"
                                 target="_blank"
@@ -211,8 +211,14 @@ const mobileOpen = ref(false);
                                 :aria-label="social.name"
                                 class="inline-flex size-9 items-center justify-center rounded-md border border-white/15 text-brand-cream/70 transition hover:border-brand-green/60 hover:text-brand-green-soft"
                             >
-                                <Instagram v-if="social.name === 'Instagram'" class="size-4" />
-                                <Facebook v-else-if="social.name === 'Facebook'" class="size-4" />
+                                <Instagram
+                                    v-if="social.name === 'Instagram'"
+                                    class="size-4"
+                                />
+                                <Facebook
+                                    v-else-if="social.name === 'Facebook'"
+                                    class="size-4"
+                                />
                                 <svg
                                     v-else
                                     class="size-4"
@@ -229,13 +235,14 @@ const mobileOpen = ref(false);
                     </div>
                 </div>
             </div>
-            <div
-                class="border-t border-white/10"
-            >
+            <div class="border-t border-white/10">
                 <div
                     class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-brand-cream/60 sm:flex-row sm:px-6 lg:px-8"
                 >
-                    <p>© {{ new Date().getFullYear() }} TODAY Shipping. All rights reserved.</p>
+                    <p>
+                        © {{ new Date().getFullYear() }} {{ brandName }}. All
+                        rights reserved.
+                    </p>
                     <p>
                         Built for Jamaica · Pickup only · JMD shipping rates ·
                         Digital partner:
