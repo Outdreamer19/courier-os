@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BlurRevealText from './BlurRevealText.vue';
+
 withDefaults(
     defineProps<{
         eyebrow: string;
@@ -13,7 +15,7 @@ withDefaults(
 
 <template>
     <div
-        class="grid items-center gap-12 rounded-3xl border border-marketing-border bg-gradient-to-br from-marketing-lavender/40 via-marketing-orange/10 to-marketing-cream p-8 sm:p-12 lg:grid-cols-2 lg:p-16"
+        class="grid items-center gap-12 rounded-3xl border border-marketing-border bg-marketing-cream bg-gradient-to-br from-marketing-lavender/40 via-marketing-orange/10 to-marketing-cream p-8 shadow-[0_-8px_40px_-12px_rgba(24,20,14,0.18)] sm:p-12 lg:grid-cols-2 lg:p-16"
     >
         <div :class="reverse ? 'lg:order-2' : 'lg:order-1'">
             <p
@@ -21,11 +23,12 @@ withDefaults(
             >
                 {{ eyebrow }}
             </p>
-            <h3
+            <BlurRevealText
+                as="h3"
+                :text="title"
+                :stagger="60"
                 class="mt-3 text-3xl leading-tight font-semibold tracking-tight text-marketing-ink sm:text-4xl"
-            >
-                {{ title }}
-            </h3>
+            />
             <p
                 class="mt-4 max-w-md text-base leading-relaxed text-marketing-ink-muted"
             >

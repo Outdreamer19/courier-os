@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { useBrand } from '@/composables/useBrand';
 import LegalPage from '@/pages/public/legal/LegalPage.vue';
 
-const sections = [
+const { name: brandName } = useBrand();
+
+const sections = computed(() => [
     {
         heading: '1. Information we collect',
-        body: 'We collect the information you provide when creating an account (name, email, phone, Jamaica address), submitting pre-alerts (invoices, shipment details), and contacting us. We also store package-related operational data once your shipments begin.',
+        body: 'We collect the information you provide when creating an account (name, email, phone, delivery address), submitting pre-alerts (invoices, shipment details), and contacting us. We also store package-related operational data once your shipments begin.',
     },
     {
         heading: '2. How we use information',
@@ -23,7 +27,7 @@ const sections = [
         heading: '5. Your rights',
         body: 'You can review and update your profile information at any time. To request deletion of your account or data, please contact us.',
     },
-];
+]);
 </script>
 
 <template>
@@ -32,7 +36,7 @@ const sections = [
     <LegalPage
         eyebrow="Legal"
         title="Privacy Policy"
-        intro="How TODAY Shipping collects, uses, and protects your information. Placeholder content for MVP."
+        :intro="`How ${brandName} collects, uses, and protects your information. Placeholder content for MVP.`"
         :sections="sections"
     />
 </template>

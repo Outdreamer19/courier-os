@@ -14,10 +14,12 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useBrand } from '@/composables/useBrand';
 import { useScrollReveal } from '@/composables/useScrollReveal';
 import { store as contactStore } from '@/routes/contact';
 
 const page = usePage();
+const { name: brandName } = useBrand();
 
 const form = useForm({
     name: '',
@@ -50,19 +52,20 @@ const { sectionDelay, itemDelay } = useScrollReveal();
 </script>
 
 <template>
-    <Head title="Contact TODAY Shipping" />
+    <Head :title="`Contact ${brandName}`" />
 
-    <section class="relative overflow-hidden bg-brand-ink text-brand-cream fade-in-section" :style="sectionDelay(0)">
+    <section
+        class="fade-in-section relative overflow-hidden bg-brand-ink text-brand-cream"
+        :style="sectionDelay(0)"
+    >
         <div
             class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(30,142,62,0.18),transparent_50%)]"
             aria-hidden="true"
         />
         <div class="relative mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-            <p class="public-section-label-on-dark">
-                Contact us
-            </p>
+            <p class="public-section-label-on-dark">Contact us</p>
             <h1
-                class="mt-3 text-balance text-4xl font-semibold tracking-tight sm:text-5xl"
+                class="mt-3 text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
             >
                 We'd love to hear from you
             </h1>
@@ -73,7 +76,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
         </div>
     </section>
 
-    <section class="bg-background fade-in-section" :style="sectionDelay(1)">
+    <section class="fade-in-section bg-background" :style="sectionDelay(1)">
         <div
             class="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:px-8"
         >
@@ -140,7 +143,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                                 v-model="form.message"
                                 rows="6"
                                 required
-                                class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                             ></textarea>
                             <InputError :message="form.errors.message" />
                         </div>
@@ -152,7 +155,11 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                                 class="public-cta"
                             >
                                 <Send class="size-4" />
-                                {{ form.processing ? 'Sending…' : 'Send message' }}
+                                {{
+                                    form.processing
+                                        ? 'Sending…'
+                                        : 'Send message'
+                                }}
                             </Button>
                         </div>
                     </form>
@@ -174,7 +181,8 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                             <div>
                                 <p class="font-medium">Email</p>
                                 <p class="text-muted-foreground">
-                                    support@todayshipping.com (placeholder)
+                                    Contact details are configured by the
+                                    courier team (placeholder)
                                 </p>
                             </div>
                         </div>
@@ -182,9 +190,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                             <Phone class="mt-0.5 size-4 text-brand-green" />
                             <div>
                                 <p class="font-medium">Phone</p>
-                                <p class="text-muted-foreground">
-                                    Coming soon
-                                </p>
+                                <p class="text-muted-foreground">Coming soon</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
@@ -203,7 +209,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                 </Card>
 
                 <div
-                    class="rounded-xl border border-border bg-secondary/30 p-6 text-sm text-muted-foreground fade-in-item"
+                    class="fade-in-item rounded-xl border border-border bg-secondary/30 p-6 text-sm text-muted-foreground"
                     :style="itemDelay(2)"
                 >
                     Already a customer? Log in to send a support message tied

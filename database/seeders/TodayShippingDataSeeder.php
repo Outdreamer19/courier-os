@@ -30,6 +30,12 @@ class TodayShippingDataSeeder extends Seeder
 
     private const PREFIX = 'TSL';
 
+    /**
+     * The pilot client's real owner login. Kept as a constant so the seeder,
+     * the UAT runbook, and any future reset all agree on one address.
+     */
+    private const PILOT_OWNER_EMAIL = 'admin@todayshippingja.com';
+
     public function run(): void
     {
         // Guarantees the tenant, owner, warehouse, and starter rate exist.
@@ -69,7 +75,21 @@ class TodayShippingDataSeeder extends Seeder
      */
     private function seedAdminTeam(): array
     {
-        $owner = User::query()->where('email', 'owner@today.test')->first();
+        // The pilot client signs in with their real, reachable address — the
+        // @today.test seed accounts are unroutable, so password resets and
+        // verification mail sent to them go nowhere. Seeding this here means
+        // a freshly seeded environment is immediately usable by the client
+        // rather than needing a tinker one-liner after every reset.
+        $owner = User::query()->updateOrCreate(
+            ['email' => self::PILOT_OWNER_EMAIL],
+            [
+                'name' => 'Today Shipping Admin',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_OWNER,
+                'status' => User::STATUS_ACTIVE,
+                'email_verified_at' => now(),
+            ],
+        );
 
         $admin = User::query()->updateOrCreate(
             ['email' => 'admin@today.test'],

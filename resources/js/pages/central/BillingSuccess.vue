@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="You're all set — CourierOS" />
+    <Head title="You're all set" />
 
     <div
         class="flex min-h-screen items-center justify-center bg-[hsl(222_47%_11%)] px-6 py-12 text-white"

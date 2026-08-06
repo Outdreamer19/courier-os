@@ -141,7 +141,7 @@ const submit = () => {
             <div class="flex gap-3">
                 <Button
                     type="submit"
-                    class="bg-brand-gold text-white hover:bg-brand-gold-soft"
+                    class="bg-brand-ink text-white hover:bg-brand-ink-soft"
                     :disabled="form.processing"
                 >
                     Create package

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
 
@@ -7,6 +8,9 @@ defineProps<{
     title?: string;
     description?: string;
 }>();
+
+const page = usePage();
+const brandName = computed(() => page.props?.brand?.name ?? 'CourierOS');
 </script>
 
 <template>
@@ -26,7 +30,7 @@ defineProps<{
                             <AppLogoIcon class="size-6" />
                         </span>
                         <span class="text-base font-semibold tracking-tight">
-                            TODAY <span class="text-brand-gold">Shipping</span>
+                            {{ brandName }}
                         </span>
                     </Link>
                     <div class="space-y-1 text-center">

@@ -23,7 +23,7 @@ const centralDomain = computed(() => {
 </script>
 
 <template>
-    <Head title="Start your courier platform — CourierOS" />
+    <Head title="Start your courier platform" />
 
     <div class="min-h-screen bg-[hsl(222_47%_11%)] text-white lg:grid lg:grid-cols-2">
         <!-- Left: the pitch -->

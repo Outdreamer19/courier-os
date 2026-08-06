@@ -1,14 +1,35 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { Menu, X } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { login } from '@/routes';
 
 const links = [
-    { name: 'Product', href: '#product' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'FAQ', href: '#faq' },
+    { name: 'Product', href: '/product' },
+    { name: 'Pricing', href: '/pricing' },
+    { name: 'FAQ', href: '/#faq' },
 ];
+
+const page = usePage();
+
+/**
+ * The logo points at the top of the current page when we're already on the
+ * home page, and at the home page itself from /product and /pricing —
+ * otherwise `#top` is a dead anchor on the sub-pages.
+ */
+const isHome = computed(() => {
+    const path = new URL(page.url, 'http://localhost').pathname;
+
+    return path === '/' || path === '';
+});
+
+const homeHref = computed(() => (isHome.value ? '#top' : '/'));
+
+const isCurrent = (href: string) => {
+    const path = new URL(page.url, 'http://localhost').pathname;
+
+    return href.startsWith('/') && !href.includes('#') && path === href;
+};
 
 const mobileOpen = ref(false);
 </script>
@@ -21,7 +42,7 @@ const mobileOpen = ref(false);
             class="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-8"
         >
             <a
-                href="#top"
+                :href="homeHref"
                 class="flex items-center gap-2 text-lg font-semibold tracking-tight text-marketing-ink"
             >
                 <span
@@ -37,7 +58,13 @@ const mobileOpen = ref(false);
                     v-for="link in links"
                     :key="link.name"
                     :href="link.href"
-                    class="rounded-md px-3 py-2 text-sm font-medium text-marketing-ink/80 transition hover:bg-marketing-eggshell hover:text-marketing-ink"
+                    :aria-current="isCurrent(link.href) ? 'page' : undefined"
+                    class="rounded-md px-3 py-2 text-sm font-medium transition hover:bg-marketing-eggshell hover:text-marketing-ink"
+                    :class="
+                        isCurrent(link.href)
+                            ? 'bg-marketing-eggshell text-marketing-ink'
+                            : 'text-marketing-ink/80'
+                    "
                 >
                     {{ link.name }}
                 </a>
@@ -62,6 +89,7 @@ const mobileOpen = ref(false);
                 type="button"
                 class="inline-flex size-9 items-center justify-center rounded-md border border-marketing-border md:hidden"
                 aria-label="Toggle menu"
+                :aria-expanded="mobileOpen"
                 @click="mobileOpen = !mobileOpen"
             >
                 <Menu v-if="!mobileOpen" class="size-5" />
@@ -78,7 +106,13 @@ const mobileOpen = ref(false);
                     v-for="link in links"
                     :key="link.name"
                     :href="link.href"
-                    class="block rounded-md px-3 py-2 text-sm font-medium text-marketing-ink/80"
+                    :aria-current="isCurrent(link.href) ? 'page' : undefined"
+                    class="block rounded-md px-3 py-2 text-sm font-medium"
+                    :class="
+                        isCurrent(link.href)
+                            ? 'bg-marketing-eggshell text-marketing-ink'
+                            : 'text-marketing-ink/80'
+                    "
                     @click="mobileOpen = false"
                 >
                     {{ link.name }}

@@ -133,6 +133,7 @@ class User extends Authenticatable implements PasskeyUser
             'manage_customers' => in_array($this->role, [self::ROLE_OWNER, self::ROLE_ADMIN], true),
             'view_customers' => true,
             'manage_contact_messages' => in_array($this->role, [self::ROLE_OWNER, self::ROLE_ADMIN], true),
+            'manage_platform_support' => in_array($this->role, [self::ROLE_OWNER, self::ROLE_ADMIN], true),
             'delete_records' => in_array($this->role, [self::ROLE_OWNER, self::ROLE_ADMIN], true),
             'manage_packages' => true,
             'manage_pre_alerts' => true,

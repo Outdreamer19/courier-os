@@ -15,12 +15,21 @@ use Inertia\Response;
 class DashboardController extends Controller
 {
     /**
-     * Customer dashboard entry point. Admins are bounced to the admin dashboard
-     * so the route works as the post-login landing page for every role.
+     * Customer dashboard entry point, and the post-login landing page for
+     * every role. Tenant admins are bounced to the tenant admin dashboard and
+     * the CourierOS platform owner is bounced to the platform console — only
+     * customers actually render this page.
      */
     public function __invoke(Request $request): Response|RedirectResponse
     {
         $user = $request->user();
+
+        // The platform owner belongs to no tenant, so none of the customer
+        // portal data below means anything to them. Send them to the console
+        // that does: revenue, tenant health, and signups.
+        if ($user instanceof User && $user->isPlatformOwner()) {
+            return redirect()->route('central.platform.dashboard');
+        }
 
         if ($user instanceof User && $user->isAdmin()) {
             return redirect()->route('admin.dashboard');

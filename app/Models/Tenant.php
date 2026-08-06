@@ -86,6 +86,33 @@ class Tenant extends Model
     }
 
     /**
+     * The host this tenant's site is served from.
+     *
+     * A custom domain wins over the subdomain, mirroring the precedence in
+     * ResolveTenant so a redirect never sends a white-label tenant back to a
+     * courieros.co URL their customers are not supposed to see.
+     */
+    public function host(): string
+    {
+        return $this->custom_domain
+            ?: $this->subdomain.'.'.config('courieros.central_domain');
+    }
+
+    /**
+     * Absolute URL to a path on this tenant's own host.
+     *
+     * Sessions are host-scoped (SESSION_DOMAIN is deliberately null), so a
+     * user bounced here from the central domain arrives logged out and has to
+     * authenticate against the tenant they actually belong to.
+     */
+    public function url(string $path = '/'): string
+    {
+        $scheme = config('app.env') === 'local' ? 'http' : 'https';
+
+        return $scheme.'://'.$this->host().'/'.ltrim($path, '/');
+    }
+
+    /**
      * Resolve a tenant by its subdomain or custom domain.
      */
     public static function resolveByHost(string $subdomain, ?string $host = null): ?self

@@ -2,6 +2,7 @@
 import { ChevronDown } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import BlurRevealText from './BlurRevealText.vue';
 
 const faqs = [
     { q: 'What is CourierOS?', a: 'CourierOS is a platform for Caribbean courier and freight-forwarding businesses to run pre-alerts, package tracking, billing, and customer communication — all from one branded site.' },
@@ -20,9 +21,10 @@ const openIndex = ref<number | null>(0);
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <div class="text-center">
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-marketing-orange">FAQ</p>
-                <h2 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-marketing-ink sm:text-4xl">
-                    Frequently Asked Questions
-                </h2>
+                <BlurRevealText
+                    text="Frequently Asked Questions"
+                    class="mt-2 text-balance text-3xl font-semibold tracking-tight text-marketing-ink sm:text-4xl"
+                />
             </div>
 
             <div class="mt-10 space-y-3">

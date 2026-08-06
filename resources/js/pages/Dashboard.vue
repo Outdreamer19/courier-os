@@ -24,15 +24,20 @@ import {
 } from '@/components/ui/card';
 import { contact, dashboard } from '@/routes';
 import { edit as profileEdit } from '@/routes/portal/profile';
-import { create as createPreAlert, index as preAlertsIndex, show as showPreAlert } from '@/routes/portal/pre-alerts';
-import { index as packagesIndex, show as showPackage } from '@/routes/portal/packages';
+import {
+    create as createPreAlert,
+    index as preAlertsIndex,
+    show as showPreAlert,
+} from '@/routes/portal/pre-alerts';
+import {
+    index as packagesIndex,
+    show as showPackage,
+} from '@/routes/portal/packages';
 import { shippingAddress } from '@/routes/portal';
 
 defineOptions({
     layout: {
-        breadcrumbs: [
-            { title: 'Dashboard', href: dashboard() },
-        ],
+        breadcrumbs: [{ title: 'Dashboard', href: dashboard() }],
     },
 });
 
@@ -82,6 +87,7 @@ const props = defineProps<{
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user ?? null);
+const brandName = computed(() => page.props?.brand?.name ?? 'CourierOS');
 const reference = computed(() => props.profile?.customer_reference ?? '—');
 
 const formattedAmountDue = computed(() =>
@@ -128,7 +134,7 @@ const formatDate = (value: string | null) => {
             >
                 <div>
                     <p
-                        class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold"
+                        class="text-xs font-semibold tracking-[0.18em] text-brand-gold uppercase"
                     >
                         Welcome back
                     </p>
@@ -136,7 +142,7 @@ const formatDate = (value: string | null) => {
                         Hello, {{ user?.name ?? 'there' }}
                     </h1>
                     <p class="text-sm text-muted-foreground">
-                        Your TODAY Shipping customer reference is
+                        Your {{ brandName }} customer reference is
                         <span class="font-medium text-foreground">
                             {{ reference }}
                         </span>
@@ -151,7 +157,7 @@ const formatDate = (value: string | null) => {
                     />
                     <Button
                         as-child
-                        class="bg-brand-gold text-white hover:bg-brand-gold-soft"
+                        class="bg-brand-ink text-white hover:bg-brand-ink-soft"
                     >
                         <Link :href="contact()">
                             <Headset class="size-4" />
@@ -168,14 +174,15 @@ const formatDate = (value: string | null) => {
                 :key="card.title"
                 class="border-border bg-card"
             >
-                <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle class="text-sm font-medium text-muted-foreground">
+                <CardHeader
+                    class="flex flex-row items-center justify-between space-y-0 pb-2"
+                >
+                    <CardTitle
+                        class="text-sm font-medium text-muted-foreground"
+                    >
                         {{ card.title }}
                     </CardTitle>
-                    <component
-                        :is="card.icon"
-                        class="size-4 text-brand-gold"
-                    />
+                    <component :is="card.icon" class="size-4 text-brand-gold" />
                 </CardHeader>
                 <CardContent>
                     <p class="text-3xl font-semibold tracking-tight">
@@ -213,7 +220,9 @@ const formatDate = (value: string | null) => {
                 <CardContent v-if="warehouse" class="space-y-4 text-sm">
                     <dl class="grid gap-3 sm:grid-cols-2">
                         <div>
-                            <dt class="text-xs uppercase tracking-wider text-muted-foreground">
+                            <dt
+                                class="text-xs tracking-wider text-muted-foreground uppercase"
+                            >
                                 Name
                             </dt>
                             <dd class="mt-0.5 font-medium">
@@ -221,7 +230,9 @@ const formatDate = (value: string | null) => {
                             </dd>
                         </div>
                         <div>
-                            <dt class="text-xs uppercase tracking-wider text-muted-foreground">
+                            <dt
+                                class="text-xs tracking-wider text-muted-foreground uppercase"
+                            >
                                 Suite (your reference)
                             </dt>
                             <dd class="mt-0.5 font-medium">
@@ -229,7 +240,9 @@ const formatDate = (value: string | null) => {
                             </dd>
                         </div>
                         <div class="sm:col-span-2">
-                            <dt class="text-xs uppercase tracking-wider text-muted-foreground">
+                            <dt
+                                class="text-xs tracking-wider text-muted-foreground uppercase"
+                            >
                                 Address
                             </dt>
                             <dd class="mt-0.5 font-medium">
@@ -265,20 +278,28 @@ const formatDate = (value: string | null) => {
                 <CardContent class="space-y-3">
                     <Button
                         as-child
-                        class="w-full justify-start bg-brand-gold text-white hover:bg-brand-gold-soft"
+                        class="w-full justify-start bg-brand-ink text-white hover:bg-brand-ink-soft"
                     >
                         <Link :href="createPreAlert()">
                             <PlusCircle class="size-4" />
                             Submit pre-alert
                         </Link>
                     </Button>
-                    <Button as-child variant="outline" class="w-full justify-start">
+                    <Button
+                        as-child
+                        variant="outline"
+                        class="w-full justify-start"
+                    >
                         <Link :href="packagesIndex()">
                             <Package class="size-4" />
                             View my packages
                         </Link>
                     </Button>
-                    <Button as-child variant="outline" class="w-full justify-start">
+                    <Button
+                        as-child
+                        variant="outline"
+                        class="w-full justify-start"
+                    >
                         <Link :href="profileEdit()">
                             <MapPinned class="size-4" />
                             Update profile
@@ -300,10 +321,7 @@ const formatDate = (value: string | null) => {
                     </Button>
                 </CardHeader>
                 <CardContent>
-                    <ul
-                        v-if="recentPreAlerts.length"
-                        class="divide-y text-sm"
-                    >
+                    <ul v-if="recentPreAlerts.length" class="divide-y text-sm">
                         <li
                             v-for="item in recentPreAlerts"
                             :key="item.id"
@@ -335,7 +353,7 @@ const formatDate = (value: string | null) => {
                         <Button
                             as-child
                             size="sm"
-                            class="bg-brand-gold text-white hover:bg-brand-gold-soft"
+                            class="bg-brand-ink text-white hover:bg-brand-ink-soft"
                         >
                             <Link :href="createPreAlert()">Submit one now</Link>
                         </Button>
@@ -354,10 +372,7 @@ const formatDate = (value: string | null) => {
                     </Button>
                 </CardHeader>
                 <CardContent>
-                    <ul
-                        v-if="recentPackages.length"
-                        class="divide-y text-sm"
-                    >
+                    <ul v-if="recentPackages.length" class="divide-y text-sm">
                         <li
                             v-for="item in recentPackages"
                             :key="item.id"
@@ -371,7 +386,12 @@ const formatDate = (value: string | null) => {
                                     {{ item.package_reference }}
                                 </Link>
                                 <p class="text-xs text-muted-foreground">
-                                    {{ formatMoney(item.amount_due, stats.currency) }}
+                                    {{
+                                        formatMoney(
+                                            item.amount_due,
+                                            stats.currency,
+                                        )
+                                    }}
                                     due
                                 </p>
                             </div>

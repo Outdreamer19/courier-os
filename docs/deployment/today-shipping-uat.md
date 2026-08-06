@@ -167,24 +167,37 @@ If the tenant is missing, seed it:
 php artisan db:seed --class=TodayShippingDataSeeder --force
 ```
 
-### 6b. Point the owner account at a real address
+### 6b. Give the client their owner login
+
+`TodayShippingDataSeeder` now seeds `admin@todayshippingja.com` as the tenant
+owner, already email-verified. On a freshly seeded environment the account
+exists but has the seeder's throwaway password, so set a real one:
 
 ```bash
-php artisan tenant:reset today \
-    --keep-customers \
-    --owner-email=admin@todayshippingja.com \
-    --owner-name="Today Shipping Admin" \
-    --force
+php artisan tenant:user today admin@todayshippingja.com \
+    --name="Today Shipping Admin" \
+    --role=owner
 ```
 
-`--keep-customers` preserves the demo customer accounts and profiles while
-clearing shipment data. Drop the flag to also remove every customer account.
+Omitting `--password` generates a strong one and prints it once — copy it
+straight into whatever you use to hand credentials over. The command also
+prints the sign-in URL and marks the address verified, so they are not stuck
+behind the `verified` middleware waiting on mail that may not be configured
+yet.
 
-Then set the password yourself and hand it over out-of-band:
+Add more of their staff the same way:
 
 ```bash
-php artisan tinker --execute="\$u = App\Models\User::withoutGlobalScope('tenant')->where('email','admin@todayshippingja.com')->firstOrFail(); \$u->forceFill(['password' => Hash::make('CHOOSE-A-STRONG-PASSWORD'), 'email_verified_at' => now()])->save();"
+php artisan tenant:user today ops@todayshippingja.com --role=staff
+php artisan tenant:user today manager@todayshippingja.com --role=admin
 ```
+
+Roles: `owner` (full access including admin user management), `admin`
+(operations + billing), `staff` (day-to-day package and pre-alert work).
+
+> The old `tenant:reset --owner-email=...` flow still works, but it renames
+> whichever owner it finds first and leaves you to set the password by hand
+> through tinker. Prefer `tenant:user`.
 
 ### 6c. When they're ready for real data
 
@@ -240,6 +253,14 @@ Run through this before sending the client their credentials.
       on `courieros.co`
 - [ ] `https://island.courieros.co` (the other seeded tenant) resolves
       separately and shows none of Today Shipping's data
+- [ ] Browser tab on any Today Shipping page reads
+      "… - Today Shipping & Logistics", never "CourierOS"
+- [ ] Log in as `platform@courieros.co` on `courieros.co` → lands on
+      `/platform`, **not** a customer dashboard, and Today Shipping appears on
+      the tenant health board
+- [ ] Suspend Today Shipping from `/platform/tenants`, load
+      `today.courieros.co` → branded 403 page, not a bare "Forbidden".
+      Reactivate afterwards.
 
 ---
 

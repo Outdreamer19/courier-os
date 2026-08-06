@@ -13,7 +13,10 @@ class DashboardController extends Controller
     {
         return Inertia::render('central/admin/Dashboard', [
             'stats' => $stats->overview(),
+            'usage' => $stats->usage(),
             'signups' => $stats->signupsByMonth(),
+            'tenantHealth' => $stats->tenantHealth(8),
+            'attention' => $stats->attention(),
         ]);
     }
 }

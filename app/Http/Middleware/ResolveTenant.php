@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Tenant;
+use App\Support\Tenancy\CentralDomain;
 use App\Support\Tenancy\TenantManager;
 use Closure;
 use Illuminate\Http\Request;
@@ -15,40 +16,48 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * TenantManager so the BelongsToTenant global scope can isolate data.
  *
  * Hosts on the central domain (apex, www, app, and other reserved
- * subdomains) bind no tenant and operate in the platform context.
+ * subdomains) bind no tenant and operate in the platform context. The host
+ * rules themselves live in CentralDomain so the guards that need to tell a
+ * platform host apart from an unrecognised one agree with this.
  */
 class ResolveTenant
 {
-    public function __construct(private readonly TenantManager $tenants) {}
+    public function __construct(
+        private readonly TenantManager $tenants,
+        private readonly CentralDomain $central,
+    ) {}
 
     public function handle(Request $request, Closure $next): Response
     {
         $host = strtolower($request->getHost());
-        $central = strtolower((string) config('courieros.central_domain'));
-        $reserved = (array) config('courieros.reserved_subdomains', []);
 
         // Custom domain takes precedence: a host that is not under the central
         // domain may belong to a tenant via its custom_domain.
-        if (! $this->isUnderCentralDomain($host, $central)) {
+        if (! $this->central->covers($host)) {
             $tenant = Tenant::query()->where('custom_domain', $host)->first();
 
             if (! $tenant) {
-                // Unknown host entirely; let it fall through as central so the
-                // app/marketing still works on arbitrary local hosts in dev.
+                // Unknown host entirely; treat as central so marketing still
+                // works on arbitrary local hosts in dev — and clear any
+                // previously bound tenant from an earlier request in-process.
+                $this->tenants->forget();
+
                 return $next($request);
             }
 
             return $this->bindAndContinue($tenant, $request, $next);
         }
 
-        $subdomain = $this->extractSubdomain($host, $central);
-
         // Apex or reserved subdomain → central context, no tenant.
-        if ($subdomain === null || in_array($subdomain, $reserved, true)) {
+        if ($this->central->isPlatformHost($host)) {
+            $this->tenants->forget();
+
             return $next($request);
         }
 
-        $tenant = Tenant::query()->where('subdomain', $subdomain)->first();
+        $tenant = Tenant::query()
+            ->where('subdomain', $this->central->subdomain($host))
+            ->first();
 
         if (! $tenant) {
             throw new NotFoundHttpException('Unknown tenant.');
@@ -69,28 +78,5 @@ class ResolveTenant
         $this->tenants->set($tenant);
 
         return $next($request);
-    }
-
-    private function isUnderCentralDomain(string $host, string $central): bool
-    {
-        return $host === $central || str_ends_with($host, '.'.$central);
-    }
-
-    private function extractSubdomain(string $host, string $central): ?string
-    {
-        if ($host === $central) {
-            return null;
-        }
-
-        $suffix = '.'.$central;
-
-        if (! str_ends_with($host, $suffix)) {
-            return null;
-        }
-
-        $label = substr($host, 0, -strlen($suffix));
-
-        // Only treat a single left-most label as the tenant subdomain.
-        return $label === '' ? null : $label;
     }
 }

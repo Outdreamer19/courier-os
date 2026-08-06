@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { Form, Head, Link } from '@inertiajs/vue3';
-import {
-    ArrowLeft,
-    CheckCircle2,
-    Mail,
-    Trash2,
-} from 'lucide-vue-next';
+import { Form, Head, Link, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, CheckCircle2, Mail, Trash2 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
@@ -57,10 +53,13 @@ const props = defineProps<{
     statuses: Record<string, string>;
 }>();
 
+const page = usePage();
+const brandName = computed(() => page.props?.brand?.name ?? 'CourierOS');
+
 const replyMailto = () => {
     const subject = encodeURIComponent(`Re: ${props.message.subject}`);
     const body = encodeURIComponent(
-        `Hi ${props.message.name},\n\nThank you for contacting TODAY Shipping.\n\n`,
+        `Hi ${props.message.name},\n\nThank you for contacting ${brandName.value}.\n\n`,
     );
 
     return `mailto:${props.message.email}?subject=${subject}&body=${body}`;
@@ -79,9 +78,11 @@ const formatDate = (value: string | null) => {
     <Head :title="`Contact · ${message.subject}`" />
 
     <div class="flex flex-col gap-6 p-4 lg:p-6">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+        >
             <div class="space-y-2">
-                <Button as-child variant="ghost" size="sm" class="w-fit -ml-2">
+                <Button as-child variant="ghost" size="sm" class="-ml-2 w-fit">
                     <Link :href="index()">
                         <ArrowLeft class="size-4" />
                         Back to inbox
@@ -166,10 +167,7 @@ const formatDate = (value: string | null) => {
                     <CardTitle>Message</CardTitle>
                     <CardDescription>
                         {{ message.name }} ·
-                        <a
-                            :href="`mailto:${message.email}`"
-                            class="underline"
-                        >
+                        <a :href="`mailto:${message.email}`" class="underline">
                             {{ message.email }}
                         </a>
                         <span v-if="message.phone">
@@ -178,7 +176,7 @@ const formatDate = (value: string | null) => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent
-                    class="whitespace-pre-wrap rounded-lg border bg-muted/30 p-4 text-sm leading-relaxed"
+                    class="rounded-lg border bg-muted/30 p-4 text-sm leading-relaxed whitespace-pre-wrap"
                 >
                     {{ message.body }}
                 </CardContent>
@@ -251,7 +249,7 @@ const formatDate = (value: string | null) => {
                     </div>
                     <Button
                         type="submit"
-                        class="bg-brand-gold text-white hover:bg-brand-gold-soft"
+                        class="bg-brand-ink text-white hover:bg-brand-ink-soft"
                         :disabled="processing"
                     >
                         Save changes
