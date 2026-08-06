@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Package } from 'lucide-vue-next';
-import StatusBadge from '@/components/StatusBadge.vue';
+import { ArrowUpRight, Package } from 'lucide-vue-next';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableFooter,
+    DataTableHeader,
+    DataTableHeaderCell,
+    DataTableRow,
+} from '@/components/data-table';
+import StatusBadge from '@/components/StatusBadge.vue';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { statusTone as paymentTone } from '@/lib/statusTone';
 import { dashboard } from '@/routes';
 import { index, show } from '@/routes/portal/packages';
 
@@ -38,6 +43,10 @@ type PackageRow = {
 const props = defineProps<{
     packages: {
         data: PackageRow[];
+        links: Array<{ url: string | null; label: string; active: boolean }>;
+        from: number | null;
+        to: number | null;
+        total: number;
     };
     currency: string;
 }>();
@@ -58,58 +67,113 @@ const formatMoney = (amount: number) => {
             </p>
         </div>
 
-        <Card v-if="packages.data.length">
-            <CardHeader>
-                <CardTitle>All packages</CardTitle>
-                <CardDescription>Pickup only — no home delivery.</CardDescription>
-            </CardHeader>
-            <CardContent class="overflow-x-auto">
-                <table class="w-full min-w-[720px] text-left text-sm">
-                    <thead>
-                        <tr class="border-b text-muted-foreground">
-                            <th class="pb-3 pr-4 font-medium">Reference</th>
-                            <th class="pb-3 pr-4 font-medium">Merchant</th>
-                            <th class="pb-3 pr-4 font-medium">Status</th>
-                            <th class="pb-3 pr-4 font-medium">Payment</th>
-                            <th class="pb-3 font-medium">Amount due</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
+        <Card v-if="packages.data.length" class="gap-0 overflow-hidden py-0">
+            <CardContent class="px-0">
+                <DataTable min-width="760px">
+                    <DataTableHeader>
+                        <DataTableHeaderCell width="24%">
+                            Reference
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="22%">
+                            Merchant
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="26%">
+                            Status
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="20%" align="right">
+                            Amount due
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="8%">
+                            <span class="sr-only">Actions</span>
+                        </DataTableHeaderCell>
+                    </DataTableHeader>
+                    <DataTableBody>
+                        <DataTableRow
                             v-for="row in packages.data"
                             :key="row.id"
-                            class="border-b border-border/60 last:border-0"
                         >
-                            <td class="py-3 pr-4">
+                            <DataTableCell>
                                 <Link
                                     :href="show(row.id)"
-                                    class="font-medium hover:underline"
+                                    class="block truncate font-medium tabular-nums hover:underline"
                                 >
                                     {{ row.package_reference }}
                                 </Link>
-                            </td>
-                            <td class="py-3 pr-4 text-muted-foreground">
+                                <div
+                                    v-if="row.tracking_number"
+                                    class="truncate text-xs text-muted-foreground"
+                                >
+                                    {{ row.tracking_number }}
+                                </div>
+                            </DataTableCell>
+                            <DataTableCell muted class="truncate">
                                 {{ row.merchant_name ?? '—' }}
-                            </td>
-                            <td class="py-3 pr-4">
+                            </DataTableCell>
+                            <DataTableCell>
                                 <StatusBadge
                                     :status="row.status"
                                     :label="row.status_label"
                                 />
-                            </td>
-                            <td class="py-3 pr-4">
-                                <StatusBadge
-                                    :status="row.payment_status"
-                                    :label="row.payment_status_label"
-                                />
-                            </td>
-                            <td class="py-3 font-medium">
-                                {{ formatMoney(row.amount_due) }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </DataTableCell>
+                            <DataTableCell
+                                align="right"
+                                class="whitespace-nowrap"
+                            >
+                                <div
+                                    class="font-medium tabular-nums"
+                                    :class="
+                                        row.amount_due > 0
+                                            ? 'text-foreground'
+                                            : 'text-muted-foreground/60'
+                                    "
+                                >
+                                    {{ formatMoney(row.amount_due) }}
+                                </div>
+                                <div
+                                    class="mt-0.5 inline-flex items-center gap-1.5 text-xs font-medium"
+                                    :class="
+                                        paymentTone(row.payment_status).text
+                                    "
+                                >
+                                    <span
+                                        class="size-1.5 shrink-0 rounded-full"
+                                        :class="
+                                            paymentTone(row.payment_status).dot
+                                        "
+                                    />
+                                    {{ row.payment_status_label }}
+                                </div>
+                            </DataTableCell>
+                            <DataTableCell align="right">
+                                <Button
+                                    as-child
+                                    variant="outline"
+                                    size="icon-sm"
+                                    class="text-muted-foreground opacity-70 transition-all group-hover:opacity-100 hover:border-brand-ink/50 hover:bg-brand-ink/10 hover:text-brand-ink dark:hover:bg-brand-ink/25 dark:hover:text-brand-cream"
+                                >
+                                    <Link
+                                        :href="show(row.id)"
+                                        :title="`View ${row.package_reference}`"
+                                    >
+                                        <ArrowUpRight class="size-4" />
+                                        <span class="sr-only">
+                                            View {{ row.package_reference }}
+                                        </span>
+                                    </Link>
+                                </Button>
+                            </DataTableCell>
+                        </DataTableRow>
+                    </DataTableBody>
+                </DataTable>
             </CardContent>
+
+            <DataTableFooter
+                :links="packages.links"
+                :from="packages.from"
+                :to="packages.to"
+                :total="packages.total"
+                noun="packages"
+            />
         </Card>
 
         <Card v-else>

@@ -9,17 +9,20 @@ import {
     Trash2,
 } from 'lucide-vue-next';
 import { ref } from 'vue';
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableFooter,
+    DataTableHeader,
+    DataTableHeaderCell,
+    DataTableRow,
+} from '@/components/data-table';
 import EmptyState from '@/components/EmptyState.vue';
-import PaginationLinks from '@/components/PaginationLinks.vue';
+import InitialsAvatar from '@/components/InitialsAvatar.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
     DialogClose,
@@ -57,6 +60,9 @@ const props = defineProps<{
     messages: {
         data: MessageRow[];
         links: Array<{ url: string | null; label: string; active: boolean }>;
+        from: number | null;
+        to: number | null;
+        total: number;
     };
     filters: { status: string | null; search: string | null };
     statuses: Record<string, string>;
@@ -96,7 +102,9 @@ const formatDate = (value: string | null) => {
     <Head title="Admin · Contact inbox" />
 
     <div class="flex flex-col gap-6 p-4 lg:p-6">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+        >
             <div>
                 <h1 class="text-2xl font-semibold tracking-tight">
                     Contact inbox
@@ -124,7 +132,7 @@ const formatDate = (value: string | null) => {
             <Card>
                 <CardContent class="flex items-center gap-3 pt-6">
                     <div
-                        class="flex size-10 items-center justify-center rounded-lg bg-brand-gold/15"
+                        class="flex size-10 items-center justify-center rounded-lg bg-brand-ink/10"
                     >
                         <Mail class="size-5 text-brand-ink" />
                     </div>
@@ -192,74 +200,96 @@ const formatDate = (value: string | null) => {
             </Button>
         </form>
 
-        <Card v-if="messages.data.length">
-            <CardHeader>
-                <CardTitle>Messages</CardTitle>
-                <CardDescription>
-                    Open a message to triage, reply, or add internal notes.
-                </CardDescription>
-            </CardHeader>
-            <CardContent class="overflow-x-auto">
-                <table class="w-full min-w-[800px] text-left text-sm">
-                    <thead>
-                        <tr class="border-b text-muted-foreground">
-                            <th class="pb-3 pr-4 font-medium">Subject</th>
-                            <th class="pb-3 pr-4 font-medium">From</th>
-                            <th class="pb-3 pr-4 font-medium">Status</th>
-                            <th class="pb-3 pr-4 font-medium">Received</th>
-                            <th class="pb-3 font-medium text-right">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
+        <Card v-if="messages.data.length" class="gap-0 overflow-hidden py-0">
+            <CardContent class="px-0">
+                <DataTable min-width="900px">
+                    <DataTableHeader>
+                        <DataTableHeaderCell width="32%">
+                            Subject
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="26%">
+                            From
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="14%">
+                            Status
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="16%">
+                            Received
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="12%" align="right">
+                            <span class="sr-only">Actions</span>
+                        </DataTableHeaderCell>
+                    </DataTableHeader>
+                    <DataTableBody>
+                        <DataTableRow
                             v-for="msg in messages.data"
                             :key="msg.id"
-                            class="border-b border-border/60 last:border-0"
                         >
-                            <td class="py-3 pr-4">
+                            <DataTableCell>
                                 <Link
                                     :href="show(msg.id)"
-                                    class="font-medium hover:underline"
+                                    class="block truncate font-medium hover:underline"
                                 >
                                     {{ msg.subject }}
                                 </Link>
-                            </td>
-                            <td class="py-3 pr-4">
-                                <p class="font-medium">{{ msg.name }}</p>
-                                <p class="text-xs text-muted-foreground">
-                                    {{ msg.email }}
-                                </p>
-                            </td>
-                            <td class="py-3 pr-4">
+                            </DataTableCell>
+                            <DataTableCell>
+                                <div class="flex items-center gap-3">
+                                    <InitialsAvatar :name="msg.name" />
+                                    <div class="min-w-0">
+                                        <p class="truncate font-medium">
+                                            {{ msg.name }}
+                                        </p>
+                                        <p
+                                            class="truncate text-xs text-muted-foreground"
+                                        >
+                                            {{ msg.email }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </DataTableCell>
+                            <DataTableCell>
                                 <StatusBadge
                                     :status="msg.status"
                                     :label="msg.status_label"
                                 />
-                            </td>
-                            <td class="py-3 pr-4 text-muted-foreground">
+                            </DataTableCell>
+                            <DataTableCell
+                                muted
+                                class="truncate text-xs tabular-nums"
+                            >
                                 {{ formatDate(msg.created_at) }}
-                            </td>
-                            <td class="py-3">
+                            </DataTableCell>
+                            <DataTableCell>
                                 <div
-                                    class="flex items-center justify-end gap-1"
+                                    class="flex items-center justify-end gap-1 opacity-70 transition-opacity group-hover:opacity-100"
                                 >
-                                    <Button as-child variant="ghost" size="sm">
-                                        <Link :href="show(msg.id)">
+                                    <Button
+                                        as-child
+                                        variant="outline"
+                                        size="icon-sm"
+                                        class="text-muted-foreground hover:border-brand-ink/50 hover:bg-brand-ink/10 hover:text-brand-ink dark:hover:bg-brand-ink/25 dark:hover:text-brand-cream"
+                                    >
+                                        <Link
+                                            :href="show(msg.id)"
+                                            :title="`View ${msg.subject}`"
+                                        >
                                             <Eye class="size-4" />
-                                            View
+                                            <span class="sr-only">View</span>
                                         </Link>
                                     </Button>
                                     <Dialog>
                                         <DialogTrigger as-child>
                                             <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                class="text-destructive hover:text-destructive"
+                                                variant="outline"
+                                                size="icon-sm"
+                                                class="text-muted-foreground hover:border-destructive/50 hover:bg-destructive/10 hover:text-destructive"
+                                                :title="`Delete ${msg.subject}`"
                                             >
                                                 <Trash2 class="size-4" />
-                                                Delete
+                                                <span class="sr-only">
+                                                    Delete
+                                                </span>
                                             </Button>
                                         </DialogTrigger>
                                         <DialogContent>
@@ -268,10 +298,10 @@ const formatDate = (value: string | null) => {
                                                     Delete message?
                                                 </DialogTitle>
                                                 <DialogDescription>
-                                                    This permanently removes
-                                                    "{{ msg.subject }}" from
-                                                    {{ msg.name }}. This cannot
-                                                    be undone.
+                                                    This permanently removes "{{
+                                                        msg.subject
+                                                    }}" from {{ msg.name }}.
+                                                    This cannot be undone.
                                                 </DialogDescription>
                                             </DialogHeader>
                                             <DialogFooter>
@@ -296,11 +326,19 @@ const formatDate = (value: string | null) => {
                                         </DialogContent>
                                     </Dialog>
                                 </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </DataTableCell>
+                        </DataTableRow>
+                    </DataTableBody>
+                </DataTable>
             </CardContent>
+
+            <DataTableFooter
+                :links="messages.links"
+                :from="messages.from"
+                :to="messages.to"
+                :total="messages.total"
+                noun="messages"
+            />
         </Card>
 
         <Card v-else>
@@ -312,7 +350,5 @@ const formatDate = (value: string | null) => {
                 />
             </CardContent>
         </Card>
-
-        <PaginationLinks :links="messages.links" />
     </div>
 </template>

@@ -113,7 +113,7 @@ const props = defineProps<{
             </label>
             <Button
                 type="submit"
-                class="bg-brand-gold text-white"
+                class="bg-brand-ink text-white"
                 :disabled="processing"
             >
                 Save changes

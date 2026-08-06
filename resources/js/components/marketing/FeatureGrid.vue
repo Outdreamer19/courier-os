@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { BadgeCheck, Bell, Calculator, LayoutDashboard, MapPinned, Package, Receipt, ShieldCheck, Users } from 'lucide-vue-next';
+import BlurRevealText from './BlurRevealText.vue';
 
 const features = [
     { icon: Receipt, title: 'Pre-Alert Management', body: 'Customers submit invoice and shipment details before packages ever arrive.' },
@@ -19,9 +20,10 @@ const features = [
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div class="mx-auto max-w-2xl text-center">
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-marketing-orange">Extra Features</p>
-                <h2 class="mt-2 text-balance text-3xl font-semibold tracking-tight text-marketing-ink sm:text-4xl">
-                    Discover Endless Opportunities
-                </h2>
+                <BlurRevealText
+                    text="Discover Endless Opportunities"
+                    class="mt-2 text-balance text-3xl font-semibold tracking-tight text-marketing-ink sm:text-4xl"
+                />
             </div>
             <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <div

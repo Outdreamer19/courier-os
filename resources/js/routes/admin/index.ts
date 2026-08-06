@@ -3,6 +3,7 @@ import customers from './customers'
 import preAlerts from './pre-alerts'
 import packages from './packages'
 import contactMessages from './contact-messages'
+import platformSupport from './platform-support'
 import shippingRates from './shipping-rates'
 import warehouse from './warehouse'
 import adminUsers from './admin-users'
@@ -95,6 +96,7 @@ const admin = {
     preAlerts: Object.assign(preAlerts, preAlerts),
     packages: Object.assign(packages, packages),
     contactMessages: Object.assign(contactMessages, contactMessages),
+    platformSupport: Object.assign(platformSupport, platformSupport),
     shippingRates: Object.assign(shippingRates, shippingRates),
     warehouse: Object.assign(warehouse, warehouse),
     adminUsers: Object.assign(adminUsers, adminUsers),

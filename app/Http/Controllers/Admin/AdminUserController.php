@@ -22,6 +22,8 @@ class AdminUserController extends Controller
     {
         abort_unless($request->user()?->hasAdminPermission('manage_admins'), 403);
 
+        $currentUser = $request->user();
+
         $admins = User::query()
             ->whereIn('role', User::adminRoles())
             ->latest()
@@ -34,11 +36,39 @@ class AdminUserController extends Controller
                 'role_label' => User::adminRoleLabels()[$admin->role] ?? $admin->role,
                 'status' => $admin->status,
                 'created_at' => $admin->created_at?->toIso8601String(),
+                'is_self' => $admin->is($currentUser),
+                'can_edit' => $currentUser->canManageAdminUser($admin),
             ]);
+
+        // Counts are computed over the whole team, not just the current page,
+        // so the summary cards stay correct once pagination kicks in.
+        $roleCounts = User::query()
+            ->whereIn('role', User::adminRoles())
+            ->selectRaw('role, count(*) as aggregate')
+            ->groupBy('role')
+            ->pluck('aggregate', 'role');
+
+        $statusCounts = User::query()
+            ->whereIn('role', User::adminRoles())
+            ->selectRaw('status, count(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
 
         return Inertia::render('admin/admin-users/Index', [
             'admins' => $admins,
             'roles' => User::adminRoleLabels(),
+            'stats' => [
+                'total' => (int) $roleCounts->sum(),
+                'active' => (int) ($statusCounts[User::STATUS_ACTIVE] ?? 0),
+                'suspended' => (int) ($statusCounts[User::STATUS_SUSPENDED] ?? 0),
+                'by_role' => collect(User::adminRoleLabels())
+                    ->map(fn (string $label, string $role) => [
+                        'role' => $role,
+                        'label' => $label,
+                        'count' => (int) ($roleCounts[$role] ?? 0),
+                    ])
+                    ->values(),
+            ],
         ]);
     }
 

@@ -199,7 +199,7 @@ const invoiceStatusLabel = () => {
                         <Button
                             v-if="package.can_pay_online && package.payment_url"
                             as-child
-                            class="w-full bg-brand-gold text-white hover:bg-brand-gold-soft"
+                            class="w-full bg-brand-ink text-white hover:bg-brand-ink-soft"
                         >
                             <a
                                 :href="package.payment_url"

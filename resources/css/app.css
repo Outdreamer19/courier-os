@@ -127,14 +127,18 @@
     .fade-in-section {
         opacity: 0;
         transform: translateY(18px);
-        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        transition:
+            opacity 0.6s ease-out,
+            transform 0.6s ease-out;
         transition-delay: var(--fade-delay, 0ms);
     }
 
     .fade-in-item {
         opacity: 0;
         transform: translateY(18px);
-        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        transition:
+            opacity 0.5s ease-out,
+            transform 0.5s ease-out;
         transition-delay: var(--fade-delay, 0ms);
     }
 
@@ -153,17 +157,68 @@
         }
     }
 
+    /* ------------------------------------------------------------------
+       Blurred word-by-word title reveal (see BlurRevealText.vue)
+       ------------------------------------------------------------------ */
+    @keyframes blur-reveal-in {
+        from {
+            opacity: 0;
+            filter: blur(12px);
+            transform: translateY(0.32em);
+        }
+        to {
+            opacity: 1;
+            filter: blur(0);
+            transform: none;
+        }
+    }
+
+    /* Words hold the "before" state until the component arms itself, so a
+       heading never flashes sharp-then-blurred on first paint. */
+    .blur-reveal-word {
+        display: inline-block;
+        opacity: 0;
+        filter: blur(12px);
+        transform: translateY(0.32em);
+    }
+
+    .blur-reveal.is-revealed .blur-reveal-word {
+        animation: blur-reveal-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation-delay: var(--blur-delay, 0ms);
+        will-change: filter, opacity, transform;
+    }
+
+    /* Animation state is dropped once the last word lands — leaving a filter
+       and a will-change hint on every heading the page has already shown keeps
+       them on their own compositor layers for nothing. */
+    .blur-reveal.is-settled .blur-reveal-word {
+        opacity: 1;
+        filter: none;
+        transform: none;
+        animation: none;
+        will-change: auto;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .blur-reveal-word {
+            opacity: 1;
+            filter: none;
+            transform: none;
+            animation: none !important;
+        }
+    }
+
     /* Public marketing site — green-forward accents */
     .public-cta {
         @apply bg-brand-green text-white hover:bg-brand-green-soft;
     }
 
     .public-section-label {
-        @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand-green;
+        @apply text-xs font-semibold tracking-[0.18em] text-brand-green uppercase;
     }
 
     .public-section-label-on-dark {
-        @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand-green-soft;
+        @apply text-xs font-semibold tracking-[0.18em] text-brand-green-soft uppercase;
     }
 
     @keyframes marketing-marquee {
@@ -185,6 +240,109 @@
 
     @media (prefers-reduced-motion: reduce) {
         .marketing-marquee-track {
+            animation: none;
+        }
+    }
+
+    /* ------------------------------------------------------------------
+       Marketing hero — layered, living background
+       ------------------------------------------------------------------ */
+
+    /* Slow-drifting colour blobs behind the hero copy. Each blob gets its
+       own duration/offset so the composition never visibly loops. */
+    @keyframes hero-drift {
+        0%,
+        100% {
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+        33% {
+            transform: translate3d(4%, -5%, 0) scale(1.08);
+        }
+        66% {
+            transform: translate3d(-4%, 4%, 0) scale(0.95);
+        }
+    }
+
+    .hero-blob {
+        animation: hero-drift 26s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .hero-blob-slow {
+        animation-duration: 38s;
+        animation-delay: -8s;
+    }
+
+    .hero-blob-slower {
+        animation-duration: 47s;
+        animation-delay: -19s;
+    }
+
+    /* Parcels travelling the freight route drawn behind the hero. */
+    @keyframes hero-route-dash {
+        to {
+            stroke-dashoffset: -400;
+        }
+    }
+
+    .hero-route-line {
+        stroke-dasharray: 5 9;
+        animation: hero-route-dash 14s linear infinite;
+    }
+
+    @keyframes hero-pulse {
+        0%,
+        100% {
+            opacity: 0.35;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.9;
+            transform: scale(1.5);
+        }
+    }
+
+    .hero-pulse {
+        animation: hero-pulse 3.2s ease-in-out infinite;
+        transform-origin: center;
+    }
+
+    /* Sheen that sweeps across the product mock every few seconds. */
+    @keyframes hero-sheen {
+        0% {
+            transform: translateX(-120%) skewX(-12deg);
+        }
+        55%,
+        100% {
+            transform: translateX(320%) skewX(-12deg);
+        }
+    }
+
+    .hero-sheen {
+        animation: hero-sheen 7s ease-in-out infinite;
+    }
+
+    @keyframes hero-rise {
+        from {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .hero-rise {
+        animation: hero-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .hero-blob,
+        .hero-route-line,
+        .hero-pulse,
+        .hero-sheen,
+        .hero-rise {
             animation: none;
         }
     }
@@ -217,8 +375,10 @@
     --marketing-ink: #210d02;
     --marketing-ink-muted: rgba(79, 77, 73, 0.72);
     --marketing-amber: #fcd519;
-    --marketing-orange: #fa8f1f;
-    --marketing-orange-deep: #fa7b31;
+    /* Vivid, fully saturated orange — the previous #fa8f1f was too light to
+       carry text, eyebrows and the hero underline against the cream page. */
+    --marketing-orange: #ff7a00;
+    --marketing-orange-deep: #e2530a;
     --marketing-olive: #aa8322;
     --marketing-periwinkle: #c6dffa;
     --marketing-lavender: #d6cdf0;

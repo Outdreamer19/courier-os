@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
 
@@ -7,6 +8,13 @@ defineProps<{
     title?: string;
     description?: string;
 }>();
+
+// Every courier on the platform shares this layout, so nothing here may name
+// a particular one. The wordmark follows the shared `brand` prop and the
+// supporting copy stays generic to package forwarding rather than describing
+// one company's route or country.
+const page = usePage();
+const brandName = computed(() => page.props?.brand?.name ?? 'CourierOS');
 </script>
 
 <template>
@@ -16,7 +24,13 @@ defineProps<{
         <!-- soft dot texture behind the card, echoes the marketing site's pattern language -->
         <div
             class="pointer-events-none absolute inset-0 text-primary opacity-[0.08]"
-            style="background-image: radial-gradient(currentColor 1.5px, transparent 1.5px); background-size: 26px 26px"
+            style="
+                background-image: radial-gradient(
+                    currentColor 1.5px,
+                    transparent 1.5px
+                );
+                background-size: 26px 26px;
+            "
         />
 
         <div
@@ -43,7 +57,7 @@ defineProps<{
                             <AppLogoIcon class="size-6" />
                         </span>
                         <span class="text-lg font-semibold tracking-tight">
-                            TODAY <span class="text-brand-gold">Shipping</span>
+                            {{ brandName }}
                         </span>
                     </Link>
 
@@ -61,15 +75,18 @@ defineProps<{
                                 stroke-dasharray="5 6"
                                 stroke-linecap="round"
                             />
-                            <path d="M108 12 L96 10 L104 18 Z" fill="currentColor" />
+                            <path
+                                d="M108 12 L96 10 L104 18 Z"
+                                fill="currentColor"
+                            />
                         </svg>
                         <p class="text-2xl leading-snug font-semibold">
                             Shop the world.<br />
                             We'll bring it home.
                         </p>
                         <p class="text-sm text-white/75">
-                            Free US address, customs handled for you, and
-                            delivery right to your door in Jamaica.
+                            Your own overseas shipping address, pre-alerts
+                            matched automatically, and an update at every step.
                         </p>
                     </div>
                 </div>
@@ -101,7 +118,10 @@ defineProps<{
                         >
                             {{ title }}
                         </h1>
-                        <p v-if="description" class="text-sm text-muted-foreground">
+                        <p
+                            v-if="description"
+                            class="text-sm text-muted-foreground"
+                        >
                             {{ description }}
                         </p>
                     </div>

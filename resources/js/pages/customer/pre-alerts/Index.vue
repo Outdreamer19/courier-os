@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import { Eye, Pencil, PlusCircle, Receipt, XCircle } from 'lucide-vue-next';
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableFooter,
+    DataTableHeader,
+    DataTableHeaderCell,
+    DataTableRow,
+} from '@/components/data-table';
 import EmptyState from '@/components/EmptyState.vue';
-import PaginationLinks from '@/components/PaginationLinks.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
     DialogClose,
@@ -51,6 +53,9 @@ defineProps<{
     preAlerts: {
         data: PreAlertRow[];
         links: Array<{ url: string | null; label: string; active: boolean }>;
+        from: number | null;
+        to: number | null;
+        total: number;
     };
 }>();
 
@@ -67,9 +72,13 @@ const formatDate = (value: string | null) => {
     <Head title="Pre-alerts" />
 
     <div class="flex flex-col gap-6 p-4 lg:p-6">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div
+            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
             <div>
-                <h1 class="text-2xl font-semibold tracking-tight">Pre-alerts</h1>
+                <h1 class="text-2xl font-semibold tracking-tight">
+                    Pre-alerts
+                </h1>
                 <p class="text-sm text-muted-foreground">
                     Create, edit, and cancel pre-alerts before your packages
                     arrive at our Florida warehouse.
@@ -77,7 +86,7 @@ const formatDate = (value: string | null) => {
             </div>
             <Button
                 as-child
-                class="bg-brand-gold text-white hover:bg-brand-gold-soft"
+                class="bg-brand-ink text-white hover:bg-brand-ink-soft"
             >
                 <Link :href="create()">
                     <PlusCircle class="size-4" />
@@ -86,91 +95,107 @@ const formatDate = (value: string | null) => {
             </Button>
         </div>
 
-        <Card v-if="preAlerts.data.length">
-            <CardHeader>
-                <CardTitle>Your pre-alerts</CardTitle>
-                <CardDescription>
-                    View details, edit while under review, or cancel if plans
-                    change.
-                </CardDescription>
-            </CardHeader>
-            <CardContent class="overflow-x-auto">
-                <table class="w-full min-w-[760px] text-left text-sm">
-                    <thead>
-                        <tr class="border-b text-muted-foreground">
-                            <th class="pb-3 pr-4 font-medium">Merchant</th>
-                            <th class="pb-3 pr-4 font-medium">Tracking</th>
-                            <th class="pb-3 pr-4 font-medium">Status</th>
-                            <th class="pb-3 pr-4 font-medium">Expected</th>
-                            <th class="pb-3 pr-4 font-medium">Submitted</th>
-                            <th class="pb-3 font-medium text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
+        <Card v-if="preAlerts.data.length" class="gap-0 overflow-hidden py-0">
+            <CardContent class="px-0">
+                <DataTable min-width="880px">
+                    <DataTableHeader>
+                        <DataTableHeaderCell width="26%">
+                            Merchant
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="18%">
+                            Tracking
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="20%">
+                            Status
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="14%">
+                            Expected
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="22%" align="right">
+                            <span class="sr-only">Actions</span>
+                        </DataTableHeaderCell>
+                    </DataTableHeader>
+                    <DataTableBody>
+                        <DataTableRow
                             v-for="row in preAlerts.data"
                             :key="row.id"
-                            class="border-b border-border/60 last:border-0"
                         >
-                            <td class="py-3 pr-4">
+                            <DataTableCell>
                                 <Link
                                     :href="show(row.id)"
-                                    class="font-medium hover:underline"
+                                    class="block truncate font-medium hover:underline"
                                 >
                                     {{ row.merchant_name }}
                                 </Link>
-                                <span
-                                    v-if="row.has_invoice"
-                                    class="ml-2 text-xs text-muted-foreground"
+                                <div
+                                    class="truncate text-xs text-muted-foreground"
                                 >
-                                    · invoice
-                                </span>
-                            </td>
-                            <td class="py-3 pr-4 text-muted-foreground">
+                                    {{ formatDate(row.created_at) }}
+                                    <span v-if="row.has_invoice"
+                                        >· invoice</span
+                                    >
+                                </div>
+                            </DataTableCell>
+                            <DataTableCell muted class="truncate tabular-nums">
                                 {{ row.tracking_number ?? '—' }}
-                            </td>
-                            <td class="py-3 pr-4">
+                            </DataTableCell>
+                            <DataTableCell>
                                 <StatusBadge
                                     :status="row.status"
                                     :label="row.status_label"
                                 />
-                            </td>
-                            <td class="py-3 pr-4 text-muted-foreground">
+                            </DataTableCell>
+                            <DataTableCell
+                                muted
+                                class="truncate text-xs tabular-nums"
+                            >
                                 {{ formatDate(row.expected_delivery_date) }}
-                            </td>
-                            <td class="py-3 pr-4 text-muted-foreground">
-                                {{ formatDate(row.created_at) }}
-                            </td>
-                            <td class="py-3">
+                            </DataTableCell>
+                            <DataTableCell>
                                 <div
-                                    class="flex items-center justify-end gap-1"
+                                    class="flex items-center justify-end gap-1 opacity-70 transition-opacity group-hover:opacity-100"
                                 >
-                                    <Button as-child variant="ghost" size="sm">
-                                        <Link :href="show(row.id)">
+                                    <Button
+                                        as-child
+                                        variant="outline"
+                                        size="icon-sm"
+                                        class="text-muted-foreground hover:border-brand-ink/50 hover:bg-brand-ink/10 hover:text-brand-ink dark:hover:bg-brand-ink/25 dark:hover:text-brand-cream"
+                                    >
+                                        <Link
+                                            :href="show(row.id)"
+                                            title="View pre-alert"
+                                        >
                                             <Eye class="size-4" />
-                                            View
+                                            <span class="sr-only">View</span>
                                         </Link>
                                     </Button>
                                     <Button
                                         v-if="row.is_editable"
                                         as-child
-                                        variant="ghost"
-                                        size="sm"
+                                        variant="outline"
+                                        size="icon-sm"
+                                        class="text-muted-foreground hover:border-brand-ink/50 hover:bg-brand-ink/10 hover:text-brand-ink dark:hover:bg-brand-ink/25 dark:hover:text-brand-cream"
                                     >
-                                        <Link :href="edit(row.id)">
+                                        <Link
+                                            :href="edit(row.id)"
+                                            title="Edit pre-alert"
+                                        >
                                             <Pencil class="size-4" />
-                                            Edit
+                                            <span class="sr-only">Edit</span>
                                         </Link>
                                     </Button>
                                     <Dialog v-if="row.is_cancellable">
                                         <DialogTrigger as-child>
                                             <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                class="text-destructive hover:text-destructive"
+                                                variant="outline"
+                                                size="icon-sm"
+                                                class="text-muted-foreground hover:border-destructive/50 hover:bg-destructive/10 hover:text-destructive"
+                                                title="Cancel pre-alert"
                                             >
                                                 <XCircle class="size-4" />
-                                                Cancel
+                                                <span class="sr-only">
+                                                    Cancel
+                                                </span>
                                             </Button>
                                         </DialogTrigger>
                                         <DialogContent>
@@ -204,11 +229,19 @@ const formatDate = (value: string | null) => {
                                         </DialogContent>
                                     </Dialog>
                                 </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </DataTableCell>
+                        </DataTableRow>
+                    </DataTableBody>
+                </DataTable>
             </CardContent>
+
+            <DataTableFooter
+                :links="preAlerts.links"
+                :from="preAlerts.from"
+                :to="preAlerts.to"
+                :total="preAlerts.total"
+                noun="pre-alerts"
+            />
         </Card>
 
         <Card v-else>
@@ -220,14 +253,14 @@ const formatDate = (value: string | null) => {
                 >
                     <Button
                         as-child
-                        class="bg-brand-gold text-white hover:bg-brand-gold-soft"
+                        class="bg-brand-ink text-white hover:bg-brand-ink-soft"
                     >
-                        <Link :href="create()">Submit your first pre-alert</Link>
+                        <Link :href="create()"
+                            >Submit your first pre-alert</Link
+                        >
                     </Button>
                 </EmptyState>
             </CardContent>
         </Card>
-
-        <PaginationLinks :links="preAlerts.links" />
     </div>
 </template>

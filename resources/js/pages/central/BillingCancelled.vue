@@ -6,7 +6,7 @@ defineOptions({ inheritAttrs: false });
 </script>
 
 <template>
-    <Head title="Checkout cancelled — CourierOS" />
+    <Head title="Checkout cancelled" />
 
     <div
         class="flex min-h-screen items-center justify-center bg-[hsl(40_30%_99%)] px-6 py-12 text-[hsl(222_47%_11%)]"

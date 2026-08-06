@@ -8,6 +8,7 @@ export type AdminPermissions = {
     manage_system_settings: boolean;
     manage_customers: boolean;
     manage_contact_messages: boolean;
+    manage_platform_support: boolean;
     delete_records: boolean;
     manage_billing: boolean;
 };

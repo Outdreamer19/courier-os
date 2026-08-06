@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import AnimatedBarChart from '@/components/marketing/AnimatedBarChart.vue';
-import AnimatedStatPanel from '@/components/marketing/AnimatedStatPanel.vue';
 import AnnouncementBar from '@/components/marketing/AnnouncementBar.vue';
 import FaqAccordion from '@/components/marketing/FaqAccordion.vue';
 import FeatureGrid from '@/components/marketing/FeatureGrid.vue';
@@ -13,6 +12,9 @@ import LogoMarquee from '@/components/marketing/LogoMarquee.vue';
 import MarketingFooter from '@/components/marketing/MarketingFooter.vue';
 import MarketingNav from '@/components/marketing/MarketingNav.vue';
 import PricingSection from '@/components/marketing/PricingSection.vue';
+import ProductScreenshotFrame from '@/components/marketing/ProductScreenshotFrame.vue';
+import ProductTeaser from '@/components/marketing/ProductTeaser.vue';
+import StackingFeatureCards from '@/components/marketing/StackingFeatureCards.vue';
 import StatsBanner from '@/components/marketing/StatsBanner.vue';
 import TestimonialSwitcher from '@/components/marketing/TestimonialSwitcher.vue';
 import { useScrollReveal } from '@/composables/useScrollReveal';
@@ -25,7 +27,9 @@ useScrollReveal();
 </script>
 
 <template>
-    <Head title="CourierOS — Run Your Courier Business Like a Platform" />
+    <!-- The brand name is appended automatically by the title callback in
+         app.ts, so leaving "CourierOS" here duplicated it in the tab. -->
+    <Head title="Run Your Courier Business Like a Platform" />
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
         <AnnouncementBar
@@ -42,9 +46,15 @@ useScrollReveal();
 
         <IntegrationsGrid />
 
-        <div class="mx-auto max-w-6xl space-y-8 px-4 py-4 sm:px-6 lg:px-8">
+        <ProductTeaser />
+
+        <StackingFeatureCards
+            eyebrow="Capabilities"
+            title="What CourierOS can do for you"
+            body="Everything you need to run the warehouse, in one place."
+        >
             <FeatureShowcase
-                eyebrow="What CourierOS can do for you"
+                eyebrow="Stay on top of every parcel"
                 title="Real-time package &amp; pre-alert tracking"
                 body="Every pre-alert and package status update lands in one dashboard, so you always know what's moving through your warehouse."
                 :bullets="[
@@ -53,27 +63,11 @@ useScrollReveal();
                 ]"
             >
                 <template #visual>
-                    <AnimatedStatPanel
-                        title="Package Status Overview"
-                        :percent="72"
-                        percent-label="of packages currently in transit"
-                        :rows="[
-                            {
-                                label: 'Pre-Alerted',
-                                percent: 88,
-                                color: '#FA8F1F',
-                            },
-                            {
-                                label: 'At Warehouse',
-                                percent: 64,
-                                color: '#FCD519',
-                            },
-                            {
-                                label: 'Ready for Pickup',
-                                percent: 41,
-                                color: '#AA8322',
-                            },
-                        ]"
+                    <ProductScreenshotFrame
+                        src="/images/marketing/admin-pre-alerts.png"
+                        webp="/images/marketing/admin-pre-alerts.webp"
+                        label="Pre-alert queue"
+                        alt="The CourierOS pre-alerts queue listing merchant, customer, tracking number and status for each submission"
                     />
                 </template>
             </FeatureShowcase>
@@ -89,14 +83,11 @@ useScrollReveal();
                 ]"
             >
                 <template #visual>
-                    <AnimatedBarChart
-                        title="Packages Processed"
-                        :bars="[
-                            { label: 'Jan', percent: 40, color: '#FA8F1F' },
-                            { label: 'Feb', percent: 55, color: '#FA8F1F' },
-                            { label: 'Mar', percent: 70, color: '#FA8F1F' },
-                            { label: 'Apr', percent: 85, color: '#FCD519' },
-                        ]"
+                    <ProductScreenshotFrame
+                        src="/images/marketing/admin-reports.png"
+                        webp="/images/marketing/admin-reports.webp"
+                        label="Reports"
+                        alt="The CourierOS reports screen showing revenue by month, package volume and top customers"
                     />
                 </template>
             </FeatureShowcase>
@@ -122,14 +113,14 @@ useScrollReveal();
                             {
                                 label: 'CourierOS',
                                 percent: 35,
-                                color: '#FA8F1F',
+                                color: '#FF7A00',
                                 note: '65% less',
                             },
                         ]"
                     />
                 </template>
             </FeatureShowcase>
-        </div>
+        </StackingFeatureCards>
 
         <StatsBanner />
 

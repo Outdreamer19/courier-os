@@ -9,6 +9,7 @@ import {
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
+import { useBrand } from '@/composables/useBrand';
 import { useScrollReveal } from '@/composables/useScrollReveal';
 import { rates, register } from '@/routes';
 import type { RateSnapshot } from '@/types/auth';
@@ -17,18 +18,22 @@ const props = defineProps<{
     rate: RateSnapshot | null;
 }>();
 
+const { brand, name: brandName } = useBrand();
+
 const ratePerLbDisplay = computed(() => {
-    const value = props.rate?.rate_per_lb ?? 500;
-    const currency = props.rate?.currency ?? 'JMD';
+    const value = props.rate?.rate_per_lb ?? 0;
+    const currency = props.rate?.currency ?? brand.value?.currency ?? 'USD';
 
     return `${currency} $${value.toLocaleString()}`;
 });
 
-const howItWorks = [
+// This is the tenant's own public site, so every string that used to name the
+// courier it was written for now interpolates the resolved brand instead.
+const howItWorks = computed(() => [
     {
         icon: UserPlus,
         title: 'Create your account',
-        body: 'Sign up in minutes and get your unique TODAY Shipping reference number.',
+        body: `Sign up in minutes and get your unique ${brandName.value} reference number.`,
     },
     {
         icon: Clipboard,
@@ -45,9 +50,9 @@ const howItWorks = [
         title: 'Track updates and collect',
         body: 'Follow status updates in your dashboard and pick up once your package is ready.',
     },
-];
+]);
 
-const whyShipDjm = [
+const whyChooseUs = computed(() => [
     {
         title: 'Clear package visibility from day one',
         body: 'Track pre-alerts and package updates in one timeline so you always know what is happening next.',
@@ -57,13 +62,13 @@ const whyShipDjm = [
     },
     {
         title: 'Pre-alert workflow that is actually simple',
-        body: 'Submit invoice details in minutes and let the TODAY Shipping team handle package matching behind the scenes.',
+        body: `Submit invoice details in minutes and let the ${brandName.value} team handle package matching behind the scenes.`,
         image: '/img/shipdjm-prealert-workflow.png',
         imageWebp: '/img/shipdjm-prealert-workflow.webp',
         imageAlt: 'Customer reviewing order and shipment details on laptop',
     },
     {
-        title: 'Built for Jamaican customers, not retrofitted',
+        title: 'Built for your customers, not retrofitted',
         body: 'From account references to pickup-first operations, the platform is designed around local customer reality.',
         image: '/img/shipdjm-jamaica.png',
         imageWebp: '/img/shipdjm-jamaica.webp',
@@ -76,7 +81,7 @@ const whyShipDjm = [
         imageWebp: '/img/shipdjm-support.webp',
         imageAlt: 'Customer support professional wearing headset and smiling',
     },
-];
+]);
 
 const faqs = [
     {
@@ -105,7 +110,7 @@ const { sectionDelay, itemDelay } = useScrollReveal();
 </script>
 
 <template>
-    <Head title="Shop Online. Ship to Jamaica.">
+    <Head title="Shop Online. We'll Ship It Home.">
         <link
             rel="preload"
             as="image"
@@ -116,58 +121,356 @@ const { sectionDelay, itemDelay } = useScrollReveal();
     </Head>
 
     <div>
-    <!-- Hero -->
-    <section
-        class="relative flex min-h-[min(560px,78vh)] items-start overflow-hidden bg-brand-ink text-brand-cream fade-in-section sm:min-h-[min(620px,82vh)]"
-        :style="sectionDelay(0)"
-    >
-        <div
-            aria-hidden="true"
-            class="absolute inset-0"
+        <!-- Hero -->
+        <section
+            class="fade-in-section relative flex min-h-[min(560px,78vh)] items-start overflow-hidden bg-brand-ink text-brand-cream sm:min-h-[min(620px,82vh)]"
+            :style="sectionDelay(0)"
         >
-            <picture>
-                <source srcset="/img/shipdjm-hero.webp" type="image/webp" />
-                <img
-                    src="/img/shipdjm-hero.png"
-                    alt="TODAY Shipping customer support team helping shoppers with package forwarding"
-                    width="1774"
-                    height="887"
-                    fetchpriority="high"
-                    decoding="async"
-                    class="h-full w-full object-cover object-[72%_center] sm:object-[68%_center]"
+            <div aria-hidden="true" class="absolute inset-0">
+                <picture>
+                    <source srcset="/img/shipdjm-hero.webp" type="image/webp" />
+                    <img
+                        src="/img/shipdjm-hero.png"
+                        alt="Customer support team helping shoppers with package forwarding"
+                        width="1774"
+                        height="887"
+                        fetchpriority="high"
+                        decoding="async"
+                        class="h-full w-full object-cover object-[72%_center] sm:object-[68%_center]"
+                    />
+                </picture>
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-brand-ink/90 via-brand-ink/45 to-brand-ink/20 sm:from-brand-ink/88 sm:via-brand-ink/35 sm:to-brand-ink/15"
                 />
-            </picture>
+                <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_12%_40%,rgba(30,142,62,0.28),transparent_45%),radial-gradient(circle_at_85%_35%,rgba(30,142,62,0.18),transparent_50%),radial-gradient(circle_at_50%_100%,rgba(255,220,80,0.12),transparent_40%)]"
+                />
+                <div
+                    class="absolute inset-y-0 left-0 w-[58%] max-w-3xl bg-gradient-to-r from-black/35 to-transparent sm:w-[52%]"
+                />
+            </div>
             <div
-                class="absolute inset-0 bg-gradient-to-r from-brand-ink/90 via-brand-ink/45 to-brand-ink/20 sm:from-brand-ink/88 sm:via-brand-ink/35 sm:to-brand-ink/15"
-            />
-            <div
-                class="absolute inset-0 bg-[radial-gradient(circle_at_12%_40%,rgba(30,142,62,0.28),transparent_45%),radial-gradient(circle_at_85%_35%,rgba(30,142,62,0.18),transparent_50%),radial-gradient(circle_at_50%_100%,rgba(255,220,80,0.12),transparent_40%)]"
-            />
-            <div class="absolute inset-y-0 left-0 w-[58%] max-w-3xl bg-gradient-to-r from-black/35 to-transparent sm:w-[52%]" />
-        </div>
-        <div
-            class="relative mx-auto w-full max-w-7xl pl-2 pr-6 pt-6 pb-14 sm:pl-3 sm:pt-8 lg:pl-4 lg:pt-10"
-        >
-            <div class="max-w-2xl space-y-5 text-left sm:space-y-6">
-                <h1
-                    class="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
-                >
-                    <span class="text-brand-gold-soft">Shop Online.</span>
-                    <span class="text-brand-green-soft"> Ship to Jamaica.</span>
-                    <br />
-                    Track everything in one place.
-                </h1>
-                <p class="max-w-xl text-base text-brand-cream/80 sm:text-lg">
-                    TODAY Shipping helps customers in Jamaica shop from stores like
-                    Amazon, Walmart, SHEIN and more, then ship packages through
-                    our Florida warehouse for pickup in Jamaica.
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <Button
-                        as-child
-                        size="lg"
-                        class="public-cta"
+                class="relative mx-auto w-full max-w-7xl pt-6 pr-6 pb-14 pl-2 sm:pt-8 sm:pl-3 lg:pt-10 lg:pl-4"
+            >
+                <div class="max-w-2xl space-y-5 text-left sm:space-y-6">
+                    <h1
+                        class="text-4xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
                     >
+                        <span class="text-brand-gold-soft">Shop Online.</span>
+                        <span class="text-brand-green-soft">
+                            We'll ship it home.</span
+                        >
+                        <br />
+                        Track everything in one place.
+                    </h1>
+                    <p
+                        class="max-w-xl text-base text-brand-cream/80 sm:text-lg"
+                    >
+                        {{ brandName }} helps you shop from stores like Amazon,
+                        Walmart, SHEIN and more, then ships your packages
+                        through our overseas warehouse to your local branch for
+                        pickup.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <Button as-child size="lg" class="public-cta">
+                            <Link :href="register()">Create account</Link>
+                        </Button>
+                        <Button
+                            as-child
+                            size="lg"
+                            variant="outline"
+                            class="border-brand-green/40 bg-transparent text-brand-cream hover:bg-brand-green/15"
+                        >
+                            <Link :href="rates()">Calculate shipping</Link>
+                        </Button>
+                    </div>
+                    <dl class="flex flex-wrap gap-x-8 gap-y-2 pt-4 text-sm">
+                        <div>
+                            <dt class="text-brand-cream/60">Base rate</dt>
+                            <dd class="font-semibold text-brand-green-soft">
+                                {{ ratePerLbDisplay }} / lb
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-brand-cream/60">Collection</dt>
+                            <dd class="font-semibold">
+                                Pickup available · Selected-area delivery
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </section>
+
+        <!-- How it works -->
+        <section class="fade-in-section bg-background" :style="sectionDelay(1)">
+            <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <p class="public-section-label">How it works</p>
+                    <h2
+                        class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
+                        Four practical steps,
+                        <span class="text-brand-gold"> start to finish</span>
+                    </h2>
+                    <p class="mt-4 text-muted-foreground">
+                        Everything is streamlined for customers: register, shop,
+                        pre-alert, and collect with clear status visibility.
+                    </p>
+                </div>
+
+                <ol class="mt-12 grid gap-5 sm:grid-cols-2">
+                    <li
+                        v-for="(step, index) in howItWorks"
+                        :key="step.title"
+                        class="group fade-in-item relative overflow-hidden rounded-2xl border border-border bg-card p-7 transition hover:border-brand-gold/25 hover:shadow-xl"
+                        :style="itemDelay(index)"
+                    >
+                        <div
+                            class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-gold/60 via-brand-green/35 to-transparent"
+                        />
+                        <div
+                            class="flex size-12 items-center justify-center rounded-lg bg-brand-green/12 text-brand-green ring-1 ring-brand-green/25 group-hover:ring-brand-gold/30"
+                        >
+                            <component :is="step.icon" class="size-5" />
+                        </div>
+                        <p
+                            class="mt-4 text-xs font-semibold tracking-[0.18em] text-brand-gold/80 uppercase"
+                        >
+                            Step {{ index + 1 }}
+                        </p>
+                        <h3 class="mt-1 text-lg font-semibold">
+                            {{ step.title }}
+                        </h3>
+                        <p class="mt-2 text-sm text-muted-foreground">
+                            {{ step.body }}
+                        </p>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Why -->
+        <section
+            class="fade-in-section bg-brand-green-muted/50"
+            :style="sectionDelay(2)"
+        >
+            <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <p
+                        class="text-xs font-semibold tracking-[0.18em] text-brand-green uppercase"
+                    >
+                        Why {{ brandName }}
+                    </p>
+                    <h2
+                        class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
+                        Built for
+                        <span class="text-brand-gold"> online shoppers</span>
+                        — not bolted on
+                    </h2>
+                </div>
+                <div class="mt-12 grid gap-8 lg:grid-cols-2">
+                    <article
+                        v-for="(item, index) in whyChooseUs"
+                        :key="item.title"
+                        class="group fade-in-item overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                        :style="itemDelay(index, 120)"
+                    >
+                        <div class="relative aspect-[16/10] overflow-hidden">
+                            <picture>
+                                <source
+                                    :srcset="item.imageWebp"
+                                    type="image/webp"
+                                />
+                                <img
+                                    :src="item.image"
+                                    :alt="item.imageAlt"
+                                    width="1448"
+                                    height="1086"
+                                    loading="lazy"
+                                    decoding="async"
+                                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                />
+                            </picture>
+                            <div
+                                class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent"
+                            />
+                            <p
+                                class="absolute bottom-3 left-3 rounded-full border border-brand-gold/30 bg-black/35 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-brand-gold-soft uppercase"
+                            >
+                                {{ brandName }} advantage
+                            </p>
+                        </div>
+                        <div class="space-y-3 p-6">
+                            <h3 class="text-xl font-semibold tracking-tight">
+                                {{ item.title }}
+                            </h3>
+                            <p
+                                class="text-sm leading-relaxed text-muted-foreground"
+                            >
+                                {{ item.body }}
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rate preview -->
+        <section class="fade-in-section bg-background" :style="sectionDelay(3)">
+            <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+                <div
+                    class="grid gap-10 rounded-2xl border border-brand-green/25 bg-gradient-to-br from-brand-green/10 via-brand-green-muted/40 to-brand-gold/10 p-10 lg:grid-cols-2 lg:items-center"
+                >
+                    <div>
+                        <p class="public-section-label">Transparent pricing</p>
+                        <h2
+                            class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                        >
+                            Simple,
+                            <span class="text-brand-gold"> weight-based</span>
+                            rates
+                        </h2>
+                        <p class="mt-4 text-muted-foreground">
+                            Our base rate for MVP is
+                            <span class="font-semibold text-brand-gold">
+                                {{ ratePerLbDisplay }} per lb
+                            </span>
+                            on a single shipping method. Pricing for heavier
+                            packages will be tuned by our admin team — and rates
+                            always come from the database, not hard-coded.
+                        </p>
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <Button
+                                as-child
+                                class="bg-brand-ink text-brand-cream hover:bg-brand-ink-soft"
+                            >
+                                <Link :href="rates()">Calculate shipping</Link>
+                            </Button>
+                            <Button as-child variant="outline">
+                                <Link :href="register()">Create account</Link>
+                            </Button>
+                        </div>
+                    </div>
+                    <div
+                        class="rounded-xl border border-border bg-card p-6 shadow-sm"
+                    >
+                        <p
+                            class="text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase"
+                        >
+                            {{ props.rate?.name ?? 'Standard Air Shipping' }}
+                        </p>
+                        <p
+                            class="mt-2 text-4xl font-semibold tracking-tight text-brand-gold"
+                        >
+                            {{ ratePerLbDisplay }}
+                            <span class="text-base text-muted-foreground">
+                                / lb
+                            </span>
+                        </p>
+                        <ul class="mt-6 space-y-3 text-sm">
+                            <li class="flex items-start gap-2">
+                                <CircleCheck
+                                    class="mt-0.5 size-4 text-brand-gold"
+                                />
+                                <span>One shipping method for MVP</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <CircleCheck
+                                    class="mt-0.5 size-4 text-brand-green"
+                                />
+                                <span
+                                    >Minimum charge
+                                    {{
+                                        props.rate?.currency ??
+                                        brand?.currency ??
+                                        'USD'
+                                    }}
+                                    ${{
+                                        (
+                                            props.rate?.minimum_charge ?? 0
+                                        ).toLocaleString()
+                                    }}</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <CircleCheck
+                                    class="mt-0.5 size-4 text-brand-green"
+                                />
+                                <span>Weight tiers coming soon</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <CircleCheck
+                                    class="mt-0.5 size-4 text-brand-green"
+                                />
+                                <span>Pickup only for now</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section
+            class="fade-in-section bg-brand-green-muted/40"
+            :style="sectionDelay(4)"
+        >
+            <div class="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <p class="public-section-label">Quick answers</p>
+                    <h2
+                        class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    >
+                        Frequently asked
+                        <span class="text-brand-gold"> questions</span>
+                    </h2>
+                </div>
+
+                <dl class="mt-10 space-y-4">
+                    <div
+                        v-for="(faq, index) in faqs"
+                        :key="faq.q"
+                        class="fade-in-item rounded-xl border border-l-2 border-border border-l-brand-gold/50 bg-card p-6"
+                        :style="itemDelay(index, 100)"
+                    >
+                        <dt class="text-base font-semibold">{{ faq.q }}</dt>
+                        <dd class="mt-2 text-sm text-muted-foreground">
+                            {{ faq.a }}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section
+            class="fade-in-section relative overflow-hidden bg-brand-ink text-brand-cream"
+            :style="sectionDelay(5)"
+        >
+            <div
+                class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(30,142,62,0.15),transparent_50%),radial-gradient(circle_at_80%_40%,rgba(255,220,80,0.08),transparent_45%)]"
+                aria-hidden="true"
+            />
+            <div
+                class="relative mx-auto max-w-5xl px-4 py-20 text-center sm:px-6 lg:px-8"
+            >
+                <h2
+                    class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                >
+                    Start shipping with
+                    <span class="text-brand-gold-soft">{{ brandName }}</span
+                    >.
+                </h2>
+                <p
+                    class="mx-auto mt-4 max-w-2xl text-base text-brand-cream/70 sm:text-lg"
+                >
+                    Create your free account, get your overseas warehouse
+                    address, and never lose track of an online order again.
+                </p>
+                <div class="mt-8 flex flex-wrap justify-center gap-3">
+                    <Button as-child size="lg" class="public-cta">
                         <Link :href="register()">Create account</Link>
                     </Button>
                     <Button
@@ -176,298 +479,10 @@ const { sectionDelay, itemDelay } = useScrollReveal();
                         variant="outline"
                         class="border-brand-green/40 bg-transparent text-brand-cream hover:bg-brand-green/15"
                     >
-                        <Link :href="rates()">Calculate shipping</Link>
+                        <Link :href="rates()">See rates</Link>
                     </Button>
                 </div>
-                <dl class="flex flex-wrap gap-x-8 gap-y-2 pt-4 text-sm">
-                    <div>
-                        <dt class="text-brand-cream/60">Base rate</dt>
-                        <dd class="font-semibold text-brand-green-soft">
-                            {{ ratePerLbDisplay }} / lb
-                        </dd>
-                    </div>
-                    <div>
-                        <dt class="text-brand-cream/60">Collection</dt>
-                        <dd class="font-semibold">Pickup available · Selected-area delivery</dd>
-                    </div>
-                </dl>
             </div>
-        </div>
-    </section>
-
-    <!-- How it works -->
-    <section class="bg-background fade-in-section" :style="sectionDelay(1)">
-        <div
-            class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
-        >
-            <div class="mx-auto max-w-2xl text-center">
-                <p class="public-section-label">
-                    How it works
-                </p>
-                <h2
-                    class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
-                >
-                    Four practical steps,
-                    <span class="text-brand-gold"> start to finish</span>
-                </h2>
-                <p class="mt-4 text-muted-foreground">
-                    Everything is streamlined for customers: register, shop,
-                    pre-alert, and collect with clear status visibility.
-                </p>
-            </div>
-
-            <ol
-                class="mt-12 grid gap-5 sm:grid-cols-2"
-            >
-                <li
-                    v-for="(step, index) in howItWorks"
-                    :key="step.title"
-                    class="group relative overflow-hidden rounded-2xl border border-border bg-card p-7 transition hover:border-brand-gold/25 hover:shadow-xl fade-in-item"
-                    :style="itemDelay(index)"
-                >
-                    <div
-                        class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-gold/60 via-brand-green/35 to-transparent"
-                    />
-                    <div
-                        class="flex size-12 items-center justify-center rounded-lg bg-brand-green/12 text-brand-green ring-1 ring-brand-green/25 group-hover:ring-brand-gold/30"
-                    >
-                        <component :is="step.icon" class="size-5" />
-                    </div>
-                    <p
-                        class="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold/80"
-                    >
-                        Step {{ index + 1 }}
-                    </p>
-                    <h3 class="mt-1 text-lg font-semibold">{{ step.title }}</h3>
-                    <p class="mt-2 text-sm text-muted-foreground">
-                        {{ step.body }}
-                    </p>
-                </li>
-            </ol>
-        </div>
-    </section>
-
-    <!-- Why -->
-    <section class="bg-brand-green-muted/50 fade-in-section" :style="sectionDelay(2)">
-        <div
-            class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
-        >
-            <div class="mx-auto max-w-2xl text-center">
-                <p
-                    class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-green"
-                >
-                    Why TODAY Shipping
-                </p>
-                <h2
-                    class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
-                >
-                    Built for
-                    <span class="text-brand-gold"> Jamaican shoppers</span>
-                    — not bolted on
-                </h2>
-            </div>
-            <div class="mt-12 grid gap-8 lg:grid-cols-2">
-                <article
-                    v-for="(item, index) in whyShipDjm"
-                    :key="item.title"
-                    class="group overflow-hidden rounded-2xl border border-border/80 bg-card fade-in-item shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
-                    :style="itemDelay(index, 120)"
-                >
-                    <div class="relative aspect-[16/10] overflow-hidden">
-                        <picture>
-                            <source
-                                :srcset="item.imageWebp"
-                                type="image/webp"
-                            />
-                            <img
-                                :src="item.image"
-                                :alt="item.imageAlt"
-                                width="1448"
-                                height="1086"
-                                loading="lazy"
-                                decoding="async"
-                                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                            />
-                        </picture>
-                        <div
-                            class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent"
-                        />
-                        <p
-                            class="absolute bottom-3 left-3 rounded-full border border-brand-gold/30 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-brand-gold-soft"
-                        >
-                            TODAY Shipping advantage
-                        </p>
-                    </div>
-                    <div class="space-y-3 p-6">
-                        <h3 class="text-xl font-semibold tracking-tight">
-                            {{ item.title }}
-                        </h3>
-                        <p class="text-sm leading-relaxed text-muted-foreground">
-                            {{ item.body }}
-                        </p>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Rate preview -->
-    <section class="bg-background fade-in-section" :style="sectionDelay(3)">
-        <div
-            class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
-        >
-            <div
-                class="grid gap-10 rounded-2xl border border-brand-green/25 bg-gradient-to-br from-brand-green/10 via-brand-green-muted/40 to-brand-gold/10 p-10 lg:grid-cols-2 lg:items-center"
-            >
-                <div>
-                    <p class="public-section-label">
-                        Transparent pricing
-                    </p>
-                    <h2
-                        class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
-                    >
-                        Simple,
-                        <span class="text-brand-gold"> weight-based</span>
-                        rates
-                    </h2>
-                    <p class="mt-4 text-muted-foreground">
-                        Our base rate for MVP is
-                        <span class="font-semibold text-brand-gold">
-                            {{ ratePerLbDisplay }} per lb
-                        </span>
-                        on a single shipping method. Pricing for heavier
-                        packages will be tuned by our admin team — and rates
-                        always come from the database, not hard-coded.
-                    </p>
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <Button
-                            as-child
-                            class="bg-brand-ink text-brand-cream hover:bg-brand-ink-soft"
-                        >
-                            <Link :href="rates()">Calculate shipping</Link>
-                        </Button>
-                        <Button as-child variant="outline">
-                            <Link :href="register()">Create account</Link>
-                        </Button>
-                    </div>
-                </div>
-                <div
-                    class="rounded-xl border border-border bg-card p-6 shadow-sm"
-                >
-                    <p
-                        class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
-                    >
-                        {{ props.rate?.name ?? 'Standard Air Shipping' }}
-                    </p>
-                    <p class="mt-2 text-4xl font-semibold tracking-tight text-brand-gold">
-                        {{ ratePerLbDisplay }}
-                        <span class="text-base text-muted-foreground">
-                            / lb
-                        </span>
-                    </p>
-                    <ul class="mt-6 space-y-3 text-sm">
-                        <li class="flex items-start gap-2">
-                            <CircleCheck
-                                class="mt-0.5 size-4 text-brand-gold"
-                            />
-                            <span>One shipping method for MVP</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <CircleCheck
-                                class="mt-0.5 size-4 text-brand-green"
-                            />
-                            <span>Minimum charge {{ props.rate?.currency ?? 'JMD' }} ${{ (props.rate?.minimum_charge ?? 500).toLocaleString() }}</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <CircleCheck
-                                class="mt-0.5 size-4 text-brand-green"
-                            />
-                            <span>Weight tiers coming soon</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <CircleCheck
-                                class="mt-0.5 size-4 text-brand-green"
-                            />
-                            <span>Pickup only for now</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="bg-brand-green-muted/40 fade-in-section" :style="sectionDelay(4)">
-        <div
-            class="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8"
-        >
-            <div class="mx-auto max-w-2xl text-center">
-                <p class="public-section-label">
-                    Quick answers
-                </p>
-                <h2
-                    class="mt-2 text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
-                >
-                    Frequently asked
-                    <span class="text-brand-gold"> questions</span>
-                </h2>
-            </div>
-
-            <dl class="mt-10 space-y-4">
-                <div
-                    v-for="(faq, index) in faqs"
-                    :key="faq.q"
-                    class="rounded-xl border border-border border-l-2 border-l-brand-gold/50 bg-card p-6 fade-in-item"
-                    :style="itemDelay(index, 100)"
-                >
-                    <dt class="text-base font-semibold">{{ faq.q }}</dt>
-                    <dd class="mt-2 text-sm text-muted-foreground">
-                        {{ faq.a }}
-                    </dd>
-                </div>
-            </dl>
-        </div>
-    </section>
-
-    <!-- Final CTA -->
-    <section class="relative overflow-hidden bg-brand-ink text-brand-cream fade-in-section" :style="sectionDelay(5)">
-        <div
-            class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(30,142,62,0.15),transparent_50%),radial-gradient(circle_at_80%_40%,rgba(255,220,80,0.08),transparent_45%)]"
-            aria-hidden="true"
-        />
-        <div
-            class="relative mx-auto max-w-5xl px-4 py-20 text-center sm:px-6 lg:px-8"
-        >
-            <h2
-                class="text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
-            >
-                Start shipping with
-                <span class="text-brand-gold-soft">TODAY Shipping</span>.
-            </h2>
-            <p
-                class="mx-auto mt-4 max-w-2xl text-base text-brand-cream/70 sm:text-lg"
-            >
-                Create your free account, get your Florida warehouse address,
-                and never lose track of an online order again.
-            </p>
-            <div class="mt-8 flex flex-wrap justify-center gap-3">
-                <Button
-                    as-child
-                    size="lg"
-                    class="public-cta"
-                >
-                    <Link :href="register()">Create account</Link>
-                </Button>
-                <Button
-                    as-child
-                    size="lg"
-                    variant="outline"
-                    class="border-brand-green/40 bg-transparent text-brand-cream hover:bg-brand-green/15"
-                >
-                    <Link :href="rates()">See rates</Link>
-                </Button>
-            </div>
-        </div>
-    </section>
+        </section>
     </div>
 </template>

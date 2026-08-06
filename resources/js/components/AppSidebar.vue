@@ -7,6 +7,7 @@ import {
     Globe,
     Headset,
     LayoutGrid,
+    LifeBuoy,
     Mail,
     MapPin,
     Package,
@@ -72,6 +73,21 @@ const adminNavItems = computed<NavItem[]>(() => {
             title: 'Contact inbox',
             href: adminContactIndex(),
             icon: Mail,
+        });
+    }
+
+    if (permissions.value?.manage_platform_support) {
+        const unread = Number(
+            (page.props as { platform_support_unread?: number })
+                .platform_support_unread ?? 0,
+        );
+        items.push({
+            title:
+                unread > 0
+                    ? `Platform support (${unread > 99 ? '99+' : unread})`
+                    : 'Platform support',
+            href: '/admin/platform-support',
+            icon: LifeBuoy,
         });
     }
 

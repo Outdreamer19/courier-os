@@ -303,7 +303,7 @@ const removePickupPerson = (person: PickupPerson) => {
                             <div class="flex justify-end border-t pt-6">
                                 <Button
                                     type="submit"
-                                    class="bg-brand-gold text-white hover:bg-brand-gold-soft"
+                                    class="bg-brand-ink text-white hover:bg-brand-ink-soft"
                                     :disabled="processing"
                                 >
                                     Save profile
@@ -476,7 +476,7 @@ const removePickupPerson = (person: PickupPerson) => {
 
                                 <Button
                                     type="submit"
-                                    class="w-full bg-brand-gold text-white hover:bg-brand-gold-soft"
+                                    class="w-full bg-brand-ink text-white hover:bg-brand-ink-soft"
                                     :disabled="pickupForm.processing"
                                 >
                                     Add pickup person
