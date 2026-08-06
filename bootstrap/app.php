@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Middleware\EnsureAdminPermission;
+use App\Http\Middleware\EnsureCentralContext;
 use App\Http\Middleware\EnsurePlatformOwner;
+use App\Http\Middleware\EnsureTenantContext;
 use App\Http\Middleware\EnsureTenantSubscribed;
 use App\Http\Middleware\EnsureUserBelongsToTenant;
 use App\Http\Middleware\EnsureUserIsActive;
@@ -25,6 +27,14 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // The app always runs behind a proxy in production (Forge's nginx, and
+        // Cloudflare in front of it when the wildcard record is proxied). Without
+        // trusted proxies Laravel sees plain HTTP, which breaks secure-cookie
+        // issuance and makes generated URLs http:// on an https:// site. The
+        // forwarded Host header also feeds ResolveTenant, so tenant resolution
+        // depends on this being right.
+        $middleware->trustProxies(at: '*');
+
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->validateCsrfTokens(except: [
@@ -42,6 +52,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
+            'central' => EnsureCentralContext::class,
+            'tenant' => EnsureTenantContext::class,
             'role' => EnsureUserRole::class,
             'admin.permission' => EnsureAdminPermission::class,
             'active' => EnsureUserIsActive::class,

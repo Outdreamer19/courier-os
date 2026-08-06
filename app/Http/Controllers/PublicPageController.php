@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Support\ShippingRatePresenter;
 use App\Support\Tenancy\TenantManager;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class PublicPageController extends Controller
 {
@@ -26,11 +28,17 @@ class PublicPageController extends Controller
         'today' => 'tenants.today-shipping',
     ];
 
-    public function home(): Response|View
+    public function home(Request $request): Response|View|SymfonyResponse
     {
         $tenant = $this->tenants->current();
 
         if ($tenant && isset(self::CUSTOM_HOME_VIEWS[$tenant->subdomain])) {
+            // Blade HTML over an Inertia XHR is rendered inside Inertia's
+            // error <dialog> (e.g. after logout → /). Force a full visit.
+            if ($request->inertia()) {
+                return Inertia::location(url()->current());
+            }
+
             return view(self::CUSTOM_HOME_VIEWS[$tenant->subdomain]);
         }
 

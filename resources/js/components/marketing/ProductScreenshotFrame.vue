@@ -4,6 +4,8 @@ import { ImageIcon } from 'lucide-vue-next';
 withDefaults(
     defineProps<{
         src?: string;
+        /** Optional WebP alongside `src`, served in preference to it. */
+        webp?: string;
         alt: string;
         label: string;
         aspect?: string;
@@ -24,14 +26,16 @@ withDefaults(
             <span class="size-2.5 rounded-full bg-marketing-olive/40" />
         </div>
         <div :class="['relative w-full', aspect]">
-            <img
-                v-if="src"
-                :src="src"
-                :alt="alt"
-                loading="lazy"
-                decoding="async"
-                class="absolute inset-0 h-full w-full object-cover object-top"
-            />
+            <picture v-if="src">
+                <source v-if="webp" :srcset="webp" type="image/webp" />
+                <img
+                    :src="src"
+                    :alt="alt"
+                    loading="lazy"
+                    decoding="async"
+                    class="absolute inset-0 h-full w-full object-cover object-top"
+                />
+            </picture>
             <div
                 v-else
                 class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-marketing-eggshell to-marketing-cream text-marketing-ink-muted"

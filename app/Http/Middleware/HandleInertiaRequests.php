@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\WarehouseAddress;
+use App\Services\Platform\PlatformSupportService;
 use App\Support\Tenancy\TenantConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -49,11 +50,15 @@ class HandleInertiaRequests extends Middleware
                         'manage_system_settings' => $user->hasAdminPermission('manage_system_settings'),
                         'manage_customers' => $user->hasAdminPermission('manage_customers'),
                         'manage_contact_messages' => $user->hasAdminPermission('manage_contact_messages'),
+                        'manage_platform_support' => $user->hasAdminPermission('manage_platform_support'),
                         'delete_records' => $user->hasAdminPermission('delete_records'),
                         'manage_billing' => $user->hasAdminPermission('manage_billing'),
                     ] : null,
                 ] : null,
             ],
+            'platform_support_unread' => fn () => $user
+                ? app(PlatformSupportService::class)->unreadCountFor($user)
+                : 0,
             'brand' => [
                 'name' => $brand->name(),
                 'currency' => $brand->currency(),

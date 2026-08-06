@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
+use App\Http\Controllers\Admin\PlatformSupportController as AdminPlatformSupportController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PackageBillingController;
@@ -66,13 +67,19 @@ Route::post('webhooks/invoicefeed', InvoiceFeedWebhookController::class)
 |--------------------------------------------------------------------------
 | The /dashboard route is the post-login landing page for every role. Admins
 | are bounced to /admin and customers see the customer dashboard.
+|
+| /dashboard itself deliberately stops short of requiring a tenant, because it
+| is also where the platform owner lands after signing in on the central
+| domain before being redirected to their console. Everything below it that
+| reads tenant-scoped data carries `tenant`, so it cannot be reached on
+| courieros.co where the BelongsToTenant global scope is inert.
 */
 Route::middleware(['auth', 'verified', 'tenant.member', 'tenant.subscribed'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     Route::prefix('portal')
         ->name('portal.')
-        ->middleware('role:customer')
+        ->middleware(['tenant', 'role:customer'])
         ->group(function () {
             Route::get('profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
             Route::patch('profile', [CustomerProfileController::class, 'update'])->name('profile.update');
@@ -94,7 +101,7 @@ Route::middleware(['auth', 'verified', 'tenant.member', 'tenant.subscribed'])->g
 
     Route::prefix('admin')
         ->name('admin.')
-        ->middleware('role:owner,admin,staff')
+        ->middleware(['tenant', 'role:owner,admin,staff'])
         ->group(function () {
             Route::get('/', AdminDashboardController::class)->name('dashboard');
 
@@ -125,6 +132,18 @@ Route::middleware(['auth', 'verified', 'tenant.member', 'tenant.subscribed'])->g
                 ->only(['index', 'show', 'update', 'destroy'])
                 ->parameters(['contact-messages' => 'contact_message'])
                 ->middleware('admin.permission:manage_contact_messages');
+
+            Route::middleware('role:owner,admin')->prefix('platform-support')->name('platform-support.')->group(function () {
+                Route::get('/', [AdminPlatformSupportController::class, 'index'])->name('index');
+                Route::post('/', [AdminPlatformSupportController::class, 'store'])
+                    ->middleware('throttle:30,1')
+                    ->name('store');
+                Route::get('{thread}', [AdminPlatformSupportController::class, 'show'])->name('show');
+                Route::post('{thread}/messages', [AdminPlatformSupportController::class, 'storeMessage'])
+                    ->middleware('throttle:30,1')
+                    ->name('messages.store');
+                Route::patch('{thread}', [AdminPlatformSupportController::class, 'update'])->name('update');
+            });
 
             Route::resource('shipping-rates', AdminShippingRateController::class)
                 ->except(['show', 'destroy'])

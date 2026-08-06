@@ -27,7 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');
 });
 
-Route::middleware(['auth', 'admin.permission:manage_system_settings'])->group(function () {
+// Branding writes to the resolved tenant, so unlike the personal settings
+// above it is meaningless — and unscoped — on the central domain.
+Route::middleware(['auth', 'tenant', 'admin.permission:manage_system_settings'])->group(function () {
     Route::get('settings/branding', [BrandingController::class, 'edit'])->name('branding.edit');
     Route::patch('settings/branding', [BrandingController::class, 'update'])->name('branding.update');
     Route::post('settings/branding/logo', [BrandingController::class, 'uploadLogo'])->name('branding.logo.store');

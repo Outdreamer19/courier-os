@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const pages = [
-    { name: 'Product', href: '#product' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'FAQ', href: '#faq' },
+    { name: 'Product', href: '/product' },
+    { name: 'Pricing', href: '/pricing' },
+    { name: 'FAQ', href: '/#faq' },
 ];
 
 const utility = [

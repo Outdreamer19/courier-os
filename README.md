@@ -1,208 +1,185 @@
-# SHIP DJM
+# CourierOS
 
-Shipping & freight forwarding portal for Jamaica-bound packages. Customers ship to a Florida warehouse, pre-alert their shipments, and receive consolidated freight on the island. Phase 1 ships the foundation: public marketing site, authentication, role-based access, and dashboard shells.
+Multi-tenant SaaS for Caribbean courier and freight-forwarding businesses.
+Each tenant gets their own branded site where their customers register, get a
+Miami warehouse address, pre-alert shipments, track packages, and pay invoices
+— while the courier runs intake, status updates, billing and reporting from an
+admin portal.
 
-Built on the Laravel 12 + Vue 3 + Inertia.js starter kit (Fortify, Wayfinder, Tailwind v4, reka-ui, TypeScript).
+One Laravel application serves three surfaces:
 
----
+| Surface | Host | What it is |
+| --- | --- | --- |
+| **Platform** | `courieros.co` | CourierOS marketing site, tenant signup, Stripe checkout, and the owner console at `/platform` |
+| **Tenant public site** | `{subdomain}.courieros.co` | The courier's own marketing site, rates and contact form |
+| **Tenant portal** | `{subdomain}.courieros.co/admin` and `/portal` | Courier admin operations, and their customers' portal |
 
-## Phase 1 scope (delivered)
-
-- **Public site:** Home, About, Rates (with calculator), Contact (functional form), Terms, Privacy, Shipping Policy, Refund Policy, Restricted Items.
-- **Brand:** black / gold / green / cream tokens applied across CSS, layouts, auth pages, and dashboards.
-- **Auth:** Fortify-driven register / login / forgot password / reset / verify, all reskinned.
-- **Users:** `role` (admin | customer) and `status` (active | suspended) columns. Suspended users are signed out and bounced on every protected request.
-- **Customer references:** `DJM-000001` style identifier created in a locked transaction whenever a user registers.
-- **Warehouse + rates:** Editable warehouse address and JMD 500/lb default shipping rate, seeded and shared to every Inertia page.
-- **Dashboards:**
-  - Customer dashboard with reference, copy-ready Florida warehouse address, and empty-state cards for packages, pre-alerts, and amount due.
-  - Admin dashboard with customer counts, placeholder package/pre-alert metrics, and recent contact messages.
-- **Contact inbox:** Public form persists to `contact_messages` and surfaces on the admin dashboard.
-- **Automated coverage:** 59 PHPUnit feature tests (Pint + ESLint clean).
-
-Future phases (pre-alerts, package intake, invoicing, notifications, etc.) are intentionally out of scope here.
+Built on Laravel 12 + Vue 3 + Inertia (Fortify, Cashier, Wayfinder,
+Tailwind v4, reka-ui, TypeScript).
 
 ---
 
-## Requirements
+## How tenancy works
 
-- PHP 8.3+ (Herd ships this)
-- Composer 2.x
-- Node 22+ and npm 10+
-- MySQL 8 (Herd's bundled MySQL works out of the box)
+Everything hangs off the request host.
+
+1. `ResolveTenant` (prepended to the `web` group) reads `$request->getHost()`,
+   strips `COURIEROS_CENTRAL_DOMAIN`, and looks the remaining label up against
+   `tenants.subdomain`. `tenants.custom_domain` is checked first, so a courier
+   can bring their own domain without a code change.
+2. The apex and any reserved subdomain (`www`, `app`, `admin`, `billing`, …
+   see `config/courieros.php`) bind no tenant and run in **central** context.
+3. A resolved tenant is bound into the `TenantManager` singleton. The
+   `BelongsToTenant` trait adds a global scope filtering every tenant-owned
+   model by `tenant_id`, and auto-fills `tenant_id` on create.
+4. With no tenant bound the scope is a **no-op** — which is what lets platform
+   code and CLI commands see across every tenant.
+
+Guards layered on top:
+
+| Middleware | Alias | Enforces |
+| --- | --- | --- |
+| `EnsureUserBelongsToTenant` | `tenant.member` | A user may only act inside their own tenant. Platform owners are barred from tenant subdomains entirely. |
+| `EnsureTenantSubscribed` | `tenant.subscribed` | The tenant has an active subscription, an in-window trial, or active status. |
+| `EnsureUserRole` | `role:owner,admin,staff` | Coarse role gate. |
+| `EnsureAdminPermission` | `admin.permission:manage_billing` | Fine-grained admin capability. |
+| `EnsurePlatformOwner` | `platform` | CourierOS owner, in central context only. |
+| `EnsureUserIsActive` | `active` (also global) | Suspended users are signed out on every request. |
+
+`SESSION_DOMAIN` must stay `null`. A null value scopes the session cookie to
+the exact host, which is what keeps each tenant's session isolated. Setting it
+to `.courieros.co` would share one session across every tenant on the
+platform.
+
+---
+
+## Roles
+
+| Role | Scope | Can |
+| --- | --- | --- |
+| `platform_owner` | Central, no tenant | Platform console: revenue, tenant health, suspend/reactivate tenants |
+| `owner` | One tenant | Everything in their tenant, including admin user management |
+| `admin` | One tenant | Operations and billing |
+| `staff` | One tenant | Day-to-day packages and pre-alerts |
+| `customer` | One tenant | Their own pre-alerts, packages and invoices |
 
 ---
 
 ## Local setup
 
+Requirements: PHP 8.3+, Composer 2, Node 22+, MySQL 8. Herd ships all of it.
+
 ```bash
-cd ~/Herd/shipdjm
+cd ~/Herd/courieros
 
 composer install
 npm install
-
-cp .env.example .env   # only if .env does not already exist
+cp .env.example .env            # only if .env does not already exist
 php artisan key:generate
 
-# Create the MySQL schema (Herd MySQL listens on 127.0.0.1:3306 with the default `root` user, no password)
-mysql -uroot -e "CREATE DATABASE IF NOT EXISTS shipdjm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -uroot -e "CREATE DATABASE IF NOT EXISTS courieros CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
 php artisan migrate --seed
-npm run build           # generates the Vite manifest used by Inertia
+npm run build                   # or `npm run dev` for HMR
 ```
 
-Serve the app through Herd (`https://shipdjm.test`) or run `php artisan serve` + `npm run dev` for a hot-reloading workflow.
+Herd resolves `*.test`, including wildcards, so `courieros.test` and
+`today.courieros.test` both work with no extra DNS config. Set
+`COURIEROS_CENTRAL_DOMAIN=courieros.test` in `.env` to match.
 
-### Seeded credentials
+### Seeding
 
-| Role      | Email                    | Password   | Reference   |
-| --------- | ------------------------ | ---------- | ----------- |
-| Admin     | `shane1obdurate@gmail.com` | `password` | n/a         |
-| Customer  | `customer@shipdjm.test`  | `password` | `DJM-000001` |
+```bash
+php artisan db:seed --class=CourierOsSeeder            # platform owner + 3 tenants
+php artisan db:seed --class=TodayShippingDataSeeder    # + realistic Today Shipping data
+```
 
-The seeder also provisions the placeholder Florida warehouse and a single active JMD 500/lb shipping rate.
+`TodayShippingDataSeeder` calls `CourierOsSeeder` first, so it is the only one
+you need for a full local environment. It is idempotent.
+
+### Seeded accounts
+
+All use the password `password`.
+
+| Host | Email | Role |
+| --- | --- | --- |
+| `courieros.test` | `platform@courieros.co` | Platform owner → `/platform` |
+| `today.courieros.test` | `admin@todayshippingja.com` | Owner (the pilot client's real address) |
+| `today.courieros.test` | `owner@today.test` | Owner |
+| `today.courieros.test` | `admin@today.test` | Admin |
+| `today.courieros.test` | `staff@today.test` | Staff |
+| `today.courieros.test` | `customer@today.test` | Customer |
+| `shipd.courieros.test` | `owner@shipd.test` / `customer@shipd.test` | Owner / customer |
+| `island.courieros.test` | `owner@island.test` / `customer@island.test` | Owner / customer |
 
 ---
 
 ## Useful commands
 
 ```bash
-# Run the test suite (PHPUnit feature + unit)
-php artisan test
+php artisan test                # 214 feature + unit tests (sqlite in-memory)
+./vendor/bin/pint               # PHP formatting
+npm run lint                    # ESLint
+npm run format                  # Prettier
+npm run types:check             # vue-tsc
 
-# PHP code style
-./vendor/bin/pint           # apply fixes
-./vendor/bin/pint --test    # dry-run
+# Provision a staff/owner account inside a tenant, ready to sign in.
+# Prints a generated password once; marks the address verified.
+php artisan tenant:user today admin@todayshippingja.com --role=owner
 
-# Frontend lint + format
-npm run lint                # apply fixes
-npm run format              # Prettier
-npm run format:check        # Prettier dry-run
-npx eslint . --max-warnings=0   # strict CI-style check
+# Wipe a tenant's operational data but keep its config, rates and staff.
+php artisan tenant:reset today --force
 
-# Build assets
-npm run dev                 # HMR dev server
-npm run build               # production build (required before php artisan test if you cleared public/build)
+# Reconcile payment status with InvoiceFeed (also scheduled hourly).
+php artisan shipdjm:sync-invoicefeed-payments
 ```
 
 ---
 
-## Manual smoke-test checklist
-
-Run after `php artisan migrate:fresh --seed` and `npm run build`.
-
-### Central marketing site (courieros.co, logged out)
-- [ ] `/` on the central domain (not a tenant subdomain) renders the CourierOS marketing page — sticky nav, hero, pricing ($79/mo + $349 setup), FAQ accordion, footer.
-- [ ] `/` on a tenant subdomain still renders that tenant's own public home page (regression check).
-- [ ] `/signup` renders full-bleed with no dashboard sidebar around it.
-
-### Public site (logged out)
-- [ ] `/` renders hero, three-step "how it works", rate preview, FAQ, and final CTA.
-- [ ] `/about` renders mission, expectations, and values copy.
-- [ ] `/rates` calculator returns `weight × 500 JMD` for several weights.
-- [ ] `/contact` submission shows a success toast and stores a row in `contact_messages`.
-- [ ] `/terms`, `/privacy`, `/shipping-policy`, `/refund-policy`, `/restricted-items` all load with the legal placeholder notice.
-- [ ] Header CTAs link to `register` and `login`; footer legal links resolve.
-
-### Authentication
-- [ ] Register a brand-new account → redirects to customer dashboard with a fresh `DJM-XXXXXX` reference.
-- [ ] Login as `customer@shipdjm.test` → lands on `/dashboard` with `DJM-000001`.
-- [ ] Logout returns to `/`.
-- [ ] Forgot password / reset password / verify email flows render with brand styling.
-
-### Customer dashboard
-- [ ] Shows customer name, `DJM-000001`, and welcome copy.
-- [ ] Florida warehouse address card displays the seeded address; "copy" buttons place the value on the clipboard with a toast.
-- [ ] Empty-state cards for packages, pre-alerts, and amount due are visible.
-
-### Admin dashboard
-- [ ] Login as `shane1obdurate@gmail.com` → `/dashboard` redirects to `/admin/dashboard`.
-- [ ] Stat cards show "Customers" count (≥1) and placeholder pre-alert/package counts.
-- [ ] Recent contact messages panel lists submissions made above.
-- [ ] Sidebar shows the admin navigation set.
-
-### Authorization
-- [ ] As a customer, GET `/admin/dashboard` returns `403`.
-- [ ] As a guest, GET `/dashboard` redirects to `/login`.
-- [ ] Set a user's `status` to `suspended` (`php artisan tinker` → `User::find(2)->update(['status' => 'suspended'])`) and try to load `/dashboard`. The user is logged out and redirected to `/login` with the "Your account has been suspended" message.
-
-### Shared data
-- [ ] Hitting `/` populates the rate preview from the active `shipping_rates` row and the warehouse from the active `warehouse_addresses` row (change either in the DB and the public site reflects it after a refresh).
-
----
-
-## Project layout (highlights)
+## Project layout
 
 ```
 app/
-├── Actions/Fortify/CreateNewUser.php        # creates customer profile + reference on register
-├── Http/Controllers/
-│   ├── PublicPageController.php             # public marketing pages
-│   ├── ContactController.php                # public contact form
-│   ├── DashboardController.php              # role-aware authenticated landing
-│   └── Admin/DashboardController.php
-├── Http/Middleware/
-│   ├── EnsureUserRole.php                   # alias `role:admin|customer`
-│   ├── EnsureUserIsActive.php               # alias `active`, also global
-│   └── HandleInertiaRequests.php            # shares brand / warehouse / flash
-├── Models/
-│   ├── User.php (role/status helpers)
-│   ├── CustomerProfile.php
-│   ├── WarehouseAddress.php
-│   ├── ShippingRate.php
-│   └── ContactMessage.php
-└── Services/CustomerReferenceGenerator.php  # DJM-000001 generator
+├── Http/Middleware/ResolveTenant.php        # host → tenant binding
+├── Http/Controllers/Central/                # platform: signup, billing, console
+├── Http/Controllers/Admin/                  # tenant admin operations
+├── Http/Controllers/Customer/               # tenant customer portal
+├── Models/Concerns/BelongsToTenant.php      # the global scope
+├── Support/Tenancy/{TenantManager,TenantConfig}.php
+├── Services/Platform/PlatformStatsService.php
+└── Console/Commands/{ProvisionTenantUser,ResetTenantData,SyncInvoiceFeedPayments}.php
 
-config/shipdjm.php                            # brand, currency, reference padding, invoice upload config
+resources/js/
+├── layouts/{AppLayout,PublicLayout,AuthLayout,PlatformLayout}.vue
+├── components/marketing/                    # CourierOS landing page
+├── pages/central/                           # platform (no layout — self-contained)
+├── pages/public/                            # tenant marketing site
+├── pages/admin/                             # tenant admin
+└── pages/customer/                          # tenant customer portal
 
-database/
-├── migrations/2026_05_26_100*                # phase 1 schema
-└── seeders/{WarehouseAddressSeeder, ShippingRateSeeder, UsersSeeder}.php
+resources/views/
+├── tenants/today-shipping.blade.php         # bespoke tenant landing page
+└── errors/                                  # branded, dependency-free error pages
 
-resources/
-├── css/app.css                               # brand tokens
-└── js/
-    ├── layouts/PublicLayout.vue              # public marketing chrome
-    ├── pages/public/                         # Home, About, Rates, Contact, legal/*
-    ├── pages/Dashboard.vue                   # customer dashboard
-    ├── pages/admin/Dashboard.vue             # admin dashboard
-    ├── components/AppLogo.vue                # SHIP DJM wordmark
-    └── components/CopyButton.vue             # reusable clipboard control
-
-routes/web.php                                # public + auth + admin groups
-tests/Feature/                                # PublicPagesTest, ContactFormTest, RoleAccessTest, CustomerReferenceGeneratorTest, InertiaSharedDataTest, ...
+routes/
+├── web.php                                  # tenant public + portal + admin
+├── central.php                              # platform-only routes
+└── console.php                              # scheduled tasks
 ```
+
+Tenants with a bespoke marketing page are mapped in
+`PublicPageController::CUSTOM_HOME_VIEWS`; everyone else gets the shared
+`public/Home` Inertia page driven by their own rates and warehouse.
 
 ---
 
-## Configuration knobs
+## Deployment
 
-`.env` (all optional, sensible defaults in `config/shipdjm.php`):
+- Production env template: [`.env.production.example`](.env.production.example)
+- Client UAT runbook: [`docs/deployment/today-shipping-uat.md`](docs/deployment/today-shipping-uat.md)
+- **Launch readiness audit: [`docs/launch-readiness.md`](docs/launch-readiness.md)** — read this before going live
 
-```dotenv
-APP_NAME="SHIP DJM"
-SHIPDJM_CURRENCY=JMD
-SHIPDJM_DEFAULT_RATE_PER_LB=500
-SHIPDJM_CUSTOMER_REFERENCE_PREFIX=DJM
-SHIPDJM_CUSTOMER_REFERENCE_PADDING=6
-```
-
-The shipping rate displayed in marketing pages comes from the active row in `shipping_rates`. Editing the seeded row (or adding new tiers via tinker) changes the public preview and the calculator immediately.
-
-The Florida warehouse address shown on the customer dashboard and the homepage comes from the active row in `warehouse_addresses`. To update it before the admin warehouse CRUD ships in a later phase, edit the seeded row via tinker or a one-off migration.
-
----
-
-## Known follow-ups (next phases)
-
-These are intentionally **not** implemented yet:
-
-- Customer profile editor (Jamaica address, phone, parish).
-- Pre-alerts (create / edit / cancel + tracking link).
-- Package intake (admin) and customer package timeline.
-- Invoicing (PDF + JMD totals + payment status).
-- Notifications (email + WhatsApp link-outs).
-- Admin CRUD for warehouses, rates, customers, and contact messages.
-- Storage of invoice uploads on the configured disk (`config/shipdjm.php → invoice_uploads`).
-
-Phase 1 lays the routing, authorization, shared data, and visual foundations so each of those slots into the existing layouts without rework.
+Tenant subdomains require a wildcard DNS record (`A * → server IP`), a
+`*.courieros.co` alias on the Forge site, and a wildcard TLS certificate
+issued via a DNS-01 challenge. Turn on the Forge scheduler so the hourly
+payment reconciliation runs.

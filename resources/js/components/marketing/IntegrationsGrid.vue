@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BlurRevealText from './BlurRevealText.vue';
+
 interface Integration {
     name: string;
     live: boolean;
@@ -27,11 +29,10 @@ const integrations: Integration[] = [
             >
                 Integrations
             </p>
-            <h2
+            <BlurRevealText
+                text="Works with the tools you already use"
                 class="mt-2 text-3xl font-semibold tracking-tight text-balance text-marketing-ink sm:text-4xl"
-            >
-                Works with the tools you already use
-            </h2>
+            />
             <p class="mx-auto mt-3 max-w-md text-sm text-marketing-ink-muted">
                 <span class="font-semibold text-marketing-orange-deep">✓</span>
                 live today &mdash; everything else is on our roadmap.

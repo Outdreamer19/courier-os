@@ -1,11 +1,21 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Receipt, Search } from 'lucide-vue-next';
+import { ArrowUpRight, Receipt, Search } from 'lucide-vue-next';
 import { ref } from 'vue';
+import {
+    DataTable,
+    DataTableBody,
+    DataTableCell,
+    DataTableFooter,
+    DataTableHeader,
+    DataTableHeaderCell,
+    DataTableRow,
+} from '@/components/data-table';
 import EmptyState from '@/components/EmptyState.vue';
+import InitialsAvatar from '@/components/InitialsAvatar.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { index, show } from '@/routes/admin/pre-alerts';
@@ -20,10 +30,28 @@ defineOptions({
 });
 
 const props = defineProps<{
-    preAlerts: { data: Array<Record<string, unknown>> };
+    preAlerts: {
+        data: Array<Record<string, unknown>>;
+        links: Array<{ url: string | null; label: string; active: boolean }>;
+        from: number | null;
+        to: number | null;
+        total: number;
+    };
     filters: { status: string | null; search: string | null };
     statuses: Record<string, string>;
 }>();
+
+const formatDate = (value: unknown) => {
+    if (typeof value !== 'string') {
+        return '—';
+    }
+
+    return new Date(value).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+    });
+};
 
 const search = ref(props.filters.search ?? '');
 const status = ref(props.filters.status ?? '');
@@ -53,7 +81,11 @@ const applyFilters = () => {
                 class="h-9 rounded-md border border-input px-3 text-sm"
             >
                 <option value="">All statuses</option>
-                <option v-for="(label, value) in statuses" :key="value" :value="value">
+                <option
+                    v-for="(label, value) in statuses"
+                    :key="value"
+                    :value="value"
+                >
                     {{ label }}
                 </option>
             </select>
@@ -63,50 +95,103 @@ const applyFilters = () => {
             </Button>
         </form>
 
-        <Card v-if="preAlerts.data.length">
-            <CardContent class="overflow-x-auto pt-6">
-                <table class="w-full min-w-[800px] text-left text-sm">
-                    <thead>
-                        <tr class="border-b text-muted-foreground">
-                            <th class="pb-3 pr-4">Merchant</th>
-                            <th class="pb-3 pr-4">Customer</th>
-                            <th class="pb-3 pr-4">Tracking</th>
-                            <th class="pb-3 pr-4">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
+        <Card v-if="preAlerts.data.length" class="gap-0 overflow-hidden py-0">
+            <CardContent class="px-0">
+                <DataTable min-width="880px">
+                    <DataTableHeader>
+                        <DataTableHeaderCell width="24%">
+                            Merchant
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="28%">
+                            Customer
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="20%">
+                            Tracking
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="20%">
+                            Status
+                        </DataTableHeaderCell>
+                        <DataTableHeaderCell width="8%">
+                            <span class="sr-only">Actions</span>
+                        </DataTableHeaderCell>
+                    </DataTableHeader>
+                    <DataTableBody>
+                        <DataTableRow
                             v-for="row in preAlerts.data"
                             :key="row.id as number"
-                            class="border-b border-border/60"
                         >
-                            <td class="py-3 pr-4">
+                            <DataTableCell>
                                 <Link
                                     :href="show(row.id as number)"
-                                    class="font-medium hover:underline"
+                                    class="block truncate font-medium hover:underline"
                                 >
                                     {{ row.merchant_name }}
                                 </Link>
-                            </td>
-                            <td class="py-3 pr-4 text-muted-foreground">
-                                {{ row.customer_name }}
-                                <span class="block text-xs">
-                                    {{ row.customer_reference }}
-                                </span>
-                            </td>
-                            <td class="py-3 pr-4 text-muted-foreground">
+                                <div
+                                    class="truncate text-xs text-muted-foreground"
+                                >
+                                    {{ formatDate(row.created_at) }}
+                                </div>
+                            </DataTableCell>
+                            <DataTableCell>
+                                <div class="flex items-center gap-3">
+                                    <InitialsAvatar
+                                        :name="
+                                            (row.customer_name as string) ?? ''
+                                        "
+                                    />
+                                    <div class="min-w-0">
+                                        <div class="truncate font-medium">
+                                            {{ row.customer_name ?? '—' }}
+                                        </div>
+                                        <div
+                                            v-if="row.customer_reference"
+                                            class="truncate text-xs text-muted-foreground tabular-nums"
+                                        >
+                                            {{ row.customer_reference }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </DataTableCell>
+                            <DataTableCell muted class="truncate tabular-nums">
                                 {{ row.tracking_number ?? '—' }}
-                            </td>
-                            <td class="py-3 pr-4">
+                            </DataTableCell>
+                            <DataTableCell>
                                 <StatusBadge
                                     :status="row.status as string"
                                     :label="row.status_label as string"
                                 />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </DataTableCell>
+                            <DataTableCell align="right">
+                                <Button
+                                    as-child
+                                    variant="outline"
+                                    size="icon-sm"
+                                    class="text-muted-foreground opacity-70 transition-all group-hover:opacity-100 hover:border-brand-ink/50 hover:bg-brand-ink/10 hover:text-brand-ink dark:hover:bg-brand-ink/25 dark:hover:text-brand-cream"
+                                >
+                                    <Link
+                                        :href="show(row.id as number)"
+                                        :title="`Open ${row.merchant_name} pre-alert`"
+                                    >
+                                        <ArrowUpRight class="size-4" />
+                                        <span class="sr-only">
+                                            Open pre-alert
+                                        </span>
+                                    </Link>
+                                </Button>
+                            </DataTableCell>
+                        </DataTableRow>
+                    </DataTableBody>
+                </DataTable>
             </CardContent>
+
+            <DataTableFooter
+                :links="preAlerts.links"
+                :from="preAlerts.from"
+                :to="preAlerts.to"
+                :total="preAlerts.total"
+                noun="pre-alerts"
+            />
         </Card>
 
         <Card v-else>

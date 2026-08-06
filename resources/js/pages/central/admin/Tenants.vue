@@ -1,114 +1,242 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import PlatformLayout from '@/layouts/PlatformLayout.vue';
 
-defineProps<{
-    tenants: {
-        id: number;
-        name: string;
-        subdomain: string;
-        custom_domain: string | null;
-        status: string;
-        currency: string;
-        created_at: string;
-    }[];
-}>();
-
-const statusColor = (status: string) => {
-    return (
-        {
-            active: 'bg-[hsl(168_76%_42%)]/15 text-[hsl(168_76%_70%)]',
-            pending: 'bg-amber-400/15 text-amber-300',
-            suspended: 'bg-rose-400/15 text-rose-300',
-            cancelled: 'bg-white/10 text-white/50',
-        }[status] ?? 'bg-white/10 text-white/50'
-    );
+type TenantRow = {
+    id: number;
+    name: string;
+    subdomain: string;
+    custom_domain: string | null;
+    url: string | null;
+    status: string;
+    currency: string;
+    subscription_status: string;
+    customers: number;
+    packages: number;
+    packages_30d: number;
+    last_activity_human: string | null;
+    health: string;
+    created_at: string;
 };
+
+type Filter = 'all' | 'active' | 'pending' | 'suspended';
+
+const props = defineProps<{ tenants: TenantRow[] }>();
+
+const search = ref('');
+const filter = ref<Filter>('all');
+
+const filtered = computed(() =>
+    props.tenants.filter((tenant) => {
+        const matchesFilter =
+            filter.value === 'all' || tenant.status === filter.value;
+
+        const term = search.value.trim().toLowerCase();
+        const matchesSearch =
+            term === '' ||
+            tenant.name.toLowerCase().includes(term) ||
+            tenant.subdomain.toLowerCase().includes(term) ||
+            (tenant.custom_domain ?? '').toLowerCase().includes(term);
+
+        return matchesFilter && matchesSearch;
+    }),
+);
+
+const counts = computed(() => ({
+    all: props.tenants.length,
+    active: props.tenants.filter((t) => t.status === 'active').length,
+    pending: props.tenants.filter((t) => t.status === 'pending').length,
+    suspended: props.tenants.filter((t) => t.status === 'suspended').length,
+}));
+
+const statusColor = (status: string) =>
+    ({
+        active: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
+        pending: 'bg-amber-50 text-amber-700 ring-amber-600/20',
+        suspended: 'bg-rose-50 text-rose-700 ring-rose-600/20',
+        cancelled: 'bg-zinc-50 text-zinc-600 ring-zinc-500/20',
+    })[status] ?? 'bg-zinc-50 text-zinc-600 ring-zinc-500/20';
+
+const healthDot = (health: string) =>
+    ({
+        healthy: 'bg-emerald-500',
+        quiet: 'bg-amber-500',
+        at_risk: 'bg-rose-500',
+        onboarding: 'bg-sky-500',
+        offline: 'bg-zinc-400',
+    })[health] ?? 'bg-zinc-400';
+
+const billingLabel = (status: string) =>
+    status === 'none' ? 'Not billed' : status.replace('_', ' ');
 
 const toggle = (id: number, status: string) => {
     const action = status === 'suspended' ? 'activate' : 'suspend';
-    router.patch(`/platform/tenants/${id}`, { action }, { preserveScroll: true });
+
+    if (
+        action === 'suspend' &&
+        !window.confirm(
+            'Suspending locks every staff member and customer of this tenant out of the app. Continue?',
+        )
+    ) {
+        return;
+    }
+
+    router.patch(
+        `/platform/tenants/${id}`,
+        { action },
+        { preserveScroll: true },
+    );
 };
+
+const tabs: { key: Filter; label: string }[] = [
+    { key: 'all', label: 'All' },
+    { key: 'active', label: 'Live' },
+    { key: 'pending', label: 'Onboarding' },
+    { key: 'suspended', label: 'Suspended' },
+];
 </script>
 
 <template>
-    <Head title="Tenants — CourierOS Platform" />
+    <Head title="Tenants" />
 
-    <div class="min-h-screen bg-[hsl(222_47%_11%)] text-white">
-        <header
-            class="flex items-center justify-between border-b border-white/10 px-8 py-5"
-        >
-            <div class="flex items-center gap-2.5">
-                <div
-                    class="flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(168_76%_42%)] font-bold text-[hsl(222_47%_11%)]"
-                >
-                    C
-                </div>
-                <span class="font-semibold tracking-tight">CourierOS</span>
-                <span class="ml-1 text-xs text-white/40">Platform</span>
+    <PlatformLayout current="tenants">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <h1 class="text-2xl/8 font-semibold text-zinc-950 sm:text-xl/8">
+                    Tenants
+                </h1>
+                <p class="mt-1 text-sm/6 text-zinc-500">
+                    {{ tenants.length }}
+                    {{ tenants.length === 1 ? 'business' : 'businesses' }} on the
+                    platform.
+                </p>
             </div>
-            <nav class="flex items-center gap-6 text-sm">
-                <Link href="/platform" class="text-white/50 hover:text-white"
-                    >Overview</Link
-                >
-                <span class="text-white/90">Tenants</span>
-            </nav>
-        </header>
 
-        <main class="mx-auto max-w-6xl px-8 py-10">
-            <h1 class="text-2xl font-semibold tracking-tight">Tenants</h1>
-            <p class="mt-1 text-sm text-white/50">
-                {{ tenants.length }}
-                {{ tenants.length === 1 ? 'business' : 'businesses' }} on the
-                platform.
-            </p>
+            <input
+                v-model="search"
+                type="search"
+                placeholder="Search name or domain…"
+                class="w-full max-w-xs rounded-lg border border-zinc-950/10 bg-white px-3 py-2 text-sm text-zinc-950 shadow-xs placeholder:text-zinc-400 focus:border-zinc-950/20 focus:outline-none focus:ring-2 focus:ring-zinc-950/10"
+            />
+        </div>
 
-            <div
-                class="mt-8 overflow-hidden rounded-xl border border-white/10 bg-white/5"
+        <div class="mt-6 flex flex-wrap gap-1">
+            <button
+                v-for="tab in tabs"
+                :key="tab.key"
+                type="button"
+                class="rounded-lg px-3 py-1.5 text-sm font-medium transition"
+                :class="
+                    filter === tab.key
+                        ? 'bg-zinc-950 text-white'
+                        : 'text-zinc-500 hover:bg-zinc-950/5 hover:text-zinc-950'
+                "
+                @click="filter = tab.key"
             >
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-white/10 text-left text-white/50">
-                            <th class="px-5 py-3 font-medium">Business</th>
-                            <th class="px-5 py-3 font-medium">Address</th>
-                            <th class="px-5 py-3 font-medium">Currency</th>
-                            <th class="px-5 py-3 font-medium">Status</th>
-                            <th class="px-5 py-3 font-medium">Joined</th>
-                            <th class="px-5 py-3 font-medium text-right">
-                                Action
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="tenant in tenants"
-                            :key="tenant.id"
-                            class="border-b border-white/5 last:border-0"
-                        >
-                            <td class="px-5 py-4 font-medium">
-                                {{ tenant.name }}
-                            </td>
-                            <td class="px-5 py-4 text-white/60">
-                                {{ tenant.custom_domain ?? tenant.subdomain }}
-                            </td>
-                            <td class="px-5 py-4 text-white/60">
-                                {{ tenant.currency }}
-                            </td>
-                            <td class="px-5 py-4">
+                {{ tab.label }}
+                <span
+                    class="ml-1 text-xs"
+                    :class="
+                        filter === tab.key ? 'text-white/60' : 'text-zinc-400'
+                    "
+                    >{{ counts[tab.key] }}</span
+                >
+            </button>
+        </div>
+
+        <div class="mt-4 overflow-x-auto">
+            <table class="min-w-full text-left text-sm/6 text-zinc-950">
+                <thead class="border-b border-zinc-950/10 text-zinc-500">
+                    <tr>
+                        <th class="py-3 pr-4 pl-0 font-medium">Business</th>
+                        <th class="px-4 py-3 font-medium">Address</th>
+                        <th class="px-4 py-3 font-medium">Status</th>
+                        <th class="px-4 py-3 font-medium">Billing</th>
+                        <th class="px-4 py-3 text-right font-medium">
+                            Customers
+                        </th>
+                        <th class="px-4 py-3 text-right font-medium">
+                            Packages (30d)
+                        </th>
+                        <th class="px-4 py-3 font-medium">Last activity</th>
+                        <th class="px-4 py-3 font-medium">Joined</th>
+                        <th class="py-3 pr-0 pl-4 text-right font-medium">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="tenant in filtered"
+                        :key="tenant.id"
+                        class="border-b border-zinc-950/5 last:border-0"
+                    >
+                        <td class="py-4 pr-4 pl-0">
+                            <span class="flex items-center gap-2">
                                 <span
-                                    class="rounded-full px-2.5 py-1 text-xs font-medium capitalize"
-                                    :class="statusColor(tenant.status)"
+                                    class="size-1.5 shrink-0 rounded-full"
+                                    :class="healthDot(tenant.health)"
+                                    :title="tenant.health"
+                                />
+                                <span class="font-medium">{{
+                                    tenant.name
+                                }}</span>
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 text-zinc-600">
+                            <a
+                                v-if="tenant.url"
+                                :href="tenant.url"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="hover:text-zinc-950 hover:underline"
+                            >
+                                {{
+                                    tenant.custom_domain ?? tenant.subdomain
+                                }}
+                            </a>
+                            <span v-else>{{ tenant.subdomain }}</span>
+                        </td>
+                        <td class="px-4 py-4">
+                            <span
+                                class="inline-flex rounded-md px-1.5 py-0.5 text-xs font-medium capitalize ring-1 ring-inset"
+                                :class="statusColor(tenant.status)"
+                            >
+                                {{ tenant.status }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-4 capitalize text-zinc-600">
+                            {{ billingLabel(tenant.subscription_status) }}
+                        </td>
+                        <td class="px-4 py-4 text-right tabular-nums">
+                            {{ tenant.customers }}
+                        </td>
+                        <td class="px-4 py-4 text-right tabular-nums">
+                            {{ tenant.packages_30d }}
+                            <span class="text-xs text-zinc-400"
+                                >/ {{ tenant.packages }}</span
+                            >
+                        </td>
+                        <td class="px-4 py-4 text-zinc-500">
+                            {{ tenant.last_activity_human ?? '—' }}
+                        </td>
+                        <td class="px-4 py-4 text-zinc-500">
+                            {{ tenant.created_at }}
+                        </td>
+                        <td class="py-4 pr-0 pl-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <Link
+                                    :href="`/platform/support?tenant_id=${tenant.id}`"
+                                    class="rounded-lg border border-zinc-950/10 px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-950/5"
                                 >
-                                    {{ tenant.status }}
-                                </span>
-                            </td>
-                            <td class="px-5 py-4 text-white/50">
-                                {{ tenant.created_at }}
-                            </td>
-                            <td class="px-5 py-4 text-right">
+                                    Message
+                                </Link>
                                 <button
                                     v-if="tenant.status !== 'pending'"
+                                    type="button"
+                                    class="rounded-lg border border-zinc-950/10 px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-950/5"
                                     @click="toggle(tenant.id, tenant.status)"
-                                    class="rounded-md border border-white/15 px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10"
                                 >
                                     {{
                                         tenant.status === 'suspended'
@@ -116,20 +244,28 @@ const toggle = (id: number, status: string) => {
                                             : 'Suspend'
                                     }}
                                 </button>
-                            </td>
-                        </tr>
-                        <tr v-if="tenants.length === 0">
-                            <td
-                                colspan="6"
-                                class="px-5 py-10 text-center text-white/40"
-                            >
-                                No tenants yet. Your first signup will appear
-                                here.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
+                                <span
+                                    v-else
+                                    class="text-xs text-zinc-400"
+                                    >Awaiting checkout</span
+                                >
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-if="filtered.length === 0">
+                        <td
+                            colspan="9"
+                            class="py-12 text-center text-sm text-zinc-500"
+                        >
+                            {{
+                                tenants.length === 0
+                                    ? 'No tenants yet. Your first signup will appear here.'
+                                    : 'No tenants match that filter.'
+                            }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </PlatformLayout>
 </template>
