@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Link, router } from '@inertiajs/vue3';
-import { LogOut, Settings } from 'lucide-vue-next';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { LifeBuoy, LogOut, Settings } from 'lucide-vue-next';
+import { computed } from 'vue';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -20,7 +21,25 @@ const handleLogout = () => {
     router.flushAll();
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const page = usePage();
+const canManagePlatformSupport = computed(
+    () => Boolean(props.user.admin_permissions?.manage_platform_support),
+);
+const platformSupportUnread = computed(() =>
+    Number(
+        (page.props as { platform_support_unread?: number })
+            .platform_support_unread ?? 0,
+    ),
+);
+const platformSupportLabel = computed(() => {
+    const unread = platformSupportUnread.value;
+
+    return unread > 0
+        ? `Platform support (${unread > 99 ? '99+' : unread})`
+        : 'Platform support';
+});
 </script>
 
 <template>
@@ -35,6 +54,16 @@ defineProps<Props>();
             <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
                 <Settings class="mr-2 h-4 w-4" />
                 Settings
+            </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem v-if="canManagePlatformSupport" :as-child="true">
+            <Link
+                class="block w-full cursor-pointer"
+                href="/admin/platform-support"
+                prefetch
+            >
+                <LifeBuoy class="mr-2 h-4 w-4" />
+                {{ platformSupportLabel }}
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>
