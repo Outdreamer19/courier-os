@@ -143,8 +143,14 @@ footer .brand-logo{height:58px}
 .pill-light:hover{transform:translateY(-2px)}
 @media(max-width:900px){
   .nav-mid{display:none}
-  .nav-right{gap:.4rem}
-  #nav .pill{padding:.62rem 1rem; font-size:.88rem}
+  .nav-register{display:none}
+  /* On small screens Log in takes the primary CTA slot Create Account occupied. */
+  #nav .nav-login{
+    background:var(--navy); color:#fff; border:none;
+    box-shadow:0 10px 26px rgba(18,39,94,.34); font-weight:500;
+    padding:.65rem 1.25rem; font-size:.9rem;
+  }
+  #nav .nav-login:hover{box-shadow:0 16px 34px rgba(18,39,94,.42)}
 }
 
 /* ============ HERO ============ */
@@ -474,8 +480,8 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
     <a href="#contact">Contact</a>
   </div>
   <div class="nav-right">
-    <a class="pill pill-outline" href="{{ route('login') }}">Log in</a>
-    <a class="pill pill-dark" href="{{ route('register') }}">Create Account</a>
+    <a class="pill pill-outline nav-login" href="{{ route('login') }}">Log in</a>
+    <a class="pill pill-dark nav-register" href="{{ route('register') }}">Create Account</a>
   </div>
 </nav>
 
