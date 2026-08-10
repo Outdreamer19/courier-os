@@ -36,6 +36,7 @@ Route::name('central.')->group(function () {
         // own home page; these two never do.
         Route::get('product', [MarketingController::class, 'product'])->name('product');
         Route::get('pricing', [MarketingController::class, 'pricing'])->name('pricing');
+        Route::get('jamaica', [MarketingController::class, 'jamaica'])->name('jamaica');
 
         Route::get('signup', [TenantSignupController::class, 'show'])->name('signup.show');
         Route::post('signup', [TenantSignupController::class, 'store'])
