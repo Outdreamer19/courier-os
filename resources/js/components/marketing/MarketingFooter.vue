@@ -2,6 +2,7 @@
 const pages = [
     { name: 'Product', href: '/product' },
     { name: 'Pricing', href: '/pricing' },
+    { name: 'Jamaica', href: '/jamaica' },
     { name: 'FAQ', href: '/#faq' },
 ];
 
