@@ -36,7 +36,13 @@ class PackageStatusChangedNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
+        $this->package->loadMissing('tenant');
+        $tenant = $this->package->tenant;
         $reference = $this->package->package_reference;
+        $tenantName = $tenant?->name ?? app(TenantConfig::class)->name();
+        $portalUrl = $tenant
+            ? $tenant->url('/portal/packages/'.$this->package->id)
+            : url('/portal/packages/'.$this->package->id);
 
         $mail = (new MailMessage)
             ->subject("Package {$reference} status update")
@@ -49,8 +55,8 @@ class PackageStatusChangedNotification extends Notification
         }
 
         return $mail
-            ->action('View package', url('/portal/packages/'.$this->package->id))
-            ->line('Thank you for shipping with '.app(TenantConfig::class)->name().'.');
+            ->action('View package', $portalUrl)
+            ->line('Thank you for shipping with '.$tenantName.'.');
     }
 
     public function toWhatsApp(object $notifiable): WhatsAppMessage

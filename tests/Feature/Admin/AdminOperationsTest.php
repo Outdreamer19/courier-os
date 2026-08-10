@@ -11,8 +11,10 @@ use App\Models\Package;
 use App\Models\PreAlert;
 use App\Models\ShippingRate;
 use App\Models\User;
+use App\Notifications\CustomerWelcomeNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -87,6 +89,8 @@ class AdminOperationsTest extends TestCase
 
     public function test_admin_can_create_a_customer(): void
     {
+        Notification::fake();
+
         $this->actingAs($this->admin())
             ->post(route('admin.customers.store'), [
                 'name' => 'New Customer',
@@ -104,6 +108,10 @@ class AdminOperationsTest extends TestCase
             'email' => 'new@shipdjm.test',
             'role' => User::ROLE_CUSTOMER,
         ]);
+
+        $customer = User::where('email', 'new@shipdjm.test')->firstOrFail();
+
+        Notification::assertSentTo($customer, CustomerWelcomeNotification::class);
     }
 
     public function test_admin_can_update_pre_alert_status(): void

@@ -36,6 +36,13 @@ class PreAlertStatusChangedNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
+        $this->preAlert->loadMissing('tenant');
+        $tenant = $this->preAlert->tenant;
+        $tenantName = $tenant?->name ?? app(TenantConfig::class)->name();
+        $portalUrl = $tenant
+            ? $tenant->url('/portal/pre-alerts/'.$this->preAlert->id)
+            : url('/portal/pre-alerts/'.$this->preAlert->id);
+
         $mail = (new MailMessage)
             ->subject('Pre-alert update — '.$this->preAlert->merchant_name)
             ->greeting('Hello '.$notifiable->name.',')
@@ -47,8 +54,8 @@ class PreAlertStatusChangedNotification extends Notification
         }
 
         return $mail
-            ->action('View pre-alert', url('/portal/pre-alerts/'.$this->preAlert->id))
-            ->line('Thank you for shipping with '.app(TenantConfig::class)->name().'.');
+            ->action('View pre-alert', $portalUrl)
+            ->line('Thank you for shipping with '.$tenantName.'.');
     }
 
     public function toWhatsApp(object $notifiable): WhatsAppMessage

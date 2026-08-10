@@ -9,6 +9,7 @@ use App\Models\ActivityLog;
 use App\Models\AuthorisedPickupPerson;
 use App\Models\CustomerProfile;
 use App\Models\User;
+use App\Notifications\CustomerWelcomeNotification;
 use App\Services\ActivityLogger;
 use App\Services\CustomerReferenceGenerator;
 use Illuminate\Support\Facades\DB;
@@ -53,7 +54,7 @@ class CreateNewUser implements CreatesNewUsers
 
         $validator->validate();
 
-        return DB::transaction(function () use ($input): User {
+        $user = DB::transaction(function () use ($input): User {
             $user = User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
@@ -81,5 +82,9 @@ class CreateNewUser implements CreatesNewUsers
 
             return $user->fresh('customerProfile');
         });
+
+        $user->notify(new CustomerWelcomeNotification($user));
+
+        return $user;
     }
 }

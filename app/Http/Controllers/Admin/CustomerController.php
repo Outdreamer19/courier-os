@@ -9,6 +9,7 @@ use App\Models\ActivityLog;
 use App\Models\AuthorisedPickupPerson;
 use App\Models\CustomerProfile;
 use App\Models\User;
+use App\Notifications\CustomerWelcomeNotification;
 use App\Services\ActivityLogger;
 use App\Services\CustomerReferenceGenerator;
 use App\Support\WhatsappLink;
@@ -105,6 +106,8 @@ class CustomerController extends Controller
             $request->user(),
             $user,
         );
+
+        $user->notify(new CustomerWelcomeNotification($user->fresh('customerProfile')));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Customer created.']);
 
