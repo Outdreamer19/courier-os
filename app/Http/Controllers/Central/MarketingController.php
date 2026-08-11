@@ -37,6 +37,18 @@ class MarketingController extends Controller
     }
 
     /**
+     * Jamaica-specific landing page: positions CourierOS for two audiences
+     * at once — people starting a courier/forwarding business from scratch,
+     * and existing operators running one on WhatsApp and spreadsheets.
+     */
+    public function jamaica(): Response
+    {
+        return Inertia::render('central/Jamaica', [
+            'pricing' => $this->basePricing(),
+        ]);
+    }
+
+    /**
      * The product page only needs the headline numbers for its inline CTAs.
      *
      * @return array{monthly: float, setup: float, currency: string}
