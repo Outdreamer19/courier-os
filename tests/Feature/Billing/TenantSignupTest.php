@@ -36,7 +36,9 @@ class TenantSignupTest extends TestCase
     {
         $this->get('http://courieros.co/signup')
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->component('central/Signup'));
+            ->assertInertia(fn ($page) => $page
+                ->component('central/Signup')
+                ->where('centralDomain', 'courieros.co'));
     }
 
     public function test_signup_creates_pending_tenant_and_owner(): void

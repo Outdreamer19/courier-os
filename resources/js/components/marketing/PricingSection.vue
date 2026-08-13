@@ -65,7 +65,7 @@ const included = [
                             href="/signup"
                             class="rounded-xl bg-marketing-amber px-6 py-3 text-center text-sm font-semibold text-marketing-ink transition hover:-translate-y-0.5 hover:brightness-95"
                         >
-                            Start Free Trial
+                            Get Started
                         </a>
                         <a
                             href="/pricing"

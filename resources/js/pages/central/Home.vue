@@ -29,11 +29,42 @@ useScrollReveal();
 <template>
     <!-- The brand name is appended automatically by the title callback in
          app.ts, so leaving "CourierOS" here duplicated it in the tab. -->
-    <Head title="Run Your Courier Business Like a Platform" />
+    <Head title="Run Your Courier Business Like a Platform">
+        <meta
+            name="description"
+            content="CourierOS is the branded website and back-office software behind a modern courier business: pre-alerts, package tracking, billing and customer updates, all in one place."
+        />
+        <meta property="og:type" content="website" />
+        <meta
+            property="og:title"
+            content="CourierOS — Run Your Courier Business Like a Platform"
+        />
+        <meta
+            property="og:description"
+            content="Pre-alerts, package tracking, billing and customer updates — on your own branded site. Launch in minutes, not months."
+        />
+        <meta
+            property="og:image"
+            content="/images/marketing/admin-dashboard.png"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+            name="twitter:title"
+            content="CourierOS — Run Your Courier Business Like a Platform"
+        />
+        <meta
+            name="twitter:description"
+            content="Pre-alerts, package tracking, billing and customer updates — on your own branded site. Launch in minutes, not months."
+        />
+        <meta
+            name="twitter:image"
+            content="/images/marketing/admin-dashboard.png"
+        />
+    </Head>
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
         <AnnouncementBar
-            text="Now onboarding Caribbean courier businesses — start free"
+            text="Now onboarding Caribbean courier businesses"
             href="/signup"
         />
         <MarketingNav />

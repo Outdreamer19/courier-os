@@ -56,6 +56,9 @@ Route::name('central.')->group(function () {
         ->group(function () {
             Route::get('/', PlatformDashboardController::class)->name('dashboard');
             Route::get('tenants', [PlatformTenantController::class, 'index'])->name('tenants.index');
+            Route::post('tenants', [PlatformTenantController::class, 'store'])
+                ->middleware('throttle:20,1')
+                ->name('tenants.store');
             Route::patch('tenants/{tenant}', [PlatformTenantController::class, 'update'])->name('tenants.update');
 
             Route::get('support', [PlatformSupportController::class, 'index'])->name('support.index');

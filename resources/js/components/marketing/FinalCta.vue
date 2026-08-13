@@ -23,7 +23,7 @@ import BlurRevealText from './BlurRevealText.vue';
                 href="/signup"
                 class="mt-9 inline-flex items-center gap-2 rounded-xl bg-marketing-ink px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-marketing-ink/25 transition hover:-translate-y-0.5 hover:shadow-xl"
             >
-                Create Free Account →
+                Create Your Account →
             </a>
         </div>
     </section>
