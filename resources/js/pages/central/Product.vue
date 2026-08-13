@@ -282,6 +282,26 @@ const openObjection = ref<number | null>(0);
             name="description"
             content="See exactly what CourierOS gives you: pre-alert matching, package tracking, a branded customer portal, rate tiers, payments and revenue reporting."
         />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="CourierOS Product" />
+        <meta
+            property="og:description"
+            content="See exactly what CourierOS gives you: pre-alert matching, package tracking, a branded customer portal, rate tiers, payments and revenue reporting."
+        />
+        <meta
+            property="og:image"
+            content="/images/marketing/admin-dashboard.png"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="CourierOS Product" />
+        <meta
+            name="twitter:description"
+            content="See exactly what CourierOS gives you: pre-alert matching, package tracking, a branded customer portal, rate tiers, payments and revenue reporting."
+        />
+        <meta
+            name="twitter:image"
+            content="/images/marketing/admin-dashboard.png"
+        />
     </Head>
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
@@ -323,7 +343,7 @@ const openObjection = ref<number | null>(0);
                             href="/signup"
                             class="w-full rounded-xl bg-marketing-ink px-8 py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-marketing-ink/20 transition hover:-translate-y-0.5 hover:shadow-xl sm:w-auto"
                         >
-                            Start Free Trial
+                            Get Started
                         </a>
                         <a
                             href="#tour"

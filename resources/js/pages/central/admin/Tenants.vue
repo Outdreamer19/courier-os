@@ -1,7 +1,22 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Form, Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import PlatformLayout from '@/layouts/PlatformLayout.vue';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import InputError from '@/components/InputError.vue';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 
 type TenantRow = {
     id: number;
@@ -89,6 +104,33 @@ const toggle = (id: number, status: string) => {
     );
 };
 
+const createOpen = ref(false);
+
+const setTrial = (id: number, name: string) => {
+    const input = window.prompt(
+        `Extend ${name}'s trial by how many days from today? Enter 0 to clear the trial date.`,
+        '14',
+    );
+
+    if (input === null || input.trim() === '') {
+        return;
+    }
+
+    const days = Number.parseInt(input, 10);
+
+    if (Number.isNaN(days) || days < 0 || days > 365) {
+        window.alert('Enter a whole number of days between 0 and 365.');
+
+        return;
+    }
+
+    router.patch(
+        `/platform/tenants/${id}`,
+        { trial_days: days === 0 ? null : days },
+        { preserveScroll: true },
+    );
+};
+
 const tabs: { key: Filter; label: string }[] = [
     { key: 'all', label: 'All' },
     { key: 'active', label: 'Live' },
@@ -113,12 +155,133 @@ const tabs: { key: Filter; label: string }[] = [
                 </p>
             </div>
 
-            <input
-                v-model="search"
-                type="search"
-                placeholder="Search name or domain…"
-                class="w-full max-w-xs rounded-lg border border-zinc-950/10 bg-white px-3 py-2 text-sm text-zinc-950 shadow-xs placeholder:text-zinc-400 focus:border-zinc-950/20 focus:outline-none focus:ring-2 focus:ring-zinc-950/10"
-            />
+            <div class="flex items-center gap-2">
+                <input
+                    v-model="search"
+                    type="search"
+                    placeholder="Search name or domain…"
+                    class="w-full max-w-xs rounded-lg border border-zinc-950/10 bg-white px-3 py-2 text-sm text-zinc-950 shadow-xs placeholder:text-zinc-400 focus:border-zinc-950/20 focus:outline-none focus:ring-2 focus:ring-zinc-950/10"
+                />
+
+                <Dialog v-model:open="createOpen">
+                    <DialogTrigger as-child>
+                        <Button type="button">Create tenant</Button>
+                    </DialogTrigger>
+                    <DialogContent class="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Create a tenant</DialogTitle>
+                            <DialogDescription>
+                                Creates the tenant active, right now — no
+                                Stripe checkout involved. Use this to onboard
+                                someone by hand while signup is unavailable,
+                                or to comp a pilot. The owner's temporary
+                                password is shown once, after you submit.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <Form
+                            action="/platform/tenants"
+                            method="post"
+                            :reset-on-success="true"
+                            @success="createOpen = false"
+                            v-slot="{ errors, processing }"
+                            class="flex flex-col gap-4"
+                        >
+                            <div class="grid gap-1.5">
+                                <Label for="business_name">Business name</Label>
+                                <Input
+                                    id="business_name"
+                                    name="business_name"
+                                    required
+                                />
+                                <InputError :message="errors.business_name" />
+                            </div>
+
+                            <div class="grid gap-1.5">
+                                <Label for="subdomain">Subdomain</Label>
+                                <Input id="subdomain" name="subdomain" required />
+                                <InputError :message="errors.subdomain" />
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="grid gap-1.5">
+                                    <Label for="currency">Currency</Label>
+                                    <select
+                                        id="currency"
+                                        name="currency"
+                                        required
+                                        class="h-9 rounded-md border border-zinc-950/10 bg-white px-2 text-sm"
+                                    >
+                                        <option value="USD">USD</option>
+                                        <option value="JMD">JMD</option>
+                                    </select>
+                                    <InputError :message="errors.currency" />
+                                </div>
+                                <div class="grid gap-1.5">
+                                    <Label for="customer_reference_prefix">
+                                        Reference prefix
+                                    </Label>
+                                    <Input
+                                        id="customer_reference_prefix"
+                                        name="customer_reference_prefix"
+                                        placeholder="e.g. IDC"
+                                        required
+                                    />
+                                    <InputError
+                                        :message="
+                                            errors.customer_reference_prefix
+                                        "
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="grid gap-1.5">
+                                <Label for="owner_name">Owner name</Label>
+                                <Input id="owner_name" name="owner_name" required />
+                                <InputError :message="errors.owner_name" />
+                            </div>
+
+                            <div class="grid gap-1.5">
+                                <Label for="owner_email">Owner email</Label>
+                                <Input
+                                    id="owner_email"
+                                    type="email"
+                                    name="owner_email"
+                                    required
+                                />
+                                <InputError :message="errors.owner_email" />
+                            </div>
+
+                            <div class="grid gap-1.5">
+                                <Label for="trial_days">
+                                    Trial length (days, optional)
+                                </Label>
+                                <Input
+                                    id="trial_days"
+                                    type="number"
+                                    name="trial_days"
+                                    min="1"
+                                    max="365"
+                                    placeholder="Leave blank for no trial deadline"
+                                />
+                                <InputError :message="errors.trial_days" />
+                            </div>
+
+                            <DialogFooter class="mt-2">
+                                <DialogClose as-child>
+                                    <Button type="button" variant="outline">
+                                        Cancel
+                                    </Button>
+                                </DialogClose>
+                                <Button type="submit" :disabled="processing">
+                                    <Spinner v-if="processing" />
+                                    Create tenant
+                                </Button>
+                            </DialogFooter>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
 
         <div class="mt-6 flex flex-wrap gap-1">
@@ -232,6 +395,13 @@ const tabs: { key: Filter; label: string }[] = [
                                 >
                                     Message
                                 </Link>
+                                <button
+                                    type="button"
+                                    class="rounded-lg border border-zinc-950/10 px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-zinc-950/5"
+                                    @click="setTrial(tenant.id, tenant.name)"
+                                >
+                                    Trial
+                                </button>
                                 <button
                                     v-if="tenant.status !== 'pending'"
                                     type="button"

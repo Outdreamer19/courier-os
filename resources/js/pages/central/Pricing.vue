@@ -126,7 +126,7 @@ const faqs = [
     },
     {
         q: 'Is there a free trial?',
-        a: 'You can create your account and configure your entire site before entering payment details, so you can see exactly what you are buying first.',
+        a: `Not a self-serve one yet — checkout happens right after you pick your business name and subdomain, before you get to branding or pricing setup. Want a look around first? Email us and we'll spin up a preview account for you.`,
     },
 ];
 
@@ -138,6 +138,26 @@ const openFaq = ref<number | null>(0);
         <meta
             name="description"
             content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff — no per-parcel fees."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="CourierOS Pricing" />
+        <meta
+            property="og:description"
+            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff — no per-parcel fees."
+        />
+        <meta
+            property="og:image"
+            content="/images/marketing/admin-dashboard.png"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="CourierOS Pricing" />
+        <meta
+            name="twitter:description"
+            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff — no per-parcel fees."
+        />
+        <meta
+            name="twitter:image"
+            content="/images/marketing/admin-dashboard.png"
         />
     </Head>
 
