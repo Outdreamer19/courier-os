@@ -11,7 +11,7 @@
 <style>
 /* ============================================================
    TODAY SHIPPING — Agero-style rebuild
-   Cream canvas · big bold type · rounded cards · reveal on scroll
+   Cream canvas with navy / red section bands · big bold type · rounded cards
    Accent: brand red · Dark sections: brand navy
    ============================================================ */
 :root{
@@ -26,6 +26,8 @@
   --blue-bright: #2151CA;
   --red:       #D0202E;
   --red-2:     #E5535E;
+  --navy-mist: #A3B8E8;   /* process band */
+  --red-wash:  #EDA6AE;   /* rates band */
   --line:      rgba(25,25,25,.12);
 
   --font-display:'Sora', -apple-system, sans-serif;
@@ -39,7 +41,7 @@
 html{scroll-behavior:smooth}
 body{
   font-family:var(--font-body);
-  background:var(--cream-2);
+  background:var(--navy-mist);
   color:var(--ink);
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
@@ -163,7 +165,11 @@ footer .brand-logo{height:58px}
 }
 .hero{
   position:relative; z-index:2;
-  background:var(--cream);
+  overflow:hidden;
+  background:
+    radial-gradient(95% 55% at 50% -6%, rgba(18,39,94,.52) 0%, transparent 62%),
+    radial-gradient(52% 48% at 62% 80%, rgba(208,32,46,.36) 0%, transparent 72%),
+    linear-gradient(180deg, #D5DEF4 0%, var(--cream) 42%);
   border-radius:0 0 var(--r-lg) var(--r-lg);
   padding:11rem 6vw 6rem;
   min-height:92vh;
@@ -235,8 +241,20 @@ footer .brand-logo{height:58px}
 .section .sub{margin-top:1rem; color:var(--ink-soft); font-size:1.05rem; line-height:1.6; max-width:56ch}
 
 /* ============ PROCESS (services split rows) ============ */
-#process{background:var(--cream-2)}
-.proc-wrap{max-width:1180px; margin:0 auto; padding:5.5rem 5vw 6.5rem}
+#process{
+  position:relative;
+  --ink-soft: #3E4458;
+  background:
+    radial-gradient(90% 50% at 0% 0%, rgba(18,39,94,.28), transparent 55%),
+    linear-gradient(180deg, #8FA8DC 0%, var(--navy-mist) 30%);
+}
+#process::after{
+  content:'';
+  position:absolute; left:0; right:0; bottom:0; height:5.5rem; z-index:0;
+  background:linear-gradient(180deg, transparent, var(--red-wash));
+  pointer-events:none;
+}
+.proc-wrap{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:5.5rem 5vw 6.5rem}
 .proc-row{
   display:grid; grid-template-columns:.9fr 1.55fr .95fr; gap:2.5rem; align-items:center;
   padding:3.2rem 1.9rem; margin:0 -1.9rem; position:relative; border-radius:22px;
@@ -285,7 +303,21 @@ footer .brand-logo{height:58px}
 }
 
 /* ============ RATES / PRICING ============ */
-#rates{background:var(--cream)}
+#rates{
+  position:relative;
+  --ink-soft: #4A3034;
+  background:
+    radial-gradient(90% 55% at 100% 0%, rgba(208,32,46,.42), transparent 62%),
+    radial-gradient(70% 40% at 0% 80%, rgba(208,32,46,.22), transparent 55%),
+    linear-gradient(180deg, #E89098 0%, var(--red-wash) 32%);
+}
+#rates::after{
+  content:'';
+  position:absolute; left:0; right:0; bottom:0; height:4.5rem; z-index:0;
+  background:linear-gradient(180deg, transparent, var(--cream));
+  pointer-events:none;
+}
+#rates .section{position:relative; z-index:1}
 .plan-stack{margin-top:3rem; display:flex; flex-direction:column; gap:1.4rem}
 .plan{
   border-radius:var(--r-lg); padding:2.6rem;
@@ -379,7 +411,7 @@ footer .brand-logo{height:58px}
 .rate-note a{color:var(--red); font-weight:600; text-decoration:none}
 
 /* ============ FAQ ============ */
-#faq{background:var(--cream-2)}
+#faq{background:var(--cream)}
 .faq-head{text-align:center; max-width:640px; margin:0 auto 3.4rem}
 .faq-head h2{margin-top:.6rem}
 .faq-head .sub{margin-inline:auto}
@@ -397,7 +429,7 @@ footer .brand-logo{height:58px}
 @media(max-width:720px){.faq-cols{columns:1}}
 
 /* ============ CONTACT ============ */
-#contact-wrap{position:relative; background:var(--cream-2); padding-bottom:0}
+#contact-wrap{position:relative; background:var(--cream); padding-bottom:0}
 .contact-echo{
   text-align:center; font-family:var(--font-display); font-weight:800;
   font-size:clamp(2.2rem,9vw,9rem); line-height:.85; letter-spacing:-.03em;
@@ -413,11 +445,15 @@ footer .brand-logo{height:58px}
 @media(max-width:820px){
   .contact-echo{
     white-space:normal;
-    font-size:clamp(3.8rem,22vw,6.4rem);
-    line-height:.82;
-    letter-spacing:-.045em;
-    padding:2.6rem 1rem .15rem;
+    /* SHIPPING is 8 ultra-bold caps — 22vw overflowed the viewport. */
+    font-size:clamp(2.2rem,11.5vw,4.2rem);
+    line-height:.9;
+    letter-spacing:-.04em;
+    padding:2.4rem 6vw .35rem;
     margin-bottom:0;
+    max-width:100%;
+    box-sizing:border-box;
+    overflow:visible;
     background:linear-gradient(180deg,#1c1b19 0%,#4a4844 62%,#7d7a74 100%);
     -webkit-background-clip:text; background-clip:text;
   }
@@ -456,7 +492,12 @@ footer .brand-logo{height:58px}
 @media(max-width:820px){.contact-inner{grid-template-columns:1fr; gap:2.4rem}}
 
 /* ============ FOOTER ============ */
-footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
+footer{position:relative; background:var(--cream); color:var(--ink); padding:5rem 6vw 2.5rem}
+footer::before{
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--navy), var(--red));
+}
 .f-inner{max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:3rem; justify-content:space-between}
 .f-tag{font-size:.92rem; color:var(--ink-soft); margin-top:1rem; max-width:30ch; line-height:1.6}
 .f-col h4{font-size:.72rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:1.1rem}
