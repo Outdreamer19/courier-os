@@ -11,6 +11,7 @@ import {
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import InitialsAvatar from '@/components/InitialsAvatar.vue';
+import { Toaster } from '@/components/ui/sonner';
 import { logout } from '@/routes';
 
 type AttentionItem = {
@@ -287,5 +288,7 @@ const navClass = (active: boolean) =>
                 <slot />
             </div>
         </main>
+
+        <Toaster richColors position="top-right" />
     </div>
 </template>

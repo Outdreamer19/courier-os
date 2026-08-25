@@ -25,6 +25,7 @@ class TenantSignupController extends Controller
                 'setup' => 349,
                 'currency' => 'USD',
             ],
+            'centralDomain' => config('courieros.central_domain'),
         ]);
     }
 

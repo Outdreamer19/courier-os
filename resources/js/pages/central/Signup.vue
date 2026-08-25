@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
@@ -11,15 +10,8 @@ import { Spinner } from '@/components/ui/spinner';
 const props = defineProps<{
     currencies: string[];
     pricing: { monthly: number; setup: number; currency: string };
+    centralDomain: string;
 }>();
-
-const centralDomain = computed(() => {
-    if (typeof window === 'undefined') {
-        return 'courieros.co';
-    }
-    const parts = window.location.host.split('.');
-    return parts.slice(-2).join('.');
-});
 </script>
 
 <template>

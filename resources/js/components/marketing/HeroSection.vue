@@ -147,7 +147,7 @@ const proofPoints = [
                     href="/signup"
                     class="inline-flex items-center gap-2 rounded-lg bg-marketing-ink px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-marketing-ink/15 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-marketing-ink/20"
                 >
-                    Start Free Trial →
+                    Get Started →
                 </a>
                 <a
                     href="#product"
@@ -161,7 +161,7 @@ const proofPoints = [
                 class="hero-rise mt-4 text-xs text-marketing-ink-muted"
                 style="animation-delay: 0.3s"
             >
-                No card required to explore · Cancel anytime
+                $79/mo + one-time setup · Cancel anytime
             </p>
         </div>
 
