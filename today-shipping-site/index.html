@@ -38,12 +38,13 @@
   --r-sm: 16px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth; overflow-x:hidden; max-width:100%}
 body{
   font-family:var(--font-body);
   background:var(--navy-mist);
   color:var(--ink);
   overflow-x:hidden;
+  max-width:100%;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
@@ -243,6 +244,7 @@ footer .brand-logo{height:58px}
 /* ============ PROCESS (services split rows) ============ */
 #process{
   position:relative;
+  overflow-x:hidden;
   --ink-soft: #3E4458;
   background:
     radial-gradient(90% 50% at 0% 0%, rgba(18,39,94,.28), transparent 55%),
@@ -300,6 +302,9 @@ footer .brand-logo{height:58px}
   .proc-wrap{padding-left:1.25rem; padding-right:1.25rem}
   .proc-row{grid-template-columns:1fr; gap:1.4rem; padding:2.6rem 0; margin:0}
   .proc-vis{order:-1; width:100%; max-width:100%}
+  /* Horizontal slide-ins overflow the viewport and make iOS shrink the page. */
+  .reveal-l{transform:translateX(-16px)}
+  .reveal-r{transform:translateX(16px)}
 }
 
 /* ============ RATES / PRICING ============ */
