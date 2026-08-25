@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TODAY Shipping &amp; Logistics — Shop Anywhere. Delivered Home.</title>
+<title>TODAY Shipping &amp; Logistics — Connecting Jamaica to the World</title>
 <meta name="description" content="Shop from your favourite US stores. TODAY Shipping handles everything from shipping to customs so your purchases arrive safely in Jamaica.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
 <style>
 /* ============================================================
    TODAY SHIPPING — Agero-style rebuild
-   Cream canvas · big bold type · rounded cards · reveal on scroll
+   Cream canvas with navy / red section bands · big bold type · rounded cards
    Accent: brand red · Dark sections: brand navy
    ============================================================ */
 :root{
@@ -25,6 +25,8 @@
   --navy-ink:  #060F26;
   --red:       #D0202E;
   --red-2:     #E5535E;
+  --navy-mist: #A3B8E8;   /* process band */
+  --red-wash:  #EDA6AE;   /* rates band */
   --line:      rgba(25,25,25,.12);
 
   --font-display:'Sora', -apple-system, sans-serif;
@@ -38,7 +40,7 @@
 html{scroll-behavior:smooth}
 body{
   font-family:var(--font-body);
-  background:var(--cream-2);
+  background:var(--navy-mist);
   color:var(--ink);
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
@@ -162,7 +164,11 @@ footer .brand-logo{height:58px}
 }
 .hero{
   position:relative; z-index:2;
-  background:var(--cream);
+  overflow:hidden;
+  background:
+    radial-gradient(95% 55% at 50% -6%, rgba(18,39,94,.52) 0%, transparent 62%),
+    radial-gradient(52% 48% at 62% 80%, rgba(208,32,46,.36) 0%, transparent 72%),
+    linear-gradient(180deg, #D5DEF4 0%, var(--cream) 42%);
   border-radius:0 0 var(--r-lg) var(--r-lg);
   padding:11rem 6vw 6rem;
   min-height:92vh;
@@ -171,8 +177,8 @@ footer .brand-logo{height:58px}
 }
 .hero h1{
   font-family:var(--font-display); font-weight:800;
-  font-size:clamp(2.2rem,5.9vw,4.7rem); line-height:1.1; letter-spacing:-.03em;
-  max-width:17ch; color:var(--ink); opacity:0;
+  font-size:clamp(1.9rem,4.8vw,3.55rem); line-height:1.15; letter-spacing:-.03em;
+  max-width:16em; color:var(--ink); opacity:0;
 }
 .hero h1 .word{padding-bottom:.02em}
 .hero h1 .g{color:var(--ink-soft)}
@@ -200,6 +206,11 @@ footer .brand-logo{height:58px}
 .hero h1 .chip{animation:chipFloat 3.4s var(--ease) infinite}
 .hero h1 .chip.red{animation:chipFloat 4s var(--ease) -1.3s infinite, chipGlow 2.8s ease-in-out infinite}
 .hero h1 .chip.red svg{animation:chipPop 2.8s var(--ease) infinite}
+.hero-emoji{
+  display:inline-block; vertical-align:middle; font-style:normal; line-height:1;
+  font-size:.85em; margin:0 .04em; transform:translateY(-.04em);
+  animation:chipFloat 3.4s var(--ease) infinite;
+}
 
 /* flight overlay — a plane takes off from the box and lands at the door */
 .hero-flight{position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:3}
@@ -229,8 +240,20 @@ footer .brand-logo{height:58px}
 .section .sub{margin-top:1rem; color:var(--ink-soft); font-size:1.05rem; line-height:1.6; max-width:56ch}
 
 /* ============ PROCESS (services split rows) ============ */
-#process{background:var(--cream-2)}
-.proc-wrap{max-width:1180px; margin:0 auto; padding:5.5rem 5vw 6.5rem}
+#process{
+  position:relative;
+  --ink-soft: #3E4458;
+  background:
+    radial-gradient(90% 50% at 0% 0%, rgba(18,39,94,.28), transparent 55%),
+    linear-gradient(180deg, #8FA8DC 0%, var(--navy-mist) 30%);
+}
+#process::after{
+  content:'';
+  position:absolute; left:0; right:0; bottom:0; height:5.5rem; z-index:0;
+  background:linear-gradient(180deg, transparent, var(--red-wash));
+  pointer-events:none;
+}
+.proc-wrap{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:5.5rem 5vw 6.5rem}
 .proc-row{
   display:grid; grid-template-columns:.9fr 1.55fr .95fr; gap:2.5rem; align-items:center;
   padding:3.2rem 1.9rem; margin:0 -1.9rem; position:relative; border-radius:22px;
@@ -273,12 +296,27 @@ footer .brand-logo{height:58px}
 .proc-meta .mrow span:first-child{color:var(--ink-soft)}
 .proc-meta .mrow span:last-child{font-weight:600; color:var(--ink)}
 @media(max-width:860px){
-  .proc-row{grid-template-columns:1fr; gap:1.4rem; padding:2.6rem 0}
-  .proc-vis{order:-1}
+  .proc-wrap{padding-left:1.25rem; padding-right:1.25rem}
+  .proc-row{grid-template-columns:1fr; gap:1.4rem; padding:2.6rem 0; margin:0}
+  .proc-vis{order:-1; width:100%; max-width:100%}
 }
 
 /* ============ RATES / PRICING ============ */
-#rates{background:var(--cream)}
+#rates{
+  position:relative;
+  --ink-soft: #4A3034;
+  background:
+    radial-gradient(90% 55% at 100% 0%, rgba(208,32,46,.42), transparent 62%),
+    radial-gradient(70% 40% at 0% 80%, rgba(208,32,46,.22), transparent 55%),
+    linear-gradient(180deg, #E89098 0%, var(--red-wash) 32%);
+}
+#rates::after{
+  content:'';
+  position:absolute; left:0; right:0; bottom:0; height:4.5rem; z-index:0;
+  background:linear-gradient(180deg, transparent, var(--cream));
+  pointer-events:none;
+}
+#rates .section{position:relative; z-index:1}
 .plan-stack{margin-top:3rem; display:flex; flex-direction:column; gap:1.4rem}
 .plan{
   border-radius:var(--r-lg); padding:2.6rem;
@@ -327,8 +365,7 @@ footer .brand-logo{height:58px}
 .rt-card td:last-child{text-align:right; font-weight:600}
 
 /* ---- built-in rate calculator ---- */
-.rt-grid-calc{grid-template-columns:minmax(230px,.82fr) 1.5fr; align-items:stretch}
-@media(max-width:820px){.rt-grid-calc{grid-template-columns:1fr}}
+.rt-grid-calc{grid-template-columns:1fr; max-width:560px}
 .rate-calc{
   position:relative; overflow:hidden;
   background:linear-gradient(158deg,#12275E 0%,#0B1836 55%,#060F26 100%);
@@ -373,7 +410,7 @@ footer .brand-logo{height:58px}
 .rate-note a{color:var(--red); font-weight:600; text-decoration:none}
 
 /* ============ FAQ ============ */
-#faq{background:var(--cream-2)}
+#faq{background:var(--cream)}
 .faq-head{text-align:center; max-width:640px; margin:0 auto 3.4rem}
 .faq-head h2{margin-top:.6rem}
 .faq-head .sub{margin-inline:auto}
@@ -391,16 +428,35 @@ footer .brand-logo{height:58px}
 @media(max-width:720px){.faq-cols{columns:1}}
 
 /* ============ CONTACT ============ */
-#contact-wrap{position:relative; background:var(--cream-2); padding-bottom:0}
+#contact-wrap{position:relative; background:var(--cream); padding-bottom:0}
 .contact-echo{
   text-align:center; font-family:var(--font-display); font-weight:800;
-  font-size:clamp(3.4rem,14vw,12rem); line-height:.8; letter-spacing:-.04em;
+  font-size:clamp(2.2rem,9vw,9rem); line-height:.85; letter-spacing:-.03em;
+  text-transform:uppercase; white-space:nowrap;
   color:transparent;
   background:linear-gradient(180deg,#8d8b87 0%,#b4b2ad 42%,#e9e8e5 100%);
   -webkit-background-clip:text; background-clip:text;
   -webkit-text-fill-color:transparent;
-  padding:3rem 1rem 0; margin-bottom:calc(-3.2vw - 1.2rem);
+  padding:3rem .5rem 0; margin-bottom:calc(-3.2vw - 1.2rem);
   position:relative; z-index:1; user-select:none; pointer-events:none;
+}
+.contact-echo .echo-br{display:none}
+@media(max-width:820px){
+  .contact-echo{
+    white-space:normal;
+    /* SHIPPING is 8 ultra-bold caps — 22vw overflowed the viewport. */
+    font-size:clamp(2.2rem,11.5vw,4.2rem);
+    line-height:.9;
+    letter-spacing:-.04em;
+    padding:2.4rem 6vw .35rem;
+    margin-bottom:0;
+    max-width:100%;
+    box-sizing:border-box;
+    overflow:visible;
+    background:linear-gradient(180deg,#1c1b19 0%,#4a4844 62%,#7d7a74 100%);
+    -webkit-background-clip:text; background-clip:text;
+  }
+  .contact-echo .echo-br{display:block}
 }
 .contact-card{
   position:relative; overflow:hidden; z-index:2;
@@ -435,7 +491,12 @@ footer .brand-logo{height:58px}
 @media(max-width:820px){.contact-inner{grid-template-columns:1fr; gap:2.4rem}}
 
 /* ============ FOOTER ============ */
-footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
+footer{position:relative; background:var(--cream); color:var(--ink); padding:5rem 6vw 2.5rem}
+footer::before{
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--navy), var(--red));
+}
 .f-inner{max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:3rem; justify-content:space-between}
 .f-tag{font-size:.92rem; color:var(--ink-soft); margin-top:1rem; max-width:30ch; line-height:1.6}
 .f-col h4{font-size:.72rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:1.1rem}
@@ -447,7 +508,7 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
 @media (prefers-reduced-motion: reduce){
   .reveal,.reveal-l,.reveal-r,.load,.head-split{opacity:1; transform:none}
   .marquee-track{animation:none}
-  .hero h1 .chip,.hero h1 .chip.red,.hero h1 .chip svg{animation:none}
+  .hero h1 .chip,.hero h1 .chip.red,.hero h1 .chip svg,.hero-emoji{animation:none}
 }
 </style>
 </head>
@@ -488,7 +549,7 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
 <!-- ============ HERO ============ -->
 <div class="hero-wrap">
 <header class="hero">
-  <h1>Shop <span class="r">Anywhere</span><span class="chip red" id="chipBox" style="background:none;box-shadow:none;border-radius:0;animation:chipFloat 3.4s var(--ease) infinite;"><img src="{{ asset('images/tenants/today-shipping/parcel.png') }}" alt="Parcel" style="width:100%;height:100%;object-fit:contain;"></span>Delivered<br><span class="g">Right</span><span class="chip" id="chipDoor"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M4 21h16"/><path d="M14.5 12v.01"/></svg></span>To Your Doorstep</h1>
+  <h1>Your trusted shipping partner<br>connecting Jamaica <span id="chipBox" class="hero-emoji">🇯🇲</span> to the <span id="chipDoor" class="hero-emoji">🌎</span> World</h1>
   <p class="lead load">Shop from your favourite US stores. We handle shipping, customs, and delivery — so your purchases arrive safely in Jamaica.</p>
   <div class="cta load">
     <a class="pill pill-red" href="{{ route('register') }}">Create Account
@@ -598,10 +659,10 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
         <span class="badge">STEP 04</span>
       </div>
       <div class="proc-detail reveal">
-        <p>Collect from our Kingston or Portmore locations — or have it delivered straight to your door. You're minutes from home.</p>
+        <p>Your package is delivered straight to your door in Kingston and Portmore. No pickup needed — we bring it home to you.</p>
         <div class="proc-meta">
-          <div class="mrow"><span>Pickup</span><span>KGN &amp; POR</span></div>
-          <div class="mrow"><span>Delivery</span><span>To your door</span></div>
+          <div class="mrow"><span>Service</span><span>Door delivery</span></div>
+          <div class="mrow"><span>Areas</span><span>Kingston &amp; Portmore</span></div>
         </div>
       </div>
     </div>
@@ -659,23 +720,9 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
       </div>
     </div>
 
-    <!-- weight tables -->
+    <!-- rate calculator -->
     <div class="rates-tables reveal">
-      <h3>Rate card by weight</h3>
-      <p class="sub" style="margin-top:.6rem">Priced per package weight, in Jamaican dollars.</p>
       <div class="rt-grid rt-grid-calc">
-        <div class="rt-card hot">
-          <div class="rt-head"><span>1–10 LB</span><span>ZONE A</span></div>
-          <table>
-            <tr><td>1 lb</td><td>$750</td></tr><tr><td>2 lb</td><td>$900</td></tr>
-            <tr><td>3 lb</td><td>$1,400</td></tr><tr><td>4 lb</td><td>$1,700</td></tr>
-            <tr><td>5 lb</td><td>$2,000</td></tr><tr><td>6 lb</td><td>$2,200</td></tr>
-            <tr><td>7 lb</td><td>$2,500</td></tr><tr><td>8 lb</td><td>$2,800</td></tr>
-            <tr><td>9 lb</td><td>$3,000</td></tr><tr><td>10 lb</td><td>$3,500</td></tr>
-          </table>
-        </div>
-
-        <!-- built-in rate calculator -->
         <div class="rate-calc" aria-label="Shipping rate calculator">
           <div class="rc-glow"></div>
           <div class="rc-top">
@@ -741,12 +788,12 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
         <div class="faq-a"><p>Yes. We handle customs paperwork and clearance for you. Duties are calculated transparently and shown before your package is released — no forms, no queues.</p></div>
       </div>
       <div class="faq-item reveal">
-        <button class="faq-q">Where do I collect my package?<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
-        <div class="faq-a"><p>Collect from our Kingston or Portmore locations, or choose door delivery. You'll get a notification the moment your package is ready.</p></div>
+        <button class="faq-q">How do I receive my packages?<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <div class="faq-a"><p>We currently offer delivery only. Once your package clears customs, it's delivered directly to your door — no pickup needed. You'll get a notification when it's on the way.</p></div>
       </div>
       <div class="faq-item reveal">
         <button class="faq-q">How do I track my shipment?<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
-        <div class="faq-a"><p>Log in to your dashboard any time to see live status — received, packed, in transit, cleared, and ready for pickup.</p></div>
+        <div class="faq-a"><p>Log in to your dashboard any time to see live status — received, packed, in transit, cleared, and out for delivery.</p></div>
       </div>
     </div>
   </div>
@@ -755,7 +802,7 @@ footer{background:var(--cream-2); color:var(--ink); padding:5rem 6vw 2.5rem}
 <!-- ============ CONTACT ============ -->
 <div id="contact" style="position:relative;top:-4rem"></div>
 <div id="contact-wrap">
-  <div class="contact-echo">Ship Today</div>
+  <div class="contact-echo">TODAY <span class="echo-br"></span>SHIPPING</div>
   <div class="contact-card reveal">
     <div class="contact-bg"></div>
     <div class="contact-inner">
