@@ -78,11 +78,25 @@ const utility = [
             </div>
         </div>
         <div class="border-t border-marketing-border">
-            <p
-                class="mx-auto max-w-6xl px-4 py-4 text-xs text-marketing-ink-muted sm:px-6 lg:px-8"
+            <div
+                class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-xs text-marketing-ink-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8"
             >
-                © {{ new Date().getFullYear() }} CourierOS. All rights reserved.
-            </p>
+                <p>
+                    © {{ new Date().getFullYear() }} CourierOS. All rights
+                    reserved.
+                </p>
+                <p>
+                    Developed by
+                    <a
+                        href="https://quantaradigital.co.uk/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-marketing-ink transition hover:text-marketing-amber focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marketing-amber"
+                    >
+                        Quantara Digital
+                    </a>
+                </p>
+            </div>
         </div>
     </footer>
 </template>
