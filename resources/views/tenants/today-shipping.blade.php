@@ -299,7 +299,7 @@ footer .brand-logo{height:58px}
 .proc-meta .mrow span:last-child{font-weight:600; color:var(--ink)}
 @media(max-width:860px){
   .proc-wrap{padding-left:1.25rem; padding-right:1.25rem}
-  .proc-row{grid-template-columns:1fr; gap:1.4rem; padding:2.6rem 0; margin:0}
+  .proc-row{grid-template-columns:1fr; gap:1.4rem; padding:1.8rem 1.2rem 2rem; margin:0}
   .proc-vis{order:-1; width:100%; max-width:100%}
   /* Horizontal slide-ins overflow the viewport and make iOS shrink the page. */
   .reveal-l{transform:translateX(-16px)}
@@ -508,7 +508,16 @@ footer::before{
 .f-col a{display:block; text-decoration:none; color:var(--ink); opacity:.8; font-size:.95rem; padding:.3rem 0}
 .f-col a:hover{opacity:1; color:var(--red)}
 .f-bottom{max-width:1180px; margin:3.5rem auto 0; padding-top:1.6rem; border-top:1px solid var(--line);
-  display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; font-size:.82rem; color:var(--ink-soft)}
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; font-size:.82rem; color:var(--ink-soft)}
+.f-credit a{
+  color:inherit; text-decoration:none;
+  border-bottom:1px solid transparent;
+  padding:.35rem 0;
+  transition:color .2s, border-color .2s;
+}
+.f-credit a:hover{color:var(--red); border-bottom-color:var(--red)}
+.f-credit a:focus-visible{outline:2px solid var(--red); outline-offset:3px; border-radius:2px}
+@media(max-width:640px){.f-bottom{flex-direction:column; align-items:flex-start; gap:.7rem}}
 
 @media (prefers-reduced-motion: reduce){
   .reveal,.reveal-l,.reveal-r,.load,.head-split{opacity:1; transform:none}
@@ -886,6 +895,7 @@ footer::before{
   </div>
   <div class="f-bottom">
     <span>© 2026 TODAY Shipping &amp; Logistics. All rights reserved.</span>
+    <span class="f-credit">Developed by <a href="https://quantaradigital.co.uk/" target="_blank" rel="noopener noreferrer">Quantara Digital</a></span>
     <span>KGN · POR · MIA</span>
   </div>
 </footer>
