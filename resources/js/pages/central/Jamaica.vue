@@ -3,440 +3,668 @@ import { Head } from '@inertiajs/vue3';
 import {
     Check,
     ChevronDown,
+    ExternalLink,
     Globe2,
-    MapPinned,
-    MessageCircleMore,
-    Rocket,
     ShieldCheck,
     Wallet,
     X,
 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import BlurRevealText from '@/components/marketing/BlurRevealText.vue';
 import FeatureShowcase from '@/components/marketing/FeatureShowcase.vue';
-import FinalCta from '@/components/marketing/FinalCta.vue';
+import AdminDashboardMock from '@/components/marketing/jamaica/AdminDashboardMock.vue';
+import BrandSwitcherMock from '@/components/marketing/jamaica/BrandSwitcherMock.vue';
+import ChatPileUp from '@/components/marketing/jamaica/ChatPileUp.vue';
+import CustomerPortalMock from '@/components/marketing/jamaica/CustomerPortalMock.vue';
+import PackageJourney from '@/components/marketing/jamaica/PackageJourney.vue';
+import RatesMock from '@/components/marketing/jamaica/RatesMock.vue';
 import MarketingFooter from '@/components/marketing/MarketingFooter.vue';
 import MarketingNav from '@/components/marketing/MarketingNav.vue';
-import ProductScreenshotFrame from '@/components/marketing/ProductScreenshotFrame.vue';
 import StackingFeatureCards from '@/components/marketing/StackingFeatureCards.vue';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
+    currentCampaign,
+    trackMarketing,
+    whatsappLink,
+} from '@/composables/useMarketingTracking';
 import { useScrollReveal } from '@/composables/useScrollReveal';
 
+/**
+ * /jamaica is the landing page for paid Instagram, Facebook, WhatsApp and
+ * Google traffic, so it is built as a funnel rather than a brochure:
+ *
+ *   hook (the parcel journey) → pain (the WhatsApp pile-up) → each pain
+ *   answered → how it works → proof (Today Shipping, live) → the offer →
+ *   objections → one last ask.
+ *
+ * Every call to action is either "WhatsApp us" (the channel this audience
+ * already lives in, and the one Click-to-WhatsApp ads land in) or sign up.
+ * The nav runs in minimal mode so ad traffic has nowhere else to wander.
+ */
 const props = defineProps<{
     pricing: { monthly: number; setup: number; currency: string };
+    sales: {
+        whatsapp: string;
+        founding: { setup: number; spotsTotal: number; spotsLeft: number };
+    };
 }>();
 
 const { itemDelay } = useScrollReveal();
 
-const proofPoints = [
-    { value: 'Minutes', label: 'To get your branded site live' },
-    { value: `$${props.pricing.monthly}/mo`, label: 'Flat price, no per-package fees' },
-    { value: '0%', label: 'Cut of what your customers pay you' },
-];
+const money = (n: number) => `US$${Number.isInteger(n) ? n : n.toFixed(2)}`;
 
-const segments = [
+const foundingOpen = computed(() => props.sales.founding.spotsLeft > 0);
+const setupNow = computed(() =>
+    foundingOpen.value ? props.sales.founding.setup : props.pricing.setup,
+);
+
+const campaign = ref<string | null>(null);
+
+const demoLink = computed(() =>
+    whatsappLink(
+        props.sales.whatsapp,
+        `Hi, I'm interested in CourierOS for my shipping business in Jamaica. Can you show me a demo?${campaign.value ? ` (${campaign.value})` : ''}`,
+    ),
+);
+
+const foundingLink = computed(() =>
+    whatsappLink(
+        props.sales.whatsapp,
+        `Hi, I'd like to claim a founding spot on CourierOS (setup ${money(props.sales.founding.setup)}).${campaign.value ? ` (${campaign.value})` : ''}`,
+    ),
+);
+
+const onWhatsApp = (placement: string) =>
+    trackMarketing('Lead', { content_name: 'whatsapp', placement });
+const onSignup = (placement: string) =>
+    trackMarketing('InitiateCheckout', {
+        placement,
+        value: setupNow.value,
+        currency: 'USD',
+    });
+
+/* Sticky mobile bar appears once the hero's own buttons have scrolled away. */
+const heroCtas = ref<HTMLElement | null>(null);
+const showStickyBar = ref(false);
+let heroObserver: IntersectionObserver | null = null;
+
+onMounted(() => {
+    campaign.value = currentCampaign();
+    trackMarketing('ViewContent', { content_name: 'jamaica' });
+
+    if (heroCtas.value && typeof IntersectionObserver !== 'undefined') {
+        heroObserver = new IntersectionObserver(([entry]) => {
+            showStickyBar.value =
+                !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        });
+        heroObserver.observe(heroCtas.value);
+    }
+});
+
+onBeforeUnmount(() => heroObserver?.disconnect());
+
+const answers = [
     {
-        icon: Rocket,
-        eyebrow: 'Starting from scratch',
-        title: 'Launch a real shipping business',
-        body: 'Already helping friends and family shop and ship? CourierOS gives you the branded site, portal and billing to turn it into a real business — no developer, no course required.',
+        asked: 'Did my package reach yet?',
+        answer: 'Live tracking in their portal, plus a WhatsApp message at every step.',
     },
     {
-        icon: MessageCircleMore,
-        eyebrow: 'Already running one',
-        title: 'Get off WhatsApp and spreadsheets',
-        body: 'Running pre-alerts through DMs and a spreadsheet works until it doesn’t. Bring your customers and your brand over, and run the same business without the chaos.',
+        asked: 'How much for a 6 lb box?',
+        answer: 'A rate calculator on your site, using your own prices.',
+    },
+    {
+        asked: "What's the Miami address again?",
+        answer: 'Every customer gets their own Miami address, saved in their account.',
+    },
+    {
+        asked: 'How much I owe you?',
+        answer: 'Invoices they can see and pay online, or in person at pickup.',
     },
 ];
 
 const fullPackage = [
-    'Your own branded website — subdomain included, custom domain later',
-    'Hosting included, nothing extra to set up',
-    'Admin portal to run intake, packages and staff',
-    'Customer portal with their own Florida warehouse address',
-    'Pre-alerts with automatic package matching',
-    'Weight-based rate calculator',
-    'Email & WhatsApp status notifications',
-    'Online payments via Stripe, plus in-person payment recording',
-    'Revenue & package reporting',
+    'Your own branded website and web address',
+    'Hosting, security and updates included',
+    'Customer portal with their own Miami address',
+    'Pre-alerts that match to packages automatically',
+    'Rate calculator using your prices',
+    'WhatsApp and email status updates',
+    'Online payments, plus cash and in-store recording',
+    'Admin console for intake, staff and reports',
+    'Unlimited customers and packages',
 ];
 
 const comparison = [
     {
         title: 'A one-off website',
-        subtitle: 'An agency builds you a page',
-        rows: [
-            { label: 'Branded site', has: true },
-            { label: 'Runs pre-alerts & tracking', has: false },
-            { label: 'Customer self-serve portal', has: false },
-            { label: 'Takes online payments', has: false },
-            { label: 'Updates as your business grows', has: false },
-        ],
+        subtitle: 'A page with your logo on it',
+        rows: [true, false, false, false, false],
     },
     {
-        title: 'Spreadsheets & WhatsApp',
-        subtitle: 'What most operators use today',
-        rows: [
-            { label: 'Branded site', has: false },
-            { label: 'Runs pre-alerts & tracking', has: 'Manually' },
-            { label: 'Customer self-serve portal', has: false },
-            { label: 'Takes online payments', has: false },
-            { label: 'Updates as your business grows', has: false },
-        ],
+        title: 'WhatsApp and a spreadsheet',
+        subtitle: 'What most couriers run on today',
+        rows: [false, 'By hand', false, false, false],
     },
     {
         title: 'CourierOS',
-        subtitle: 'Everything, from day one',
+        subtitle: 'The whole business, from day one',
         featured: true,
-        rows: [
-            { label: 'Branded site', has: true },
-            { label: 'Runs pre-alerts & tracking', has: true },
-            { label: 'Customer self-serve portal', has: true },
-            { label: 'Takes online payments', has: true },
-            { label: 'Updates as your business grows', has: true },
-        ],
+        rows: [true, true, true, true, true],
     },
+];
+const comparisonLabels = [
+    'Branded website',
+    'Pre-alerts and tracking',
+    'Customer self-service portal',
+    'Online payments',
+    'Improves as you grow',
 ];
 
-const faqs = [
+const faqs = computed(() => [
     {
-        q: 'How long does it take to get up and running?',
-        a: 'Your branded site is live within minutes of signing up. Setting your rates and warehouse address takes another few minutes. Most operators are ready to send their first customer a link the same day.',
+        q: 'I have never run a courier business. Can I still do this?',
+        a: "Yes. That is exactly who the setup call is for. We set up your site, rates and Miami address with you, and walk you through receiving your first package. You don't need a developer or a course.",
     },
     {
-        q: 'How much does it cost?',
-        a: `$${props.pricing.monthly}/month plus a one-time $${props.pricing.setup} setup fee, billed securely through Stripe — that's the whole platform, unlimited customers, packages and staff. No per-package fees. If you don't already have a Florida warehouse relationship, that's a separate arrangement — ask us and we'll point you to one.`,
+        q: 'I already have customers on WhatsApp. Do I lose them?',
+        a: 'No. You send them your new link, they register in a minute and get their own Miami address. Your business name, your customers, just without the chaos.',
     },
     {
-        q: 'What do I actually need to do to launch?',
-        a: 'Sign up, choose your subdomain and rates, confirm your Florida/US warehouse address, then share your link. From there your customers register themselves and start submitting pre-alerts.',
+        q: 'How much does it cost, really?',
+        a: `${money(props.pricing.monthly)} a month and a one-time setup fee of ${money(setupNow.value)}${foundingOpen.value ? ` (normally ${money(props.pricing.setup)})` : ''}. That covers the whole platform with unlimited customers, packages and staff. No per-package fees, and no cut of what your customers pay you.`,
     },
     {
-        q: 'Do I need to know how to code, or hire someone?',
-        a: 'No. Branding, rates and your warehouse address are all set from your own admin dashboard. No code, no developer, no waiting on an agency.',
+        q: 'Do I need a Miami warehouse?',
+        a: "You need a US address where packages are received, usually a freight forwarder's warehouse in Miami. If you don't have one yet, ask us on WhatsApp and we'll point you to options.",
     },
     {
-        q: 'Why CourierOS instead of building this myself?',
-        a: 'A one-off website doesn’t track packages, take payments, or give your customers a portal. Spreadsheets and WhatsApp groups don’t scale. CourierOS is the operations software behind the business, not just a page with your logo on it.',
+        q: 'How do my customers pay me?',
+        a: 'Online through your own Stripe account, or cash and card in person, recorded against the package. The money goes to you, never to CourierOS.',
     },
     {
-        q: 'Is my business data kept separate from other CourierOS businesses?',
-        a: 'Yes. Every courier business on CourierOS has fully isolated data by design — nothing is shared or visible across accounts.',
+        q: 'Can I leave if it is not for me?',
+        a: 'Yes. Billing is month to month and you can cancel any time.',
     },
     {
-        q: 'Do my customers pay CourierOS anything?',
-        a: 'Never. Your customers pay you, through your own Stripe account. CourierOS only bills you, the courier business.',
+        q: 'Is my business data kept private?',
+        a: 'Yes. Every business on CourierOS has its own separate data. No other courier can see your customers or packages.',
     },
-];
+]);
 
 const openFaq = ref<number | null>(0);
 </script>
 
 <template>
-    <Head title="CourierOS for Jamaica">
+    <Head title="Start or grow your shipping business in Jamaica">
         <meta
             name="description"
-            content="Start or upgrade a shop-and-ship courier business in Jamaica. A branded website, hosting, and the operations software behind it — one package, one price."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="CourierOS for Jamaica" />
-        <meta
-            property="og:description"
-            content="Start or upgrade a shop-and-ship courier business in Jamaica. A branded website, hosting, and the operations software behind it — one package, one price."
-        />
-        <meta
-            property="og:image"
-            content="/images/marketing/admin-dashboard.png"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="CourierOS for Jamaica" />
-        <meta
-            name="twitter:description"
-            content="Start or upgrade a shop-and-ship courier business in Jamaica. A branded website, hosting, and the operations software behind it — one package, one price."
-        />
-        <meta
-            name="twitter:image"
-            content="/images/marketing/admin-dashboard.png"
+            content="Your own branded courier website, customer portal with Miami address, tracking, WhatsApp updates and payments. Set up with you this week."
         />
     </Head>
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
-        <MarketingNav />
+        <!-- Founding offer bar -->
+        <a
+            v-if="foundingOpen"
+            :href="foundingLink"
+            target="_blank"
+            rel="noopener"
+            class="block bg-marketing-ink px-4 py-2.5 text-center text-[13px] text-white/85 transition hover:text-white"
+            @click="onWhatsApp('founding-bar')"
+        >
+            <span class="font-semibold text-marketing-amber"
+                >Founding offer:</span
+            >
+            setup {{ money(sales.founding.setup) }} instead of
+            {{ money(pricing.setup) }} for the first
+            {{ sales.founding.spotsTotal }} Jamaican couriers.
+            <span
+                class="font-semibold whitespace-nowrap underline underline-offset-4"
+                >{{ sales.founding.spotsLeft }} spots left</span
+            >
+        </a>
 
-        <!-- Hero -->
-        <section class="relative overflow-hidden pt-16 pb-10 sm:pt-24">
+        <MarketingNav
+            minimal
+            :cta-href="demoLink"
+            cta-label="WhatsApp us"
+            @cta="onWhatsApp('nav')"
+        />
+
+        <!-- 1. Hook -->
+        <section class="relative overflow-hidden">
             <div
-                aria-hidden="true"
-                class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-96 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(255,122,0,0.14),transparent_70%)]"
-            />
-            <div class="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-                <p class="text-xs font-semibold tracking-[0.2em] text-marketing-orange uppercase">
-                    CourierOS for Jamaica
-                </p>
-                <BlurRevealText
-                    as="h1"
-                    immediate
-                    text="Always Wanted to Start a Courier Business? We Build It With You."
-                    class="mt-3 text-4xl font-semibold tracking-tight text-balance text-marketing-ink sm:text-5xl"
-                />
-                <p class="mx-auto mt-5 max-w-xl text-base text-pretty text-marketing-ink-muted">
-                    Whether you're starting from scratch or already running one
-                    out of WhatsApp and a spreadsheet, CourierOS is the branded
-                    website, customer portal and admin console behind it —
-                    one package, one price, live in minutes.
-                </p>
-                <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-                    <a
-                        href="/signup"
-                        class="inline-flex items-center gap-2 rounded-lg bg-marketing-ink px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-marketing-ink/15 transition hover:-translate-y-0.5 hover:shadow-xl"
+                class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-4 pt-10 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:px-8 lg:pt-16 lg:pb-24"
+            >
+                <div>
+                    <p
+                        class="inline-flex items-center gap-2 rounded-full border border-marketing-border bg-white px-3 py-1.5 text-[13px] font-medium text-marketing-ink"
                     >
-                        Get the Full Package →
-                    </a>
-                    <a
-                        href="mailto:hello@courieros.co?subject=CourierOS%20Jamaica"
-                        class="rounded-lg border border-marketing-border bg-white/70 px-6 py-3 text-sm font-semibold text-marketing-ink backdrop-blur transition hover:bg-white"
+                        <span class="flex gap-0.5" aria-hidden="true">
+                            <span
+                                class="size-2 rounded-full bg-marketing-ink"
+                            />
+                            <span
+                                class="size-2 rounded-full bg-marketing-amber"
+                            />
+                            <span class="size-2 rounded-full bg-[#009b3a]" />
+                        </span>
+                        Built for Jamaican shop-and-ship couriers
+                    </p>
+                    <BlurRevealText
+                        as="h1"
+                        immediate
+                        text="Always wanted your own courier business? We build it with you."
+                        class="mt-5 text-[2.6rem] leading-[1.02] font-semibold tracking-[-0.035em] text-balance sm:text-6xl"
+                    />
+                    <p
+                        class="mt-6 max-w-xl text-lg leading-relaxed text-pretty text-marketing-ink-muted"
                     >
-                        Talk to Us First
-                    </a>
+                        Your own branded website, a portal where customers get
+                        their Miami address and track every package, WhatsApp
+                        updates and online payments. Starting out or already
+                        shipping from a WhatsApp group, we set it up with you.
+                    </p>
+
+                    <div
+                        ref="heroCtas"
+                        class="mt-8 flex flex-col gap-3 sm:flex-row"
+                    >
+                        <a
+                            :href="demoLink"
+                            target="_blank"
+                            rel="noopener"
+                            class="inline-flex items-center justify-center gap-2.5 rounded-xl bg-marketing-amber px-6 py-4 text-base font-semibold text-marketing-ink shadow-[0_10px_30px_-10px_rgba(226,83,10,0.55)] transition hover:-translate-y-0.5 hover:brightness-95"
+                            @click="onWhatsApp('hero')"
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                class="size-5 fill-current"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.2-.7-2.7-1.1-4.4-3.8-4.5-4-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.6-.1 1.1Z"
+                                />
+                            </svg>
+                            Get a free demo on WhatsApp
+                        </a>
+                        <a
+                            href="#offer"
+                            class="inline-flex items-center justify-center rounded-xl border border-marketing-ink/15 bg-white px-6 py-4 text-base font-semibold text-marketing-ink transition hover:border-marketing-ink/30"
+                        >
+                            See the price
+                        </a>
+                    </div>
+                    <p class="mt-4 text-sm text-marketing-ink-muted">
+                        {{ money(pricing.monthly) }} a month. No per-package
+                        fees. Cancel any time.
+                    </p>
                 </div>
-                <p class="mt-4 text-xs text-marketing-ink-muted">
-                    See exactly what you get before you pay anything.
-                </p>
+
+                <div class="relative">
+                    <PackageJourney />
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Pain -->
+        <section class="bg-marketing-ink py-20 text-white sm:py-28">
+            <div
+                class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8"
+            >
+                <div class="lg:order-2">
+                    <BlurRevealText
+                        text="Sound familiar?"
+                        class="text-4xl font-semibold tracking-[-0.03em] sm:text-5xl"
+                    />
+                    <p
+                        class="mt-5 max-w-md text-lg leading-relaxed text-white/70"
+                    >
+                        If your phone looks like this every morning, the
+                        business is running you. Every one of these messages is
+                        something your customers could check for themselves.
+                    </p>
+                    <p
+                        class="mt-4 max-w-md text-lg leading-relaxed text-white/70"
+                    >
+                        CourierOS answers them before they are asked, so you
+                        spend the day receiving packages and getting paid, not
+                        replying.
+                    </p>
+                </div>
+                <div class="lg:order-1">
+                    <ChatPileUp />
+                </div>
             </div>
 
-            <!-- Hero visual -->
-            <div class="relative mx-auto mt-12 max-w-4xl px-4 sm:px-6 lg:px-8">
-                <ProductScreenshotFrame
-                    src="/images/marketing/admin-dashboard.png"
-                    webp="/images/marketing/admin-dashboard.webp"
-                    label="Admin dashboard"
-                    alt="The CourierOS admin dashboard showing customer, pre-alert and package counts alongside sign-up, volume and pre-alert status charts — this is what running your business looks like from day one"
-                />
-
-                <!-- Proof points -->
-                <dl class="mt-10 grid gap-6 border-t border-marketing-border pt-8 sm:grid-cols-3">
-                    <div v-for="point in proofPoints" :key="point.label" class="text-center">
-                        <dt class="text-lg font-semibold text-marketing-ink">{{ point.value }}</dt>
-                        <dd class="mt-1 text-sm text-marketing-ink-muted">{{ point.label }}</dd>
+            <div class="mx-auto mt-16 max-w-6xl px-4 sm:px-6 lg:px-8">
+                <dl
+                    class="grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2"
+                >
+                    <div
+                        v-for="(item, index) in answers"
+                        :key="item.asked"
+                        class="fade-in-item bg-marketing-ink p-6 sm:p-7"
+                        :style="itemDelay(index)"
+                    >
+                        <dt class="text-base text-white/50">
+                            "{{ item.asked }}"
+                        </dt>
+                        <dd
+                            class="mt-2 text-lg leading-snug font-medium text-white"
+                        >
+                            {{ item.answer }}
+                        </dd>
                     </div>
                 </dl>
             </div>
         </section>
 
-        <!-- Two segments -->
-        <section class="py-16">
-            <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-                <div class="grid gap-6 sm:grid-cols-2">
-                    <div
-                        v-for="(segment, index) in segments"
-                        :key="segment.title"
-                        class="fade-in-item rounded-2xl border border-marketing-border bg-white p-8"
-                        :style="itemDelay(index)"
-                    >
-                        <div class="flex size-10 items-center justify-center rounded-lg bg-marketing-orange/12 text-marketing-orange">
-                            <component :is="segment.icon" class="size-5" />
-                        </div>
-                        <p class="mt-4 text-xs font-semibold tracking-[0.16em] text-marketing-orange uppercase">
-                            {{ segment.eyebrow }}
-                        </p>
-                        <h3 class="mt-1 text-lg font-semibold text-marketing-ink">{{ segment.title }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-marketing-ink-muted">{{ segment.body }}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- How it works -->
+        <!-- 3. How it works -->
         <StackingFeatureCards
             eyebrow="How it works"
-            title="From sign-up to your first customer"
-            body="Four steps, most of them done the same day you start."
+            title="From your first call with us to your first customer"
+            body="Most couriers are taking pre-alerts within a week."
         >
             <FeatureShowcase
                 eyebrow="Day 1"
-                title="Sign up & brand your site"
-                body="Pick a subdomain, add your name and colors, and your site is live — no waiting on a developer or an agency."
-                :bullets="['Live in minutes', 'No code required']"
+                title="Your name, your colours, your web address"
+                body="We set up your branded site with you on a call. Your customers only ever see your business, never ours."
+                :bullets="['Your logo and colours', 'Your own web address']"
             >
                 <template #visual>
-                    <ProductScreenshotFrame
-                        src="/images/marketing/courieros-login.png"
-                        webp="/images/marketing/courieros-login.webp"
-                        label="Sign in"
-                        alt="The CourierOS sign-in screen for a newly branded courier business"
-                    />
+                    <BrandSwitcherMock />
                 </template>
             </FeatureShowcase>
 
             <FeatureShowcase
                 reverse
-                eyebrow="Day 1–2"
-                title="Set your rates & warehouse address"
-                body="Enter your per-pound rate and your Florida address. Both are editable any time from your dashboard, so you can adjust as you learn."
-                :bullets="['Weight-based rate calculator', 'Editable warehouse address']"
+                eyebrow="Day 1"
+                title="Set your rates and Miami address"
+                body="Put in your per-pound prices and your warehouse address. Change them whenever you like and your site updates straight away."
+                :bullets="[
+                    'Rate calculator for customers',
+                    'Prices in JMD or USD',
+                ]"
             >
                 <template #visual>
-                    <ProductScreenshotFrame
-                        src="/images/marketing/admin-shipping-rates.png"
-                        webp="/images/marketing/admin-shipping-rates.webp"
-                        label="Shipping rates"
-                        alt="The CourierOS admin screen for setting shipping rates by weight"
-                    />
+                    <RatesMock />
                 </template>
             </FeatureShowcase>
 
             <FeatureShowcase
                 eyebrow="This week"
-                title="Bring your customers on"
-                body="Share your link. Customers register themselves, get their own reference number and Florida address, and submit pre-alerts without calling you."
-                :bullets="['Customers self-serve', 'No phone calls needed']"
+                title="Customers sign themselves up"
+                body="Share your link on WhatsApp and Instagram. Customers register, copy their Miami address and send pre-alerts without messaging you."
+                :bullets="[
+                    'Their own Miami address',
+                    'Pre-alerts with invoice upload',
+                ]"
             >
                 <template #visual>
-                    <ProductScreenshotFrame
-                        src="/images/marketing/customer-pre-alert-create.png"
-                        webp="/images/marketing/customer-pre-alert-create.webp"
-                        label="Submit a pre-alert"
-                        alt="A CourierOS customer submitting a pre-alert with invoice and shipment details"
-                    />
+                    <CustomerPortalMock />
                 </template>
             </FeatureShowcase>
 
             <FeatureShowcase
                 reverse
-                eyebrow="Ongoing"
-                title="Run it like a business"
-                body="Track every package to pickup, bill online or in person, and see your revenue and volume at a glance instead of guessing."
-                :bullets="['Full status timeline', 'Revenue & volume reporting']"
+                wide-visual
+                eyebrow="Every day after"
+                title="Run it like a real business"
+                body="See every package from Miami to pickup, who has paid, and what you made this month, all in one place."
+                :bullets="[
+                    'Every package, one screen',
+                    'Money collected, month by month',
+                ]"
             >
                 <template #visual>
-                    <ProductScreenshotFrame
-                        src="/images/marketing/admin-reports.png"
-                        webp="/images/marketing/admin-reports.webp"
-                        label="Reports"
-                        alt="The CourierOS reports screen showing revenue by month, package volume and top customers"
-                    />
+                    <AdminDashboardMock />
                 </template>
             </FeatureShowcase>
         </StackingFeatureCards>
 
-        <!-- The Full Package -->
-        <section class="fade-in-section py-16">
-            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-                <div class="rounded-3xl border border-marketing-border bg-white p-8 sm:p-10">
-                    <div class="flex flex-wrap items-start justify-between gap-4">
-                        <div>
-                            <p class="text-xs font-semibold tracking-[0.16em] text-marketing-orange uppercase">
-                                The Full Package
-                            </p>
-                            <h2 class="mt-1 text-2xl font-semibold text-marketing-ink">
-                                Everything to run the business, in one plan
-                            </h2>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-3xl font-semibold text-marketing-ink">
-                                ${{ pricing.monthly }}<span class="text-sm font-medium text-marketing-ink-muted">/mo</span>
-                            </p>
-                            <p class="text-xs text-marketing-ink-muted">
-                                + ${{ pricing.setup }} one-time setup · {{ pricing.currency }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <ul class="mt-8 grid gap-3 sm:grid-cols-2">
-                        <li
-                            v-for="item in fullPackage"
-                            :key="item"
-                            class="flex items-start gap-2.5 text-sm text-marketing-ink"
+        <!-- 4. Proof -->
+        <section class="fade-in-section py-16 sm:py-20 lg:pt-0">
+            <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <div
+                    class="flex flex-col gap-8 rounded-3xl bg-white p-8 shadow-[0_30px_60px_-40px_rgba(33,13,2,0.4)] ring-1 ring-marketing-border sm:flex-row sm:items-center sm:p-10"
+                >
+                    <img
+                        src="/images/tenants/today-shipping/logo.png"
+                        alt="Today Shipping"
+                        class="h-16 w-auto self-start sm:h-20 sm:self-center"
+                    />
+                    <div class="flex-1">
+                        <h2
+                            class="text-2xl font-semibold tracking-tight sm:text-3xl"
                         >
-                            <Check class="mt-0.5 size-4 shrink-0 text-marketing-orange" aria-hidden="true" />
-                            <span>{{ item }}</span>
-                        </li>
-                    </ul>
-
-                    <a
-                        href="/signup"
-                        class="mt-8 inline-flex items-center gap-2 rounded-lg bg-marketing-ink px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
-                    >
-                        Get the Full Package →
-                    </a>
-                    <p class="mt-4 text-xs text-marketing-ink-muted">
-                        That's the software cost, no per-package fees. If you don't
-                        already have a Florida warehouse relationship, that's a
-                        separate arrangement — ask us and we'll point you to one.
-                    </p>
+                            Not a concept. Today Shipping runs on it.
+                        </h2>
+                        <p
+                            class="mt-3 text-base leading-relaxed text-marketing-ink-muted"
+                        >
+                            Today Shipping is a Jamaican courier taking
+                            pre-alerts, tracking packages and billing customers
+                            on CourierOS right now. Have a look at their site.
+                            Yours would work the same way, with your name on it.
+                        </p>
+                        <a
+                            href="https://today.courieros.co"
+                            target="_blank"
+                            rel="noopener"
+                            class="mt-5 inline-flex items-center gap-2 text-base font-semibold text-marketing-ink underline decoration-marketing-orange decoration-2 underline-offset-4 hover:decoration-marketing-ink"
+                        >
+                            Visit Today Shipping's live site
+                            <ExternalLink class="size-4" aria-hidden="true" />
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Founding cohort -->
-        <section class="pb-16">
-            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col items-start gap-4 rounded-2xl bg-marketing-eggshell/60 p-6 sm:flex-row sm:items-center sm:p-8">
-                    <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-marketing-ink text-marketing-amber">
-                        <Wallet class="size-5" />
+        <!-- 5. Offer -->
+        <section id="offer" class="scroll-mt-24 pb-20">
+            <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <div
+                    class="overflow-hidden rounded-[28px] bg-marketing-ink text-white shadow-[0_50px_100px_-50px_rgba(226,83,10,0.7)]"
+                >
+                    <div
+                        class="grid gap-10 p-8 sm:p-12 lg:grid-cols-[1fr_1.1fr]"
+                    >
+                        <div>
+                            <BlurRevealText
+                                text="Everything to run the business. One price."
+                                class="text-3xl leading-tight font-semibold tracking-[-0.03em] sm:text-4xl"
+                            />
+                            <div class="mt-8 flex items-end gap-2">
+                                <span
+                                    class="text-6xl font-semibold tracking-tight tabular-nums"
+                                    >{{ money(pricing.monthly) }}</span
+                                >
+                                <span class="pb-2 text-white/60">a month</span>
+                            </div>
+                            <p class="mt-3 text-base text-white/75">
+                                One-time setup
+                                <template v-if="foundingOpen">
+                                    <span class="text-white/45 line-through">{{
+                                        money(pricing.setup)
+                                    }}</span>
+                                    <span
+                                        class="ml-1 font-semibold text-marketing-amber"
+                                        >{{ money(sales.founding.setup) }}</span
+                                    >
+                                </template>
+                                <span v-else class="font-semibold text-white">{{
+                                    money(pricing.setup)
+                                }}</span>
+                            </p>
+                            <p
+                                v-if="foundingOpen"
+                                class="mt-5 rounded-xl bg-white/[0.07] p-4 text-sm leading-relaxed text-white/80"
+                            >
+                                <span class="font-semibold text-marketing-amber"
+                                    >Founding Jamaica cohort.</span
+                                >
+                                The first
+                                {{ sales.founding.spotsTotal }} couriers to
+                                launch get the reduced setup and a direct line
+                                to us while we build what they ask for.
+                                <span class="font-semibold text-white"
+                                    >{{ sales.founding.spotsLeft }} of
+                                    {{ sales.founding.spotsTotal }} spots
+                                    left.</span
+                                >
+                            </p>
+                        </div>
+
+                        <div>
+                            <ul class="space-y-3">
+                                <li
+                                    v-for="item in fullPackage"
+                                    :key="item"
+                                    class="flex items-start gap-3 text-base text-white/90"
+                                >
+                                    <Check
+                                        class="mt-1 size-4 shrink-0 text-marketing-amber"
+                                        :stroke-width="3"
+                                        aria-hidden="true"
+                                    />
+                                    {{ item }}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-semibold text-marketing-ink">Founding Jamaica Cohort</p>
-                        <p class="mt-1 text-sm text-marketing-ink-muted">
-                            The first businesses to launch on CourierOS from Jamaica get a
-                            reduced setup fee. Message us before you sign up to check availability.
+
+                    <div
+                        class="flex flex-col gap-3 border-t border-white/10 bg-white/[0.03] p-8 sm:flex-row sm:items-center sm:px-12"
+                    >
+                        <a
+                            :href="foundingOpen ? foundingLink : demoLink"
+                            target="_blank"
+                            rel="noopener"
+                            class="inline-flex items-center justify-center gap-2.5 rounded-xl bg-marketing-amber px-6 py-4 text-base font-semibold text-marketing-ink transition hover:brightness-95"
+                            @click="onWhatsApp('offer')"
+                        >
+                            {{
+                                foundingOpen
+                                    ? 'Claim a founding spot on WhatsApp'
+                                    : 'Get a free demo on WhatsApp'
+                            }}
+                        </a>
+                        <a
+                            href="/signup"
+                            class="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-4 text-base font-semibold text-white transition hover:border-white/40"
+                            @click="onSignup('offer')"
+                        >
+                            Sign up now
+                        </a>
+                        <p
+                            class="text-sm text-white/55 sm:ml-auto sm:max-w-[200px]"
+                        >
+                            Month to month. No per-package fees.
                         </p>
                     </div>
                 </div>
+
+                <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                    <div
+                        class="flex items-start gap-3 rounded-2xl bg-white p-4 text-sm text-marketing-ink-muted ring-1 ring-marketing-border"
+                    >
+                        <Wallet
+                            class="mt-0.5 size-4 shrink-0 text-marketing-orange"
+                            aria-hidden="true"
+                        />
+                        Your customers pay you directly. We never take a cut.
+                    </div>
+                    <div
+                        class="flex items-start gap-3 rounded-2xl bg-white p-4 text-sm text-marketing-ink-muted ring-1 ring-marketing-border"
+                    >
+                        <ShieldCheck
+                            class="mt-0.5 size-4 shrink-0 text-marketing-orange"
+                            aria-hidden="true"
+                        />
+                        Your data is kept separate from every other courier.
+                    </div>
+                    <div
+                        class="flex items-start gap-3 rounded-2xl bg-white p-4 text-sm text-marketing-ink-muted ring-1 ring-marketing-border"
+                    >
+                        <Globe2
+                            class="mt-0.5 size-4 shrink-0 text-marketing-orange"
+                            aria-hidden="true"
+                        />
+                        Prices and totals in JMD and USD for your customers.
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Why CourierOS -->
-        <section class="fade-in-section bg-marketing-eggshell/40 py-20">
+        <!-- 6. Why not the alternatives -->
+        <section class="fade-in-section bg-marketing-eggshell/50 py-20">
             <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                    <p class="text-xs font-semibold tracking-[0.2em] text-marketing-orange uppercase">Why us</p>
-                    <BlurRevealText
-                        text="Everyone else gives you a piece. This is the whole business."
-                        class="mt-2 text-balance text-3xl font-semibold tracking-tight text-marketing-ink sm:text-4xl"
-                    />
-                </div>
-
-                <div class="mt-12 grid gap-6 lg:grid-cols-3">
+                <BlurRevealText
+                    text="Everyone else gives you a piece. This is the whole business."
+                    class="mx-auto max-w-2xl text-center text-3xl font-semibold tracking-[-0.03em] text-balance sm:text-4xl"
+                />
+                <div class="mt-12 grid gap-4 lg:grid-cols-3">
                     <div
                         v-for="(option, index) in comparison"
                         :key="option.title"
-                        class="fade-in-item rounded-2xl border p-6"
+                        class="fade-in-item rounded-2xl p-6"
                         :class="
                             option.featured
-                                ? 'border-marketing-orange bg-marketing-ink text-white shadow-[0_30px_80px_-32px_rgba(226,83,10,0.55)]'
-                                : 'border-marketing-border bg-white'
+                                ? 'bg-marketing-ink text-white'
+                                : 'bg-white ring-1 ring-marketing-border'
                         "
                         :style="itemDelay(index)"
                     >
-                        <p class="text-lg font-semibold" :class="option.featured ? 'text-white' : 'text-marketing-ink'">
-                            {{ option.title }}
-                        </p>
-                        <p class="mt-1 text-sm" :class="option.featured ? 'text-white/75' : 'text-marketing-ink-muted'">
+                        <p class="text-lg font-semibold">{{ option.title }}</p>
+                        <p
+                            class="mt-1 text-sm"
+                            :class="
+                                option.featured
+                                    ? 'text-white/65'
+                                    : 'text-marketing-ink-muted'
+                            "
+                        >
                             {{ option.subtitle }}
                         </p>
                         <ul class="mt-6 space-y-3">
                             <li
-                                v-for="row in option.rows"
-                                :key="row.label"
+                                v-for="(has, i) in option.rows"
+                                :key="i"
                                 class="flex items-start gap-2.5 text-sm"
-                                :class="option.featured ? 'text-white/90' : 'text-marketing-ink'"
                             >
                                 <Check
-                                    v-if="row.has === true"
+                                    v-if="has === true"
                                     class="mt-0.5 size-4 shrink-0"
-                                    :class="option.featured ? 'text-marketing-amber' : 'text-marketing-orange'"
+                                    :class="
+                                        option.featured
+                                            ? 'text-marketing-amber'
+                                            : 'text-marketing-orange'
+                                    "
+                                    :stroke-width="3"
                                 />
                                 <X
-                                    v-else-if="row.has === false"
-                                    class="mt-0.5 size-4 shrink-0 opacity-50"
+                                    v-else-if="has === false"
+                                    class="mt-0.5 size-4 shrink-0 opacity-40"
                                 />
                                 <span
                                     v-else
-                                    class="mt-0.5 size-4 shrink-0 text-center text-[10px] font-bold opacity-70"
+                                    class="mt-0.5 size-4 shrink-0 text-center text-xs font-bold opacity-60"
                                     >~</span
                                 >
-                                <span>{{ row.label }}{{ typeof row.has === 'string' ? ` (${row.has})` : '' }}</span>
+                                <span
+                                    :class="has === false ? 'opacity-55' : ''"
+                                >
+                                    {{ comparisonLabels[i]
+                                    }}<template v-if="typeof has === 'string'">
+                                        ({{ has.toLowerCase() }})</template
+                                    >
+                                </span>
                             </li>
                         </ul>
                     </div>
@@ -444,105 +672,119 @@ const openFaq = ref<number | null>(0);
             </div>
         </section>
 
-        <!-- Case study -->
-        <section class="fade-in-section py-16">
+        <!-- 7. Objections -->
+        <section class="fade-in-section py-20">
             <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-                <div class="overflow-hidden rounded-2xl border border-marketing-border bg-white">
-                    <div class="flex items-center gap-4 border-b border-marketing-border bg-marketing-eggshell/50 px-8 py-6">
-                        <img
-                            src="/images/tenants/today-shipping/logo.png"
-                            alt="Today Shipping logo"
-                            class="h-10 w-auto"
-                        />
-                        <div>
-                            <p class="text-xs font-semibold tracking-[0.16em] text-marketing-orange uppercase">Already live</p>
-                            <h2 class="text-xl font-semibold text-marketing-ink">Today Shipping runs on CourierOS</h2>
-                        </div>
-                    </div>
-                    <div class="grid gap-6 p-8 sm:grid-cols-[1fr_auto] sm:items-center">
-                        <p class="text-sm leading-relaxed text-marketing-ink-muted">
-                            Today Shipping is a real Jamaican courier business
-                            running its site, pre-alerts, tracking and billing on
-                            CourierOS today — proof this isn't a concept, it's a
-                            working platform you can be running on too.
-                        </p>
-                        <img
-                            src="/images/tenants/today-shipping/parcel.png"
-                            alt="A Today Shipping parcel ready for pickup"
-                            class="h-24 w-24 rounded-xl object-cover justify-self-center sm:justify-self-end"
-                        />
-                    </div>
-                    <!--
-                        TODO(Shane): swap the paragraph above for a direct quote
-                        and real numbers (packages/month, time saved) once you
-                        have them from Today Shipping — that's the strongest
-                        proof point for both segments and only you can get it.
-                    -->
-                </div>
-
-                <!-- Assurance -->
-                <div class="mt-6 grid gap-4 sm:grid-cols-3">
-                    <div class="flex items-start gap-2.5 rounded-xl border border-marketing-border bg-white p-4 text-sm text-marketing-ink-muted">
-                        <ShieldCheck class="mt-0.5 size-4 shrink-0 text-marketing-orange" />
-                        <span>Your data is isolated from every other business on CourierOS.</span>
-                    </div>
-                    <div class="flex items-start gap-2.5 rounded-xl border border-marketing-border bg-white p-4 text-sm text-marketing-ink-muted">
-                        <Wallet class="mt-0.5 size-4 shrink-0 text-marketing-orange" />
-                        <span>Your customers pay you, not CourierOS. Cancel anytime.</span>
-                    </div>
-                    <div class="flex items-start gap-2.5 rounded-xl border border-marketing-border bg-white p-4 text-sm text-marketing-ink-muted">
-                        <Globe2 class="mt-0.5 size-4 shrink-0 text-marketing-orange" />
-                        <span>Rates and totals shown in JMD & USD for your customers.</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ -->
-        <section class="fade-in-section bg-marketing-eggshell/40 py-20">
-            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <p class="text-xs font-semibold tracking-[0.2em] text-marketing-orange uppercase">FAQ</p>
-                    <BlurRevealText
-                        text="What people starting out in Jamaica ask us"
-                        class="mt-2 text-balance text-3xl font-semibold tracking-tight text-marketing-ink sm:text-4xl"
-                    />
-                </div>
-
+                <BlurRevealText
+                    text="What couriers in Jamaica ask us first"
+                    class="text-center text-3xl font-semibold tracking-[-0.03em] text-balance sm:text-4xl"
+                />
                 <div class="mt-10 space-y-3">
                     <Collapsible
                         v-for="(faq, index) in faqs"
                         :key="faq.q"
                         :open="openFaq === index"
-                        class="rounded-xl border border-marketing-border bg-white"
+                        class="rounded-2xl bg-white ring-1 ring-marketing-border"
                         @update:open="(open) => (openFaq = open ? index : null)"
                     >
-                        <CollapsibleTrigger class="flex w-full items-center justify-between gap-4 px-6 py-4 text-left text-base font-semibold text-marketing-ink">
+                        <CollapsibleTrigger
+                            class="flex w-full items-center justify-between gap-4 px-6 py-5 text-left text-base font-semibold"
+                        >
                             {{ faq.q }}
                             <ChevronDown
                                 class="size-4 shrink-0 text-marketing-ink-muted transition-transform"
                                 :class="{ 'rotate-180': openFaq === index }"
                             />
                         </CollapsibleTrigger>
-                        <CollapsibleContent class="px-6 pb-4 text-sm leading-relaxed text-marketing-ink-muted">
+                        <CollapsibleContent
+                            class="px-6 pb-5 text-base leading-relaxed text-marketing-ink-muted"
+                        >
                             {{ faq.a }}
                         </CollapsibleContent>
                     </Collapsible>
                 </div>
-
-                <div class="mt-8 flex items-start gap-2.5 rounded-xl border border-marketing-border bg-white p-4 text-sm text-marketing-ink-muted">
-                    <MapPinned class="mt-0.5 size-4 shrink-0 text-marketing-orange" aria-hidden="true" />
-                    <p>
-                        <span class="font-semibold text-marketing-ink">Don't have a Florida address yet? </span>
-                        You'll need a US warehouse relationship before you can start
-                        taking in packages — ask us and we'll point you to one.
-                    </p>
-                </div>
             </div>
         </section>
 
-        <FinalCta />
+        <!-- 8. Last ask -->
+        <section
+            class="relative overflow-hidden bg-marketing-ink py-24 text-white"
+        >
+            <div
+                aria-hidden="true"
+                class="absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_120%,rgba(255,122,0,0.45),transparent_70%)]"
+            />
+            <div class="relative mx-auto max-w-2xl px-4 text-center sm:px-6">
+                <BlurRevealText
+                    text="Your customers are already shopping in the US. Be the one they ship with."
+                    class="text-3xl leading-tight font-semibold tracking-[-0.03em] text-balance sm:text-5xl"
+                />
+                <p class="mx-auto mt-5 max-w-lg text-lg text-white/70">
+                    Send us a message. We'll show you the platform on a quick
+                    call and answer anything, no pressure.
+                </p>
+                <a
+                    :href="demoLink"
+                    target="_blank"
+                    rel="noopener"
+                    class="mt-9 inline-flex items-center gap-2.5 rounded-xl bg-marketing-amber px-8 py-4 text-base font-semibold text-marketing-ink transition hover:-translate-y-0.5 hover:brightness-95"
+                    @click="onWhatsApp('final')"
+                >
+                    Get a free demo on WhatsApp
+                </a>
+                <p class="mt-4 text-sm text-white/50">
+                    Prefer to start straight away?
+                    <a
+                        href="/signup"
+                        class="font-semibold text-white underline underline-offset-4"
+                        @click="onSignup('final')"
+                        >Sign up here</a
+                    >
+                </p>
+            </div>
+        </section>
 
         <MarketingFooter />
+
+        <!-- Sticky mobile CTA -->
+        <Transition name="bar">
+            <div
+                v-if="showStickyBar"
+                class="fixed inset-x-0 bottom-0 z-50 border-t border-marketing-border bg-marketing-cream/95 p-3 backdrop-blur md:hidden"
+                :style="{
+                    paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
+                }"
+            >
+                <div class="flex gap-2">
+                    <a
+                        :href="demoLink"
+                        target="_blank"
+                        rel="noopener"
+                        class="flex-1 rounded-xl bg-marketing-amber px-4 py-3.5 text-center text-[15px] font-semibold text-marketing-ink"
+                        @click="onWhatsApp('sticky')"
+                    >
+                        Free demo on WhatsApp
+                    </a>
+                    <a
+                        href="#offer"
+                        class="rounded-xl border border-marketing-ink/15 bg-white px-4 py-3.5 text-[15px] font-semibold"
+                    >
+                        Price
+                    </a>
+                </div>
+            </div>
+        </Transition>
     </div>
 </template>
+
+<style scoped>
+.bar-enter-active,
+.bar-leave-active {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bar-enter-from,
+.bar-leave-to {
+    transform: translateY(100%);
+}
+</style>

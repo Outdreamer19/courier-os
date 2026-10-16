@@ -30,14 +30,18 @@
             }
         </style>
 
-        <link rel="icon" href="/branding/today-shipping-icon.png" type="image/png">
-        <link rel="apple-touch-icon" href="/branding/today-shipping-icon.png">
+        @if (app(\App\Support\Tenancy\TenantManager::class)->hasTenant())
+            <link rel="icon" href="/branding/today-shipping-icon.png" type="image/png">
+            <link rel="apple-touch-icon" href="/branding/today-shipping-icon.png">
+        @else
+            @include('partials.central-head')
+        @endif
 
         @fonts
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>{{ $meta['title'] ?? (app(\App\Support\Tenancy\TenantManager::class)->hasTenant() ? config('app.name', 'Laravel') : config('courieros.name', 'CourierOS')) }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

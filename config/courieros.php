@@ -74,4 +74,48 @@ return [
             : strtoupper((string) env('CASHIER_CURRENCY', 'USD')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Platform name
+    |--------------------------------------------------------------------------
+    |
+    | What the central marketing domain calls itself in titles, share previews
+    | and the shared `brand.name` prop. Kept apart from APP_NAME, which the
+    | production server still carries from the Ship'd JM days and which was
+    | putting "Ship'd JM" on every CourierOS link preview.
+    |
+    */
+
+    'name' => env('COURIEROS_NAME', 'CourierOS'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Marketing and paid ads
+    |--------------------------------------------------------------------------
+    |
+    | sales_whatsapp: the number every "WhatsApp us" button on the marketing
+    | site opens, digits only with country code.
+    |
+    | founding: the Founding Jamaica Cohort offer shown on /jamaica. Set
+    | spots_left to 0 to hide the offer once it is gone.
+    |
+    | meta_pixel_id / google_tag_id: injected on the central domain only, never
+    | on a tenant's white-label site. google_ads_lead: the Google Ads conversion
+    | "send_to" value (AW-XXXXXXX/abcDEF) fired when someone starts a WhatsApp
+    | chat or signs up.
+    |
+    */
+
+    'marketing' => [
+        'sales_whatsapp' => env('COURIEROS_SALES_WHATSAPP', '447565727032'),
+        'founding' => [
+            'setup' => (float) env('COURIEROS_FOUNDING_SETUP', 149),
+            'spots_total' => (int) env('COURIEROS_FOUNDING_SPOTS', 10),
+            'spots_left' => (int) env('COURIEROS_FOUNDING_SPOTS_LEFT', 10),
+        ],
+        'meta_pixel_id' => env('META_PIXEL_ID'),
+        'google_tag_id' => env('GOOGLE_TAG_ID'),
+        'google_ads_lead' => env('GOOGLE_ADS_LEAD_SEND_TO'),
+    ],
+
 ];

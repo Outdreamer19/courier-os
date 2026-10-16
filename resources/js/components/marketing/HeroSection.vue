@@ -2,32 +2,17 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import BlurRevealText from './BlurRevealText.vue';
 import HeroBackdrop from './HeroBackdrop.vue';
-import HeroProductMock from './HeroProductMock.vue';
+import AdminDashboardMock from './jamaica/AdminDashboardMock.vue';
+import CustomerPortalMock from './jamaica/CustomerPortalMock.vue';
 
 /**
- * A tab either points at a real product screenshot or falls back to the
- * rendered mock in HeroProductMock. Drop a screenshot into
- * public/images/marketing/ and add `image` here to swap one over.
+ * Both tabs are coded, on-brand product mocks (see components/marketing/jamaica)
+ * rather than screenshots: the old captures carried Today Shipping's navy and
+ * red theme, which clashed with the marketing palette and blurred when scaled.
  */
 const tabs = [
-    {
-        key: 'admin',
-        label: 'Admin Dashboard',
-        image: {
-            webp: '/images/marketing/admin-dashboard.webp',
-            png: '/images/marketing/admin-dashboard.png',
-            alt: 'CourierOS admin dashboard showing customer, pre-alert and package counts alongside sign-up, volume and pre-alert status charts',
-        },
-    },
-    {
-        key: 'portal',
-        label: 'Customer Portal',
-        image: {
-            webp: '/images/marketing/customer-portal.webp',
-            png: '/images/marketing/customer-portal.png',
-            alt: 'CourierOS customer portal showing a welcome banner with the customer reference, active package and pre-alert counts, amount due, the assigned Florida shipping address and quick actions',
-        },
-    },
+    { key: 'admin', label: 'Admin Dashboard' },
+    { key: 'portal', label: 'Customer Portal' },
 ] as const;
 
 const active = ref(0);
@@ -201,14 +186,14 @@ const proofPoints = [
                     <span
                         class="mx-auto rounded-md bg-white/70 px-3 py-0.5 text-[10px] text-marketing-ink-muted"
                     >
-                        todayshippingja.com
+                        yourcourier.courieros.co
                     </span>
                 </div>
 
                 <!-- Aspect matched to the screenshot (1920×1053) rather than a
                      round 16/9, so object-cover has nothing to crop and the
                      app sidebar isn't sliced off at the left edge. -->
-                <div class="relative aspect-[1920/1053] w-full">
+                <div class="relative aspect-[1100/690] w-full">
                     <!--
                         Both panels stay mounted and crossfade via opacity,
                         rather than being swapped through <Transition>.
@@ -229,31 +214,29 @@ const proofPoints = [
                         "
                         :aria-hidden="active !== index"
                     >
-                        <!--
-                            Real screenshot where we have one, rendered mock
-                            otherwise. The admin screenshot is the LCP element,
-                            so it is eager and high priority rather than lazy.
-                        -->
-                        <picture v-if="tab.image">
-                            <source
-                                :srcset="tab.image.webp"
-                                type="image/webp"
-                            />
-                            <img
-                                :src="tab.image.png"
-                                :alt="tab.image.alt"
-                                width="1920"
-                                height="1053"
-                                fetchpriority="high"
-                                decoding="async"
-                                class="h-full w-full object-cover object-top"
-                            />
-                        </picture>
-                        <HeroProductMock
+                        <AdminDashboardMock v-if="tab.key === 'admin'" bare />
+                        <div
                             v-else
-                            :view="tab.key"
-                            class="h-full w-full"
-                        />
+                            class="flex h-full items-center justify-center gap-10 bg-marketing-ink px-6"
+                        >
+                            <div
+                                class="hidden max-w-[240px] text-white sm:block"
+                            >
+                                <p
+                                    class="text-2xl font-semibold tracking-tight"
+                                >
+                                    Their own Miami address, in their pocket.
+                                </p>
+                                <p class="mt-3 text-sm text-white/65">
+                                    Customers copy their address, send
+                                    pre-alerts and track every package without
+                                    messaging you.
+                                </p>
+                            </div>
+                            <div class="w-[30%] max-w-[190px] py-4">
+                                <CustomerPortalMock />
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Glass sheen sweep -->

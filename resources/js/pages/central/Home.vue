@@ -8,11 +8,12 @@ import FeatureShowcase from '@/components/marketing/FeatureShowcase.vue';
 import FinalCta from '@/components/marketing/FinalCta.vue';
 import HeroSection from '@/components/marketing/HeroSection.vue';
 import IntegrationsGrid from '@/components/marketing/IntegrationsGrid.vue';
+import AdminDashboardMock from '@/components/marketing/jamaica/AdminDashboardMock.vue';
+import PackageJourney from '@/components/marketing/jamaica/PackageJourney.vue';
 import LogoMarquee from '@/components/marketing/LogoMarquee.vue';
 import MarketingFooter from '@/components/marketing/MarketingFooter.vue';
 import MarketingNav from '@/components/marketing/MarketingNav.vue';
 import PricingSection from '@/components/marketing/PricingSection.vue';
-import ProductScreenshotFrame from '@/components/marketing/ProductScreenshotFrame.vue';
 import ProductTeaser from '@/components/marketing/ProductTeaser.vue';
 import StackingFeatureCards from '@/components/marketing/StackingFeatureCards.vue';
 import StatsBanner from '@/components/marketing/StatsBanner.vue';
@@ -45,7 +46,7 @@ useScrollReveal();
         />
         <meta
             property="og:image"
-            content="/images/marketing/admin-dashboard.png"
+            content="/images/marketing/og/courieros-og.png"
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
@@ -58,7 +59,7 @@ useScrollReveal();
         />
         <meta
             name="twitter:image"
-            content="/images/marketing/admin-dashboard.png"
+            content="/images/marketing/og/courieros-og.png"
         />
     </Head>
 
@@ -94,12 +95,7 @@ useScrollReveal();
                 ]"
             >
                 <template #visual>
-                    <ProductScreenshotFrame
-                        src="/images/marketing/admin-pre-alerts.png"
-                        webp="/images/marketing/admin-pre-alerts.webp"
-                        label="Pre-alert queue"
-                        alt="The CourierOS pre-alerts queue listing merchant, customer, tracking number and status for each submission"
-                    />
+                    <PackageJourney />
                 </template>
             </FeatureShowcase>
 
@@ -114,12 +110,7 @@ useScrollReveal();
                 ]"
             >
                 <template #visual>
-                    <ProductScreenshotFrame
-                        src="/images/marketing/admin-reports.png"
-                        webp="/images/marketing/admin-reports.webp"
-                        label="Reports"
-                        alt="The CourierOS reports screen showing revenue by month, package volume and top customers"
-                    />
+                    <AdminDashboardMock />
                 </template>
             </FeatureShowcase>
 
