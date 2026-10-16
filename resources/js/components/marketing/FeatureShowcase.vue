@@ -8,14 +8,23 @@ withDefaults(
         body: string;
         bullets?: string[];
         reverse?: boolean;
+        /** Give the visual three fifths of the row, for dense desktop mocks. */
+        wideVisual?: boolean;
     }>(),
-    { bullets: () => [], reverse: false },
+    { bullets: () => [], reverse: false, wideVisual: false },
 );
 </script>
 
 <template>
     <div
-        class="grid items-center gap-12 rounded-3xl border border-marketing-border bg-marketing-cream bg-gradient-to-br from-marketing-lavender/40 via-marketing-orange/10 to-marketing-cream p-8 shadow-[0_-8px_40px_-12px_rgba(24,20,14,0.18)] sm:p-12 lg:grid-cols-2 lg:p-16"
+        class="grid items-center gap-12 rounded-3xl border border-marketing-border bg-marketing-cream bg-gradient-to-br from-marketing-lavender/40 via-marketing-orange/10 to-marketing-cream p-8 shadow-[0_-8px_40px_-12px_rgba(24,20,14,0.18)] sm:p-12 lg:p-16"
+        :class="
+            wideVisual
+                ? reverse
+                    ? 'lg:grid-cols-[3fr_2fr]'
+                    : 'lg:grid-cols-[2fr_3fr]'
+                : 'lg:grid-cols-2'
+        "
     >
         <div :class="reverse ? 'lg:order-2' : 'lg:order-1'">
             <p

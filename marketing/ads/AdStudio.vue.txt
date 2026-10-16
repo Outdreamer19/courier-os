@@ -1,0 +1,129 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import AdminDashboardMock from '@/components/marketing/jamaica/AdminDashboardMock.vue';
+import BrandSwitcherMock from '@/components/marketing/jamaica/BrandSwitcherMock.vue';
+import ChatPileUp from '@/components/marketing/jamaica/ChatPileUp.vue';
+import CustomerPortalMock from '@/components/marketing/jamaica/CustomerPortalMock.vue';
+import PackageJourney from '@/components/marketing/jamaica/PackageJourney.vue';
+import BlurRevealText from '@/components/marketing/BlurRevealText.vue';
+
+// LOCAL ONLY: renders ad creatives. Not shipped.
+const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+const format = (params.get('format') ?? 'story') as 'story' | 'feed' | 'og';
+const fixedScene = params.get('scene');
+const reel = params.get('reel') === '1';
+
+const size = computed(() =>
+    format === 'feed' ? { w: 1080, h: 1350 } : format === 'og' ? { w: 1200, h: 630 } : { w: 1080, h: 1920 },
+);
+
+const scene = ref(fixedScene ? Number(fixedScene) : 1);
+const durations: Record<number, number> = { 1: 4200, 2: 6800, 3: 4200, 4: 4200, 5: 5000 };
+
+onMounted(() => {
+    if (!reel) return;
+    const next = () => {
+        if (scene.value >= 5) return;
+        setTimeout(() => {
+            scene.value += 1;
+            next();
+        }, durations[scene.value]);
+    };
+    next();
+});
+</script>
+
+<template>
+    <div
+        class="relative overflow-hidden font-marketing"
+        :style="{ width: `${size.w}px`, height: `${size.h}px` }"
+    >
+        <!-- OG / share card -->
+        <div v-if="format === 'og'" class="flex h-full items-center gap-10 bg-marketing-ink px-16 text-white">
+            <div class="flex-1">
+                <div class="flex items-center gap-3">
+                    <span class="flex size-12 items-center justify-center rounded-xl bg-marketing-amber text-2xl font-bold text-marketing-ink">C</span>
+                    <span class="text-3xl font-semibold">CourierOS</span>
+                </div>
+                <p class="mt-8 text-[54px] leading-[1.02] font-semibold tracking-[-0.035em]">
+                    {{ params.get('variant') === 'jamaica' ? 'Your own courier business, built with you.' : 'Run your courier business like a platform.' }}
+                </p>
+                <p class="mt-6 text-2xl text-white/65">Branded site. Miami address. Tracking. WhatsApp updates.</p>
+            </div>
+            <div class="w-[420px]"><PackageJourney /></div>
+        </div>
+
+        <template v-else>
+            <Transition name="scene" mode="out-in">
+                <!-- 1: pain -->
+                <div v-if="scene === 1" key="1" class="flex h-full flex-col bg-marketing-ink px-[80px] text-white" :class="format === 'story' ? 'pt-[220px]' : 'pt-[110px]'">
+                    <BlurRevealText immediate as="p" text="Still running your shipping business from WhatsApp?" class="text-[88px] leading-[0.98] font-semibold tracking-[-0.04em]" />
+                    <div class="mt-auto origin-bottom scale-[1.55] pb-[60px]" :class="format === 'story' ? 'mb-[260px]' : 'mb-[140px]'">
+                        <ChatPileUp />
+                    </div>
+                </div>
+
+                <!-- 2: tracking -->
+                <div v-else-if="scene === 2" key="2" class="flex h-full flex-col bg-marketing-cream px-[70px] text-marketing-ink" :class="format === 'story' ? 'pt-[200px]' : 'pt-[90px]'">
+                    <BlurRevealText immediate as="p" text="Give every customer their own Miami address and live tracking." class="text-[72px] leading-[1.02] font-semibold tracking-[-0.04em]" />
+                    <div class="mt-[60px]" :class="format === 'feed' ? 'mx-auto w-[720px]' : ''"><PackageJourney /></div>
+                </div>
+
+                <!-- 3: brand -->
+                <div v-else-if="scene === 3" key="3" class="flex h-full flex-col bg-marketing-cream px-[70px] text-marketing-ink" :class="format === 'story' ? 'pt-[260px]' : 'pt-[110px]'">
+                    <BlurRevealText immediate as="p" text="Your name. Your colours. Your website." class="text-[84px] leading-[1.0] font-semibold tracking-[-0.04em]" />
+                    <p class="mt-6 text-[34px] text-marketing-ink-muted">Customers never see ours.</p>
+                    <div class="mt-[90px]"><BrandSwitcherMock /></div>
+                    <div v-if="format === 'story'" class="mx-auto mt-[90px] w-[360px]"><CustomerPortalMock /></div>
+                </div>
+
+                <!-- 4: dashboard -->
+                <div v-else-if="scene === 4" key="4" class="flex h-full flex-col bg-marketing-ink px-[70px] text-white" :class="format === 'story' ? 'pt-[300px]' : 'pt-[120px]'">
+                    <BlurRevealText immediate as="p" text="Every package. Every payment. One screen." class="text-[84px] leading-[1.0] font-semibold tracking-[-0.04em]" />
+                    <div class="mt-[110px] w-[1240px] origin-top-left scale-[0.76]"><AdminDashboardMock /></div>
+                </div>
+
+                <!-- 5: offer -->
+                <div v-else key="5" class="relative flex h-full flex-col items-center justify-center bg-marketing-ink px-[80px] text-center text-white">
+                    <div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_100%,rgba(255,122,0,0.55),transparent_70%)]" />
+                    <div class="relative flex items-center gap-4">
+                        <span class="flex size-[84px] items-center justify-center rounded-[22px] bg-marketing-amber text-[48px] font-bold text-marketing-ink">C</span>
+                        <span class="text-[64px] font-semibold tracking-tight">CourierOS</span>
+                    </div>
+                    <BlurRevealText immediate as="p" :delay="200" text="Start or grow your courier business in Jamaica." class="relative mt-[70px] text-[80px] leading-[1.0] font-semibold tracking-[-0.04em]" />
+                    <p class="relative mt-[50px] text-[46px] text-white/80">
+                        <span class="font-semibold text-white">US$79</span> a month
+                    </p>
+                    <p class="relative mt-3 text-[34px] text-white/60">
+                        Founding setup <span class="text-white/40 line-through">US$349</span>
+                        <span class="ml-3 font-semibold text-marketing-amber">US$149</span>
+                    </p>
+                    <div class="relative mt-[80px] rounded-[28px] bg-marketing-amber px-[60px] py-[34px] text-[44px] font-semibold text-marketing-ink">
+                        WhatsApp us for a free demo
+                    </div>
+                    <p class="relative mt-8 text-[32px] text-white/55">courieros.co/jamaica</p>
+                </div>
+            </Transition>
+            <div v-if="format === 'story' && scene < 5" class="absolute inset-x-0 bottom-[150px] flex items-center justify-center gap-4">
+                <span class="flex size-[56px] items-center justify-center rounded-[16px] bg-marketing-amber text-[30px] font-bold text-marketing-ink">C</span>
+                <span class="text-[36px] font-semibold" :class="scene === 1 || scene === 4 ? 'text-white' : 'text-marketing-ink'">courieros.co/jamaica</span>
+            </div>
+        </template>
+    </div>
+</template>
+
+<style scoped>
+.scene-enter-active,
+.scene-leave-active {
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease;
+}
+.scene-enter-from {
+    opacity: 0;
+    transform: translateY(30px);
+}
+.scene-leave-to {
+    opacity: 0;
+}
+</style>

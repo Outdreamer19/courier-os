@@ -290,7 +290,7 @@ const openObjection = ref<number | null>(0);
         />
         <meta
             property="og:image"
-            content="/images/marketing/admin-dashboard.png"
+            content="/images/marketing/og/courieros-og.png"
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="CourierOS Product" />
@@ -300,7 +300,7 @@ const openObjection = ref<number | null>(0);
         />
         <meta
             name="twitter:image"
-            content="/images/marketing/admin-dashboard.png"
+            content="/images/marketing/og/courieros-og.png"
         />
     </Head>
 

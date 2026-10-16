@@ -33,7 +33,7 @@ class TenantConfig
     public function name(): string
     {
         return $this->tenants->current()?->name
-            ?? (string) config('app.name', 'CourierOS');
+            ?? (string) config('courieros.name', 'CourierOS');
     }
 
     public function whatsappNumber(): ?string

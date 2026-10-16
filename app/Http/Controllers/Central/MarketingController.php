@@ -26,6 +26,11 @@ class MarketingController extends Controller
     {
         return Inertia::render('central/Product', [
             'pricing' => $this->basePricing(),
+        ])->withViewData([
+            'meta' => [
+                'title' => 'Product tour | CourierOS',
+                'description' => 'See the branded site, customer portal and admin console that run a Caribbean shop-and-ship business.',
+            ],
         ]);
     }
 
@@ -33,6 +38,11 @@ class MarketingController extends Controller
     {
         return Inertia::render('central/Pricing', [
             'pricing' => $this->annualAwarePricing(),
+        ])->withViewData([
+            'meta' => [
+                'title' => 'Pricing | CourierOS',
+                'description' => 'One flat monthly price for your branded courier website, customer portal and admin console. No per-package fees.',
+            ],
         ]);
     }
 
@@ -43,8 +53,24 @@ class MarketingController extends Controller
      */
     public function jamaica(): Response
     {
+        $founding = config('courieros.marketing.founding');
+
         return Inertia::render('central/Jamaica', [
             'pricing' => $this->basePricing(),
+            'sales' => [
+                'whatsapp' => (string) config('courieros.marketing.sales_whatsapp'),
+                'founding' => [
+                    'setup' => (float) $founding['setup'],
+                    'spotsTotal' => (int) $founding['spots_total'],
+                    'spotsLeft' => (int) $founding['spots_left'],
+                ],
+            ],
+        ])->withViewData([
+            'meta' => [
+                'title' => 'Start or grow your shipping business in Jamaica | CourierOS',
+                'description' => 'Your own branded courier website, customer portal with Miami address, tracking, WhatsApp updates and payments. Set up with you this week.',
+                'image' => '/images/marketing/og/courieros-jamaica-og.png',
+            ],
         ]);
     }
 

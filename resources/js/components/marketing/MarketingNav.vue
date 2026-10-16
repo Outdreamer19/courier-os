@@ -4,6 +4,21 @@ import { Menu, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { login } from '@/routes';
 
+const props = withDefaults(
+    defineProps<{
+        /**
+         * Landing-page mode for paid traffic: logo plus one call to action, no
+         * menu. Every extra link on an ad landing page is a way out of it.
+         */
+        minimal?: boolean;
+        ctaHref?: string;
+        ctaLabel?: string;
+    }>(),
+    { minimal: false, ctaHref: '/signup', ctaLabel: 'Get Started' },
+);
+
+const emit = defineEmits<{ cta: [] }>();
+
 const links = [
     { name: 'Product', href: '/product' },
     { name: 'Pricing', href: '/pricing' },
@@ -54,7 +69,21 @@ const mobileOpen = ref(false);
                 CourierOS
             </a>
 
-            <nav class="hidden items-center gap-1 md:flex">
+            <a
+                v-if="props.minimal"
+                :href="props.ctaHref"
+                target="_blank"
+                rel="noopener"
+                class="rounded-lg bg-marketing-amber px-4 py-2.5 text-sm font-semibold text-marketing-ink transition hover:brightness-95"
+                @click="emit('cta')"
+            >
+                {{ props.ctaLabel }}
+            </a>
+
+            <nav
+                v-if="!props.minimal"
+                class="hidden items-center gap-1 md:flex"
+            >
                 <a
                     v-for="link in links"
                     :key="link.name"
@@ -71,7 +100,10 @@ const mobileOpen = ref(false);
                 </a>
             </nav>
 
-            <div class="hidden items-center gap-2 md:flex">
+            <div
+                v-if="!props.minimal"
+                class="hidden items-center gap-2 md:flex"
+            >
                 <Link
                     :href="login()"
                     class="rounded-md px-3 py-2 text-sm font-medium text-marketing-ink/80 hover:text-marketing-ink"
@@ -87,6 +119,7 @@ const mobileOpen = ref(false);
             </div>
 
             <button
+                v-if="!props.minimal"
                 type="button"
                 class="inline-flex size-9 items-center justify-center rounded-md border border-marketing-border md:hidden"
                 aria-label="Toggle menu"
@@ -99,7 +132,7 @@ const mobileOpen = ref(false);
         </div>
 
         <div
-            v-if="mobileOpen"
+            v-if="mobileOpen && !props.minimal"
             class="border-t border-marketing-border md:hidden"
         >
             <div class="mx-auto max-w-7xl space-y-1 px-4 py-3">
