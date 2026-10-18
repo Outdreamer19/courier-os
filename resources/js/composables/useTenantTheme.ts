@@ -5,23 +5,16 @@ import type { BrandConfig } from '@/types/auth';
 const HEX_COLOR = /^#[0-9A-Fa-f]{6}$/;
 
 /** CSS custom properties driven by the tenant's chosen primary colour. */
-const PRIMARY_VARS = [
-    '--primary',
-    '--sidebar-primary',
-    '--ring',
-    '--sidebar-ring',
-];
-const PRIMARY_FOREGROUND_VARS = [
-    '--primary-foreground',
-    '--sidebar-primary-foreground',
-];
+const PRIMARY_VARS = ['--primary'];
+const PRIMARY_FOREGROUND_VARS = ['--primary-foreground'];
 
-/** CSS custom properties driven by the tenant's chosen accent colour. */
-const ACCENT_VARS = ['--accent', '--sidebar-accent'];
-const ACCENT_FOREGROUND_VARS = [
-    '--accent-foreground',
-    '--sidebar-accent-foreground',
-];
+/**
+ * CSS custom properties driven by the tenant's chosen accent colour. The
+ * sidebar, ring and active nav tint are derived from --primary in app.css
+ * (color-mix), so only the brand pair itself is set here.
+ */
+const ACCENT_VARS = ['--brand-accent'];
+const ACCENT_FOREGROUND_VARS = ['--brand-accent-foreground'];
 
 /**
  * Applies the current tenant's primary/accent brand colours as inline CSS

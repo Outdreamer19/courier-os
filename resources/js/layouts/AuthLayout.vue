@@ -3,6 +3,7 @@ import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import DemoBanner from '@/components/DemoBanner.vue';
 import { Toaster } from '@/components/ui/sonner';
+import { useTenantTheme } from '@/composables/useTenantTheme';
 import AuthLoginSplitLayout from '@/layouts/auth/AuthLoginSplitLayout.vue';
 import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
 
@@ -17,6 +18,9 @@ const { title = '', description = '' } = defineProps<{
 const SPLIT_LAYOUT_PAGES = ['auth/Login', 'auth/Register'];
 
 const page = usePage();
+
+// Sign in pages wear the courier's colours too.
+useTenantTheme();
 const layout = computed(() =>
     SPLIT_LAYOUT_PAGES.includes(page.component)
         ? AuthLoginSplitLayout
