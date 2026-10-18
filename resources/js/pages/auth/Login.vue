@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, router } from '@inertiajs/vue3';
 import { Lock, Mail } from 'lucide-vue-next';
+import DemoLoginPanel from '@/components/DemoLoginPanel.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -24,6 +25,11 @@ defineProps<{
     status?: string;
     canResetPassword: boolean;
 }>();
+
+// Demo courier only: sign straight in with one of the public demo logins.
+const loginAsDemo = (credentials: { email: string; password: string }) => {
+    router.post(store().url, { ...credentials, remember: false });
+};
 </script>
 
 <template>
@@ -35,6 +41,8 @@ defineProps<{
     >
         {{ status }}
     </div>
+
+    <DemoLoginPanel @login="loginAsDemo" />
 
     <Form
         v-bind="store.form()"

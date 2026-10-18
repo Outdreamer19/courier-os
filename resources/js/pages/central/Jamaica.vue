@@ -38,7 +38,7 @@ import { useScrollReveal } from '@/composables/useScrollReveal';
  * Google traffic, so it is built as a funnel rather than a brochure:
  *
  *   hook (the parcel journey) → pain (the WhatsApp pile-up) → each pain
- *   answered → how it works → proof (Today Shipping, live) → the offer →
+ *   answered → how it works → live demo (Blue Mahoe Express) → the offer →
  *   objections → one last ask.
  *
  * Every call to action is either "WhatsApp us" (the channel this audience
@@ -51,6 +51,7 @@ const props = defineProps<{
         whatsapp: string;
         founding: { setup: number; spotsTotal: number; spotsLeft: number };
     };
+    liveDemo: { url: string; name: string } | null;
 }>();
 
 const { itemDelay } = useScrollReveal();
@@ -80,6 +81,8 @@ const foundingLink = computed(() =>
 
 const onWhatsApp = (placement: string) =>
     trackMarketing('Lead', { content_name: 'whatsapp', placement });
+const onDemo = (placement: string) =>
+    trackMarketing('ViewContent', { content_name: 'live_demo', placement });
 const onSignup = (placement: string) =>
     trackMarketing('InitiateCheckout', {
         placement,
@@ -293,6 +296,18 @@ const openFaq = ref<number | null>(0);
                             Get a free demo on WhatsApp
                         </a>
                         <a
+                            v-if="liveDemo"
+                            :href="liveDemo.url"
+                            target="_blank"
+                            rel="noopener"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-marketing-ink/15 bg-white px-6 py-4 text-base font-semibold text-marketing-ink transition hover:border-marketing-ink/30"
+                            @click="onDemo('hero')"
+                        >
+                            Try the live demo
+                            <ExternalLink class="size-4" aria-hidden="true" />
+                        </a>
+                        <a
+                            v-else
                             href="#offer"
                             class="inline-flex items-center justify-center rounded-xl border border-marketing-ink/15 bg-white px-6 py-4 text-base font-semibold text-marketing-ink transition hover:border-marketing-ink/30"
                         >
@@ -427,40 +442,49 @@ const openFaq = ref<number | null>(0);
             </FeatureShowcase>
         </StackingFeatureCards>
 
-        <!-- 4. Proof -->
-        <section class="fade-in-section py-16 sm:py-20 lg:pt-0">
+        <!-- 4. Live demo -->
+        <section
+            v-if="liveDemo"
+            id="demo"
+            class="fade-in-section scroll-mt-24 py-16 sm:py-20 lg:pt-0"
+        >
             <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
                 <div
                     class="flex flex-col gap-8 rounded-3xl bg-white p-8 shadow-[0_30px_60px_-40px_rgba(33,13,2,0.4)] ring-1 ring-marketing-border sm:flex-row sm:items-center sm:p-10"
                 >
                     <img
-                        src="/images/tenants/today-shipping/logo.png"
-                        alt="Today Shipping"
-                        class="h-16 w-auto self-start sm:h-20 sm:self-center"
+                        src="/images/demo/blue-mahoe-logo.svg"
+                        :alt="liveDemo.name"
+                        class="size-16 self-start sm:size-20 sm:self-center"
                     />
                     <div class="flex-1">
                         <h2
                             class="text-2xl font-semibold tracking-tight sm:text-3xl"
                         >
-                            Not a concept. Today Shipping runs on it.
+                            Don't take our word for it. Click around.
                         </h2>
                         <p
                             class="mt-3 text-base leading-relaxed text-marketing-ink-muted"
                         >
-                            Today Shipping is a Jamaican courier taking
-                            pre-alerts, tracking packages and billing customers
-                            on CourierOS right now. Have a look at their site.
-                            Yours would work the same way, with your name on it.
+                            {{ liveDemo.name }} is a made up courier running on
+                            CourierOS. Log in as a customer or as the courier
+                            and try it all: pre-alerts, tracking, receiving
+                            packages, reports. Yours works the same way, with
+                            your name on it.
                         </p>
                         <a
-                            href="https://today.courieros.co"
+                            :href="liveDemo.url"
                             target="_blank"
                             rel="noopener"
                             class="mt-5 inline-flex items-center gap-2 text-base font-semibold text-marketing-ink underline decoration-marketing-orange decoration-2 underline-offset-4 hover:decoration-marketing-ink"
+                            @click="onDemo('demo_section')"
                         >
-                            Visit Today Shipping's live site
+                            Open the live demo
                             <ExternalLink class="size-4" aria-hidden="true" />
                         </a>
+                        <p class="mt-2 text-sm text-marketing-ink-muted">
+                            No signup. One tap logins on the demo page.
+                        </p>
                     </div>
                 </div>
             </div>

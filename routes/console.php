@@ -30,3 +30,12 @@ Schedule::command('shipdjm:sync-invoicefeed-payments')
     ->hourly()
     ->withoutOverlapping()
     ->runInBackground();
+
+// The public demo courier (demo.courieros.co) is wiped and reseeded every
+// night so each day's visitors start from the same clean showcase.
+if (config('courieros.demo.enabled', true)) {
+    Schedule::command('demo:reset')
+        ->dailyAt((string) config('courieros.demo.reset_time', '04:00'))
+        ->timezone((string) config('courieros.demo.reset_timezone', 'America/Jamaica'))
+        ->withoutOverlapping();
+}

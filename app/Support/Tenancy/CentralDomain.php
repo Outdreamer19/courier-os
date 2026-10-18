@@ -70,6 +70,25 @@ class CentralDomain
             return true;
         }
 
+        // The public demo courier lives on a reserved name (so no signup can
+        // take it) but must still resolve to its tenant.
+        if ($subdomain === self::demoSubdomain()) {
+            return false;
+        }
+
         return in_array($subdomain, (array) config('courieros.reserved_subdomains', []), true);
+    }
+
+    /**
+     * The subdomain the public demo courier is served on, or null when the
+     * demo is switched off.
+     */
+    public static function demoSubdomain(): ?string
+    {
+        if (! config('courieros.demo.enabled', true)) {
+            return null;
+        }
+
+        return (string) config('courieros.demo.subdomain', 'demo') ?: null;
     }
 }

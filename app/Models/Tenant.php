@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Tenancy\CentralDomain;
 use Database\Factories\TenantFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -78,6 +79,16 @@ class Tenant extends Model
     public function isPending(): bool
     {
         return $this->status === self::STATUS_PENDING;
+    }
+
+    /**
+     * Whether this is the public demo courier on demo.{central_domain}.
+     */
+    public function isDemo(): bool
+    {
+        $demo = CentralDomain::demoSubdomain();
+
+        return $demo !== null && $this->subdomain === $demo && blank($this->custom_domain);
     }
 
     public function isCancelled(): bool
