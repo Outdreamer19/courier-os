@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
+use App\Support\Demo\DemoMode;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -65,6 +66,10 @@ class MarketingController extends Controller
                     'spotsLeft' => (int) $founding['spots_left'],
                 ],
             ],
+            'liveDemo' => DemoMode::url() ? [
+                'url' => DemoMode::url(),
+                'name' => DemoMode::COURIER_NAME,
+            ] : null,
         ])->withViewData([
             'meta' => [
                 'title' => 'Start or grow your shipping business in Jamaica | CourierOS',

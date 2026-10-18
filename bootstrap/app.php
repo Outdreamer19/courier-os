@@ -8,6 +8,7 @@ use App\Http\Middleware\EnsureTenantSubscribed;
 use App\Http\Middleware\EnsureUserBelongsToTenant;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\EnsureUserRole;
+use App\Http\Middleware\GuardDemoTenant;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ResolveTenant;
@@ -48,6 +49,9 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             EnsureUserIsActive::class,
             HandleInertiaRequests::class,
+            // After Inertia so its redirect-back is upgraded to a 303 and the
+            // flash message reaches the page.
+            GuardDemoTenant::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 

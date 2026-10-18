@@ -4,10 +4,14 @@ namespace App\Providers;
 
 use App\Channels\WhatsApp\WhatsAppChannel;
 use App\Models\User;
+use App\Support\Demo\DemoMode;
 use Carbon\CarbonImmutable;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\Events\NotificationSending;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -30,6 +34,23 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureRouteBindings();
         $this->configureNotificationChannels();
+        $this->silenceDemoCourier();
+    }
+
+    /**
+     * The public demo courier must never email or WhatsApp anyone: its
+     * accounts are fictional and its logins are shared. Returning false from
+     * these listeners cancels the send.
+     */
+    protected function silenceDemoCourier(): void
+    {
+        Event::listen(NotificationSending::class, function (NotificationSending $event): ?bool {
+            return DemoMode::shouldSuppressNotificationTo($event->notifiable) ? false : null;
+        });
+
+        Event::listen(MessageSending::class, function (): ?bool {
+            return DemoMode::active() ? false : null;
+        });
     }
 
     protected function configureNotificationChannels(): void

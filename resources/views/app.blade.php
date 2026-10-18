@@ -30,9 +30,15 @@
             }
         </style>
 
-        @if (app(\App\Support\Tenancy\TenantManager::class)->hasTenant())
-            <link rel="icon" href="/branding/today-shipping-icon.png" type="image/png">
-            <link rel="apple-touch-icon" href="/branding/today-shipping-icon.png">
+        @php($currentTenant = app(\App\Support\Tenancy\TenantManager::class)->current())
+        @if ($currentTenant)
+            {{-- Each courier's own icon: its uploaded logo, else the CourierOS mark.
+                 Today Shipping's icon predates logo uploads, so it keeps its file. --}}
+            @php($tenantIcon = $currentTenant->logo_path
+                ? \Illuminate\Support\Facades\Storage::disk('public')->url($currentTenant->logo_path)
+                : ($currentTenant->subdomain === 'today' ? '/branding/today-shipping-icon.png' : '/branding/courieros-icon.svg'))
+            <link rel="icon" href="{{ $tenantIcon }}">
+            <link rel="apple-touch-icon" href="{{ $currentTenant->logo_path || $currentTenant->subdomain === 'today' ? $tenantIcon : '/branding/courieros-icon-180.png' }}">
         @else
             @include('partials.central-head')
         @endif
@@ -41,7 +47,7 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ $meta['title'] ?? (app(\App\Support\Tenancy\TenantManager::class)->hasTenant() ? config('app.name', 'Laravel') : config('courieros.name', 'CourierOS')) }}</title>
+            <title>{{ $meta['title'] ?? ($currentTenant?->name ?? config('courieros.name', 'CourierOS')) }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

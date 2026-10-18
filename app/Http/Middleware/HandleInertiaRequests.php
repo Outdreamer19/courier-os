@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\WarehouseAddress;
 use App\Services\Platform\PlatformSupportService;
+use App\Support\Demo\DemoMode;
 use App\Support\Tenancy\TenantConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -70,6 +71,7 @@ class HandleInertiaRequests extends Middleware
                 'default_rate_per_lb' => $brand->defaultRatePerLb(),
             ],
             'warehouse' => fn () => $this->activeWarehouseSnapshot(),
+            'demo' => DemoMode::sharedProps(),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

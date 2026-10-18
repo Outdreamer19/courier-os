@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { Facebook, Instagram, Menu, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
+import DemoBanner from '@/components/DemoBanner.vue';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import {
@@ -46,6 +47,8 @@ const mobileOpen = ref(false);
 <template>
     <div class="flex min-h-svh flex-col bg-background text-foreground">
         <Toaster richColors position="top-right" />
+
+        <DemoBanner />
 
         <header
             class="sticky top-0 z-40 border-b border-brand-green/20 bg-background/85 backdrop-blur"

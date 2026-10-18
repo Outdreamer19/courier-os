@@ -67,6 +67,15 @@ export type BrandConfig = {
     default_rate_per_lb: number;
 };
 
+/** Present only on the public demo courier (demo.courieros.co). */
+export type DemoConfig = {
+    password: string;
+    customer_email: string;
+    admin_email: string;
+    get_started_url: string;
+    platform_name: string;
+};
+
 /* @chisel-passkeys */
 export type Passkey = {
     id: number;

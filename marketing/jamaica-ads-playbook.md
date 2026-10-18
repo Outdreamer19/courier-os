@@ -10,7 +10,7 @@ Creatives: `marketing/ads/` (feed 1080x1350, story/reel 1080x1920, 22s reel MP4)
 1. **WhatsApp Business app** on the sales number (`COURIEROS_SALES_WHATSAPP`, default +44 7565 727032).
    - Profile: CourierOS logo (`public/branding/courieros-icon-180.png`), description "Courier software for Jamaican shop-and-ship businesses", link courieros.co/jamaica.
    - Greeting message: "Hi! Thanks for reaching out about CourierOS. Are you starting a courier business or already running one?"
-   - Quick replies: `/price` (US$79 a month, founding setup US$149, no per-package fees), `/demo` (link to book a 15 minute screen share), `/live` (https://today.courieros.co).
+   - Quick replies: `/price` (US$79 a month, founding setup US$149, no per-package fees), `/demo` (link to book a 15 minute screen share), `/live` (https://demo.courieros.co, one tap customer and admin logins).
 2. **Meta Pixel**: Events Manager > Connect data > Web > Pixel. Put the ID in production `.env` as `META_PIXEL_ID`.
 3. **Google tag**: create a GA4 property, put the measurement ID in `GOOGLE_TAG_ID` (G-XXXX). In Google Ads create a conversion action "WhatsApp lead" (website, manual) and put its send_to value in `GOOGLE_ADS_LEAD_SEND_TO` (AW-XXXX/label).
 4. Founding offer is driven by env: `COURIEROS_FOUNDING_SETUP=149`, `COURIEROS_FOUNDING_SPOTS=10`, `COURIEROS_FOUNDING_SPOTS_LEFT=10`. **Drop SPOTS_LEFT by hand as people sign.** Set it to 0 and the offer disappears from the page.
@@ -66,7 +66,7 @@ jobs, vacancy, salary, near me, dhl, fedex, ups, usps, track my package, trackin
 
 ### Responsive search ad
 Headlines (30 chars max):
-Start a Courier Business · Courier Software for Jamaica · Your Own Shipping Website · Give Customers a Miami Address · Tracking and WhatsApp Alerts · Run Your Shipping Business · US$79 a Month, No Package Fees · Founding Setup Only US$149 · We Set It Up With You · See a Free Demo Today · Built for Shop-and-Ship · Today Shipping Runs On It
+Start a Courier Business · Courier Software for Jamaica · Your Own Shipping Website · Give Customers a Miami Address · Tracking and WhatsApp Alerts · Run Your Shipping Business · US$79 a Month, No Package Fees · Founding Setup Only US$149 · We Set It Up With You · See a Free Demo Today · Built for Shop-and-Ship · Try the Live Demo
 
 Descriptions (90 chars max):
 1. Your own branded courier website, customer portal, tracking and payments. Set up with you.
@@ -74,7 +74,7 @@ Descriptions (90 chars max):
 3. US$79 a month. No per-package fees. Founding Jamaican couriers get setup for US$149.
 4. Stop answering "did my package reach?" all day. WhatsApp updates go out automatically.
 
-Sitelinks: See the price (`#offer`), Live example (https://today.courieros.co), WhatsApp us.
+Sitelinks: See the price (`#offer`), Live demo (https://demo.courieros.co), WhatsApp us.
 
 ---
 

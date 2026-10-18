@@ -100,7 +100,9 @@ const bars = [38, 52, 44, 67, 58, 81, 72, 94];
                         class="flex size-4 items-center justify-center rounded bg-marketing-amber text-[8px] font-bold text-marketing-ink"
                         >T</span
                     >
-                    <span class="text-[9px] font-semibold">Today Shipping</span>
+                    <span class="text-[9px] font-semibold"
+                        >Blue Mahoe Express</span
+                    >
                 </div>
                 <div class="mt-3 space-y-1">
                     <div
@@ -115,9 +117,7 @@ const bars = [38, 52, 44, 67, 58, 81, 72, 94];
                         :key="item"
                         class="rounded px-1.5 py-1 text-[8px]"
                         :class="
-                            i === 1
-                                ? 'bg-white/15 text-white'
-                                : 'text-white/45'
+                            i === 1 ? 'bg-white/15 text-white' : 'text-white/45'
                         "
                     >
                         {{ item }}
@@ -171,7 +171,9 @@ const bars = [38, 52, 44, 67, 58, 81, 72, 94];
                         <p class="text-[8px] font-semibold sm:text-[9px]">
                             Recent intake
                         </p>
-                        <div class="mt-1.5 flex flex-1 flex-col justify-between">
+                        <div
+                            class="mt-1.5 flex flex-1 flex-col justify-between"
+                        >
                             <div
                                 v-for="row in adminRows"
                                 :key="row.ref"

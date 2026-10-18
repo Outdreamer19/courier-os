@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import DemoBanner from '@/components/DemoBanner.vue';
+import { Toaster } from '@/components/ui/sonner';
 import AuthLoginSplitLayout from '@/layouts/auth/AuthLoginSplitLayout.vue';
 import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
 
@@ -23,6 +25,8 @@ const layout = computed(() =>
 </script>
 
 <template>
+    <DemoBanner />
+    <Toaster richColors position="top-center" />
     <component :is="layout" :title="title" :description="description">
         <slot />
     </component>

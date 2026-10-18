@@ -9,8 +9,8 @@ Copy-paste as-is or tweak. Fill in `[brackets]` before sending.
 > Hey [name] — saw [business name] shipping from the US to JA. I built CourierOS,
 > software made for exactly this: your own branded site, customer portal,
 > pre-alerts, tracking and online payments, so you're not running it out of
-> WhatsApp and a spreadsheet. Today Shipping runs on it already. Want a quick
-> look?
+> WhatsApp and a spreadsheet. You can click around a live demo here:
+> https://demo.courieros.co. Want me to walk you through it?
 
 ## WhatsApp / DM message (Segment A — aspiring entrepreneurs)
 
@@ -23,8 +23,8 @@ Copy-paste as-is or tweak. Fill in `[brackets]` before sending.
 
 > Starting a shop-and-ship business in Jamaica? Or already running one out of
 > WhatsApp and a spreadsheet? CourierOS gives you a branded website, hosting,
-> customer portal and admin console — one package, one price. Today Shipping
-> already runs on it. Link in bio → courieros.co/jamaica
+> customer portal and admin console — one package, one price. Try the live
+> demo, no signup. Link in bio → courieros.co/jamaica
 
 ## Shipping Association of Jamaica — email
 
@@ -34,7 +34,8 @@ Copy-paste as-is or tweak. Fill in `[brackets]` before sending.
 >
 > I run CourierOS, a platform built for Caribbean courier and freight-forwarding
 > businesses — branded website, customer portal, pre-alerts, tracking and
-> billing in one package. Today Shipping is a live example.
+> billing in one package. There is a live demo you can click through at
+> https://demo.courieros.co.
 >
 > I'd like to explore making this available to SAJ members, either as a
 > partner offer or something you'd be open to sharing with the association.

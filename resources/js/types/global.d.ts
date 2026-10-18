@@ -1,6 +1,7 @@
 import type {
     Auth,
     BrandConfig,
+    DemoConfig,
     WarehouseSnapshot,
 } from '@/types/auth';
 
@@ -23,6 +24,7 @@ declare module '@inertiajs/core' {
             auth: Auth;
             brand: BrandConfig;
             warehouse: WarehouseSnapshot | null;
+            demo: DemoConfig | null;
             flash: {
                 success?: string | null;
                 error?: string | null;

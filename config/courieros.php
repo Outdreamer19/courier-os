@@ -118,4 +118,30 @@ return [
         'google_ads_lead' => env('GOOGLE_ADS_LEAD_SEND_TO'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Public demo courier
+    |--------------------------------------------------------------------------
+    |
+    | A fictional courier ("Blue Mahoe Express") served on demo.{central_domain}
+    | so prospects can click through a real CourierOS site before they buy.
+    | The logins are public on purpose and shown on the demo login page. All
+    | demo data is wiped and reseeded nightly by `php artisan demo:reset`, and
+    | outbound email, WhatsApp, billing and account changes are switched off.
+    |
+    | The subdomain stays in reserved_subdomains so no signup can claim it;
+    | CentralDomain lets this one reserved name resolve to the demo tenant.
+    |
+    */
+
+    'demo' => [
+        'enabled' => (bool) env('COURIEROS_DEMO_ENABLED', true),
+        'subdomain' => env('COURIEROS_DEMO_SUBDOMAIN', 'demo'),
+        'password' => env('COURIEROS_DEMO_PASSWORD', 'demo1234'),
+        'customer_email' => 'customer@bluemahoe.example',
+        'admin_email' => 'admin@bluemahoe.example',
+        'reset_time' => '04:00',
+        'reset_timezone' => 'America/Jamaica',
+    ],
+
 ];

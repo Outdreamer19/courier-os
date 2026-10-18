@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Blue Mahoe Express">
+  <rect width="64" height="64" rx="14" fill="#1F5F6B"/>
+  <path d="M32 12c-9 7-13 15-13 22 0 8 6 14 13 14s13-6 13-14c0-7-4-15-13-22z" fill="#F2A93B"/>
+  <path d="M32 20v26" stroke="#1F5F6B" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M32 30l-6-5M32 37l7-6M32 43l-5-4" stroke="#1F5F6B" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M16 50h32" stroke="#F2A93B" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+</svg>
