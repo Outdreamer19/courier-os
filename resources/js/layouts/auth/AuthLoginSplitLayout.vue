@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
+import { MapPin, PackageCheck, Plane, Warehouse } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
@@ -10,111 +11,200 @@ defineProps<{
 }>();
 
 // Every courier on the platform shares this layout, so nothing here may name
-// a particular one. The wordmark follows the shared `brand` prop and the
-// supporting copy stays generic to package forwarding rather than describing
-// one company's route or country.
+// a particular one. Colour comes from the courier's brand (useTenantTheme in
+// AuthLayout), the wordmark from the shared `brand` prop, and the artwork is
+// drawn in code: no stock photography that another courier might also wear.
 const page = usePage();
 const brandName = computed(() => page.props?.brand?.name ?? 'CourierOS');
+
+const steps = [
+    { icon: Warehouse, label: 'Shop with your US address' },
+    { icon: Plane, label: 'We fly it home' },
+    { icon: PackageCheck, label: 'Collect or get it delivered' },
+];
 </script>
 
 <template>
     <div
-        class="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-brand-cream p-4 md:p-10"
+        class="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-background p-4 md:p-10"
     >
-        <!-- soft dot texture behind the card, echoes the marketing site's pattern language -->
+        <!-- Soft colour washes in the courier's own brand colours -->
         <div
-            class="pointer-events-none absolute inset-0 text-primary opacity-[0.08]"
-            style="
-                background-image: radial-gradient(
-                    currentColor 1.5px,
-                    transparent 1.5px
-                );
-                background-size: 26px 26px;
-            "
+            class="blob-drift pointer-events-none absolute -top-40 -left-32 size-[520px] rounded-full bg-primary/15 blur-3xl"
+            aria-hidden="true"
+        />
+        <div
+            class="blob-drift pointer-events-none absolute -right-24 -bottom-48 size-[560px] rounded-full bg-brand-accent/20 blur-3xl"
+            style="animation-delay: -6s"
+            aria-hidden="true"
         />
 
         <div
-            class="relative grid w-full max-w-5xl overflow-hidden rounded-[28px] bg-card shadow-xl ring-1 ring-primary/5 md:grid-cols-2"
+            class="relative grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-border bg-card shadow-[0_40px_80px_-40px_rgba(15,23,42,0.35)] md:grid-cols-[1.05fr_1fr]"
         >
-            <!-- Left: brand / photo panel -->
-            <div class="relative hidden min-h-[560px] md:block">
-                <img
-                    src="https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?q=80&w=1200&auto=format&fit=crop"
-                    alt="Package delivered to a doorstep at home"
-                    class="absolute inset-0 h-full w-full object-cover"
+            <!-- Left: brand panel, drawn in code -->
+            <div
+                class="relative hidden min-h-[580px] overflow-hidden bg-primary md:block"
+            >
+                <div
+                    class="absolute inset-0 bg-[radial-gradient(120%_80%_at_0%_0%,rgba(255,255,255,0.22),transparent_60%),radial-gradient(90%_70%_at_100%_100%,rgba(0,0,0,0.28),transparent_60%)]"
+                    aria-hidden="true"
                 />
                 <div
-                    class="absolute inset-0 bg-gradient-to-t from-brand-ink via-brand-ink/50 to-brand-ink/75"
+                    class="absolute inset-0 opacity-[0.10]"
+                    style="
+                        background-image: radial-gradient(
+                            white 1.2px,
+                            transparent 1.2px
+                        );
+                        background-size: 22px 22px;
+                    "
+                    aria-hidden="true"
                 />
 
                 <div
-                    class="relative flex h-full flex-col justify-between p-10 text-white"
+                    class="relative flex h-full flex-col justify-between p-10 text-primary-foreground"
                 >
                     <Link :href="home()" class="flex items-center gap-3">
                         <span
-                            class="flex size-11 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/30 backdrop-blur-sm"
+                            class="flex size-12 items-center justify-center rounded-2xl bg-white shadow-lg shadow-black/10"
                         >
-                            <AppLogoIcon class="size-6" />
+                            <AppLogoIcon class="size-8" />
                         </span>
-                        <span class="text-lg font-semibold tracking-tight">
+                        <span class="text-xl font-bold tracking-tight">
                             {{ brandName }}
                         </span>
                     </Link>
 
-                    <div class="space-y-4">
+                    <!-- Route artwork: a plane rides the dashed line home -->
+                    <div class="relative mx-auto my-6 w-full max-w-sm">
                         <svg
-                            viewBox="0 0 120 40"
-                            class="h-7 w-auto text-brand-gold/90"
+                            viewBox="0 0 320 150"
+                            class="w-full overflow-visible"
                             fill="none"
                             aria-hidden="true"
                         >
                             <path
-                                d="M4 30 C40 30 70 30 108 12"
+                                id="login-route"
+                                d="M24 118 C 90 20, 220 10, 296 92"
                                 stroke="currentColor"
-                                stroke-width="2"
-                                stroke-dasharray="5 6"
+                                stroke-opacity="0.55"
+                                stroke-width="2.5"
+                                stroke-dasharray="6 8"
                                 stroke-linecap="round"
+                                class="route-dash"
                             />
-                            <path
-                                d="M108 12 L96 10 L104 18 Z"
-                                fill="currentColor"
+                            <circle cx="24" cy="118" r="7" fill="white" />
+                            <circle
+                                cx="24"
+                                cy="118"
+                                r="13"
+                                stroke="white"
+                                stroke-opacity="0.35"
+                                stroke-width="2"
                             />
+                            <circle
+                                cx="296"
+                                cy="92"
+                                r="7"
+                                class="fill-brand-accent"
+                            />
+                            <circle
+                                cx="296"
+                                cy="92"
+                                r="14"
+                                class="stroke-brand-accent"
+                                stroke-opacity="0.45"
+                                stroke-width="2"
+                            >
+                                <animate
+                                    attributeName="r"
+                                    values="10;18;10"
+                                    dur="2.4s"
+                                    repeatCount="indefinite"
+                                />
+                                <animate
+                                    attributeName="stroke-opacity"
+                                    values="0.6;0;0.6"
+                                    dur="2.4s"
+                                    repeatCount="indefinite"
+                                />
+                            </circle>
+                            <g>
+                                <animateMotion
+                                    dur="5.5s"
+                                    repeatCount="indefinite"
+                                    rotate="auto"
+                                    keyPoints="0;1"
+                                    keyTimes="0;1"
+                                    calcMode="spline"
+                                    keySplines="0.45 0 0.55 1"
+                                >
+                                    <mpath href="#login-route" />
+                                </animateMotion>
+                                <circle r="15" fill="white" />
+                                <path
+                                    d="M-7 0 L7 0 M7 0 L2 -5 M7 0 L2 5"
+                                    class="stroke-primary"
+                                    stroke-width="2.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </g>
                         </svg>
-                        <p class="text-2xl leading-snug font-semibold">
+                        <div
+                            class="mt-1 flex justify-between text-[11px] font-semibold tracking-[0.18em] uppercase opacity-80"
+                        >
+                            <span>US warehouse</span>
+                            <span class="flex items-center gap-1">
+                                <MapPin class="size-3.5" /> Home
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-5">
+                        <p class="text-[28px] leading-tight font-bold">
                             Shop the world.<br />
                             We'll bring it home.
                         </p>
-                        <p class="text-sm text-white/75">
-                            Your own overseas shipping address, pre-alerts
-                            matched automatically, and an update at every step.
-                        </p>
+                        <ul class="grid gap-2.5">
+                            <li
+                                v-for="step in steps"
+                                :key="step.label"
+                                class="flex items-center gap-3 text-sm font-medium opacity-90"
+                            >
+                                <span
+                                    class="flex size-8 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/25"
+                                >
+                                    <component :is="step.icon" class="size-4" />
+                                </span>
+                                {{ step.label }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
             <!-- Right: form panel -->
             <div class="relative flex flex-col justify-center p-8 sm:p-12">
-                <svg
-                    viewBox="0 0 120 40"
-                    class="absolute top-8 right-8 h-6 w-auto text-accent/60"
-                    fill="none"
-                    aria-hidden="true"
+                <!-- Brand mark for phones, where the left panel is hidden -->
+                <Link
+                    :href="home()"
+                    class="mb-8 flex items-center justify-center gap-2.5 md:hidden"
                 >
-                    <path
-                        d="M4 30 C40 30 70 30 108 12"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-dasharray="5 6"
-                        stroke-linecap="round"
-                    />
-                    <path d="M108 12 L96 10 L104 18 Z" fill="currentColor" />
-                </svg>
+                    <AppLogoIcon class="size-9" />
+                    <span
+                        class="text-lg font-bold tracking-tight text-foreground"
+                    >
+                        {{ brandName }}
+                    </span>
+                </Link>
 
                 <div class="mx-auto w-full max-w-sm space-y-8">
                     <div class="space-y-1.5 text-center md:text-left">
                         <h1
                             v-if="title"
-                            class="text-3xl font-bold tracking-tight text-primary"
+                            class="text-3xl font-bold tracking-tight text-foreground"
                         >
                             {{ title }}
                         </h1>

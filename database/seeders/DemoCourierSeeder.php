@@ -91,8 +91,8 @@ class DemoCourierSeeder extends Seeder
             'package_reference_prefix' => 'PKG',
             'whatsapp_number' => '+1 (876) 555-0142',
             'logo_path' => self::LOGO_PATH,
-            'brand_primary_color' => '#1F5F6B',
-            'brand_accent_color' => '#F2A93B',
+            'brand_primary_color' => '#1B6E8C',
+            'brand_accent_color' => '#F5A524',
             // Never billed: the demo is ours. A far trial keeps it entitled
             // under the subscription guard without a Stripe customer.
             'trial_ends_at' => now()->addYears(10), // MySQL TIMESTAMP stops at 2038

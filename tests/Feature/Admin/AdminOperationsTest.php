@@ -74,6 +74,8 @@ class AdminOperationsTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('admin/Dashboard')
                 ->has('charts.new_users.labels', 6)
+                ->has('money.collected.data', 6)
+                ->has('pipeline', 5)
                 ->has('charts.new_users.data', 6)
                 ->has('charts.pre_alerts_by_status.labels', count(PreAlertStatus::cases()))
                 ->has('charts.pre_alerts_by_status.data', count(PreAlertStatus::cases()))

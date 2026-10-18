@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\PackageStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\PreAlertStatus;
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
@@ -41,6 +42,8 @@ class DashboardController extends Controller
                     ->where('status', ContactMessage::STATUS_NEW)
                     ->count(),
             ],
+            'money' => $this->moneySummary(),
+            'pipeline' => $this->pipeline(),
             'charts' => [
                 'new_users' => $this->newUsersChart(),
                 'packages_over_time' => $this->packagesOverTimeChart(),
@@ -77,6 +80,61 @@ class DashboardController extends Controller
     }
 
     /**
+     * What is owed now and what came in, month by month.
+     *
+     * @return array{outstanding: float, collected_this_month: float, collected: array{labels: list<string>, data: list<float>}}
+     */
+    private function moneySummary(): array
+    {
+        $labels = [];
+        $data = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $start = now()->subMonths($i)->startOfMonth();
+            $end = $start->endOfMonth();
+
+            $labels[] = $start->format('M');
+            $data[] = (float) Package::query()
+                ->where('payment_status', PaymentStatus::Paid)
+                ->whereBetween('paid_at', [$start, $end])
+                ->sum('amount_due');
+        }
+
+        return [
+            'outstanding' => (float) Package::query()->outstandingPayment()->sum('amount_due'),
+            'collected_this_month' => (float) end($data),
+            'collected' => ['labels' => $labels, 'data' => $data],
+        ];
+    }
+
+    /**
+     * Packages grouped by where they physically are on the Miami to
+     * Jamaica run, for the journey strip on the dashboard.
+     *
+     * @return list<array{key: string, label: string, count: int}>
+     */
+    private function pipeline(): array
+    {
+        $counts = Package::query()
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $sum = fn (PackageStatus ...$statuses): int => array_sum(array_map(
+            fn (PackageStatus $status) => (int) ($counts[$status->value] ?? 0),
+            $statuses,
+        ));
+
+        return [
+            ['key' => 'expected', 'label' => 'Expected', 'count' => $sum(PackageStatus::AwaitingArrival)],
+            ['key' => 'warehouse', 'label' => 'At Miami warehouse', 'count' => $sum(PackageStatus::ReceivedAtFloridaWarehouse, PackageStatus::Processing)],
+            ['key' => 'transit', 'label' => 'In transit', 'count' => $sum(PackageStatus::InTransitToJamaica)],
+            ['key' => 'customs', 'label' => 'Landed and customs', 'count' => $sum(PackageStatus::ArrivedInJamaica, PackageStatus::CustomsProcessing, PackageStatus::OnHold)],
+            ['key' => 'ready', 'label' => 'Ready for pickup', 'count' => $sum(PackageStatus::ReadyForPickup)],
+        ];
+    }
+
+    /**
      * @return array{labels: list<string>, data: list<int>}
      */
     private function newUsersChart(): array
@@ -89,7 +147,7 @@ class DashboardController extends Controller
             $start = $month->copy()->startOfMonth();
             $end = $month->copy()->endOfMonth();
 
-            $labels[] = $start->format('M Y');
+            $labels[] = $start->format('M');
             $data[] = User::query()
                 ->where('role', User::ROLE_CUSTOMER)
                 ->whereBetween('created_at', [$start, $end])
@@ -115,7 +173,7 @@ class DashboardController extends Controller
             $start = $month->copy()->startOfMonth();
             $end = $month->copy()->endOfMonth();
 
-            $labels[] = $start->format('M Y');
+            $labels[] = $start->format('M');
             $data[] = Package::query()
                 ->whereBetween('created_at', [$start, $end])
                 ->count();

@@ -40,7 +40,7 @@ const accounts = computed(() =>
 <template>
     <section
         v-if="demo"
-        class="mb-6 rounded-2xl border border-[#1F5F6B]/25 bg-[#1F5F6B]/[0.06] p-4"
+        class="mb-6 rounded-2xl border border-primary/20 bg-primary/[0.05] p-4"
         aria-labelledby="demo-login-heading"
     >
         <h2
@@ -62,7 +62,7 @@ const accounts = computed(() =>
                 :key="account.key"
                 type="button"
                 :data-test="`demo-login-${account.key}`"
-                class="group flex items-start gap-3 rounded-xl border border-border bg-background p-3 text-left transition hover:border-[#1F5F6B] hover:shadow-sm focus-visible:ring-2 focus-visible:ring-[#1F5F6B] focus-visible:outline-none"
+                class="group flex items-start gap-3 rounded-xl border border-border bg-background p-3 text-left transition hover:border-primary hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                 @click="
                     emit('login', {
                         email: account.email,
@@ -72,7 +72,7 @@ const accounts = computed(() =>
             >
                 <component
                     :is="account.icon"
-                    class="mt-0.5 size-5 shrink-0 text-[#1F5F6B]"
+                    class="mt-0.5 size-5 shrink-0 text-primary"
                 />
                 <span class="min-w-0">
                     <span class="block text-sm font-semibold">{{
