@@ -95,7 +95,7 @@ class DemoCourierSeeder extends Seeder
             'brand_accent_color' => '#F2A93B',
             // Never billed: the demo is ours. A far trial keeps it entitled
             // under the subscription guard without a Stripe customer.
-            'trial_ends_at' => now()->addYears(50),
+            'trial_ends_at' => now()->addYears(10), // MySQL TIMESTAMP stops at 2038
         ]);
     }
 
