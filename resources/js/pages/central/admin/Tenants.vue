@@ -254,7 +254,7 @@ const tabs: { key: Filter; label: string }[] = [
 
                             <div class="grid gap-1.5">
                                 <Label for="trial_days">
-                                    Trial length (days, optional)
+                                    Trial length (days)
                                 </Label>
                                 <Input
                                     id="trial_days"
@@ -262,7 +262,7 @@ const tabs: { key: Filter; label: string }[] = [
                                     name="trial_days"
                                     min="1"
                                     max="365"
-                                    placeholder="Leave blank for no trial deadline"
+                                    placeholder="30 if left blank"
                                 />
                                 <InputError :message="errors.trial_days" />
                             </div>

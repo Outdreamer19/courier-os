@@ -20,11 +20,36 @@ class SubscriptionGuardTest extends TestCase
         Route::middleware(['web', 'tenant.subscribed'])->get('/_guarded', fn () => 'ok');
     }
 
-    public function test_active_tenant_passes_the_guard(): void
+    public function test_active_tenant_without_subscription_or_trial_is_blocked(): void
     {
-        $tenant = Tenant::factory()->create(['subdomain' => 'acme', 'status' => Tenant::STATUS_ACTIVE]);
+        Tenant::factory()->unpaid()->create(['subdomain' => 'acme', 'status' => Tenant::STATUS_ACTIVE]);
 
-        $this->get('http://acme.courieros.co/_guarded')
+        $this->get('http://acme.courieros.co/_guarded')->assertStatus(402);
+    }
+
+    public function test_expired_trial_is_blocked(): void
+    {
+        Tenant::factory()->create([
+            'subdomain' => 'lapsed',
+            'status' => Tenant::STATUS_ACTIVE,
+            'trial_ends_at' => now()->subDay(),
+        ]);
+
+        $this->get('http://lapsed.courieros.co/_guarded')->assertStatus(402);
+    }
+
+    public function test_subscribed_tenant_passes_the_guard(): void
+    {
+        $tenant = Tenant::factory()->unpaid()->create(['subdomain' => 'payer', 'status' => Tenant::STATUS_ACTIVE]);
+        $tenant->subscriptions()->create([
+            'type' => 'default',
+            'stripe_id' => 'sub_test',
+            'stripe_status' => 'active',
+            'stripe_price' => 'price_test',
+            'quantity' => 1,
+        ]);
+
+        $this->get('http://payer.courieros.co/_guarded')
             ->assertOk()
             ->assertSee('ok');
     }

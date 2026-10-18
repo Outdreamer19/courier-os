@@ -32,13 +32,23 @@ class TenantFactory extends Factory
             'whatsapp_number' => null,
             'logo_path' => null,
             'brand_primary_color' => null,
-            'trial_ends_at' => null,
+            // Entitled by default so feature tests reach tenant pages; use
+            // unpaid() to test the subscription guard.
+            'trial_ends_at' => now()->addDays(30),
         ];
     }
 
     public function pending(): static
     {
         return $this->state(fn () => ['status' => Tenant::STATUS_PENDING]);
+    }
+
+    /**
+     * No subscription and no trial: blocked by EnsureTenantSubscribed.
+     */
+    public function unpaid(): static
+    {
+        return $this->state(fn () => ['trial_ends_at' => null]);
     }
 
     public function suspended(): static
