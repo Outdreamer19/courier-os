@@ -100,6 +100,8 @@ class CourierOsSeeder extends Seeder
                 'package_reference_prefix' => 'PKG',
                 'whatsapp_number' => '+1 (876) 555-0000',
                 'brand_primary_color' => $config['brand_primary_color'] ?? null,
+                // Local and test seed tenants never go through Stripe.
+                'trial_ends_at' => now()->addYear(),
             ],
         );
 

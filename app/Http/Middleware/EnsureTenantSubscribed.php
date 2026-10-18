@@ -36,9 +36,11 @@ class EnsureTenantSubscribed
             );
         }
 
+        // Paying (Stripe subscription) or inside a trial window. Being
+        // "active" alone no longer counts: that let any tenant created by
+        // hand use the platform for free indefinitely.
         $entitled = $tenant->subscribed('default')
-            || $tenant->onGenericTrial()
-            || $tenant->isActive();
+            || $tenant->onGenericTrial();
 
         if (! $entitled) {
             throw new HttpException(

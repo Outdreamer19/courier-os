@@ -17,6 +17,9 @@ use Inertia\Response;
 
 class TenantController extends Controller
 {
+    /** Trial given to a tenant created from the platform console when no length is set. */
+    private const DEFAULT_TRIAL_DAYS = 30;
+
     public function index(Request $request, PlatformStatsService $stats): Response
     {
         // Usage/health figures for every tenant, computed in a handful of
@@ -105,9 +108,9 @@ class TenantController extends Controller
                 'currency' => $validated['currency'],
                 'customer_reference_prefix' => strtoupper($validated['customer_reference_prefix']),
                 'package_reference_prefix' => 'PKG',
-                'trial_ends_at' => ! empty($validated['trial_days'])
-                    ? now()->addDays((int) $validated['trial_days'])
-                    : null,
+                // A hand-made tenant has no Stripe subscription, so it needs a
+                // trial window or the subscription guard blocks it at once.
+                'trial_ends_at' => now()->addDays((int) ($validated['trial_days'] ?? self::DEFAULT_TRIAL_DAYS)),
             ]);
 
             $previous = $tenants->current();
