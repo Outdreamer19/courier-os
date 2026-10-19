@@ -49,7 +49,7 @@ onUnmounted(() => clearInterval(timer));
 
 const proofPoints = [
     { value: 'Under 10 min', label: 'From signup to a live branded site' },
-    { value: 'Your domain', label: 'Customers never see CourierOS' },
+    { value: 'Your name', label: 'Your brand on every page, not ours' },
     { value: 'JMD & USD', label: 'Rates, invoices and totals in-currency' },
 ];
 </script>
@@ -80,7 +80,7 @@ const proofPoints = [
                 >
                     New
                 </span>
-                Now onboarding Caribbean courier businesses
+                Now welcoming Caribbean courier businesses
             </span>
 
             <!--
@@ -148,7 +148,7 @@ const proofPoints = [
                 class="hero-rise mt-4 text-xs text-marketing-ink-muted"
                 style="animation-delay: 0.3s"
             >
-                $79/mo + one-time setup · Cancel anytime
+                US$63 a month + one-time setup · Cancel anytime
             </p>
         </div>
 

@@ -92,11 +92,11 @@ onMounted(() => {
                     </div>
                     <BlurRevealText immediate as="p" :delay="200" text="Start or grow your courier business in Jamaica." class="relative mt-[70px] text-[80px] leading-[1.0] font-semibold tracking-[-0.04em]" />
                     <p class="relative mt-[50px] text-[46px] text-white/80">
-                        <span class="font-semibold text-white">US$79</span> a month
+                        <span class="font-semibold text-white">US$63</span> a month
                     </p>
                     <p class="relative mt-3 text-[34px] text-white/60">
-                        Founding setup <span class="text-white/40 line-through">US$349</span>
-                        <span class="ml-3 font-semibold text-marketing-amber">US$149</span>
+                        Founding setup <span class="text-white/40 line-through">US$149</span>
+                        <span class="ml-3 font-semibold text-marketing-amber">US$99</span>
                     </p>
                     <div class="relative mt-[80px] rounded-[28px] bg-marketing-amber px-[60px] py-[34px] text-[44px] font-semibold text-marketing-ink">
                         WhatsApp us for a free demo

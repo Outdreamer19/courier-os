@@ -41,6 +41,9 @@ return [
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
         'price_monthly' => env('STRIPE_PRICE_MONTHLY'),
         'price_setup' => env('STRIPE_PRICE_SETUP'),
+        // One-time setup at the founding (discounted) price. Used at checkout
+        // while founding spots remain; falls back to price_setup otherwise.
+        'price_setup_founding' => env('STRIPE_PRICE_SETUP_FOUNDING'),
     ],
 
     /*

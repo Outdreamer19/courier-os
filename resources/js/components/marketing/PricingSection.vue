@@ -8,7 +8,12 @@ import BlurRevealText from './BlurRevealText.vue';
  * to answer "what does it cost" without sending anyone off the page.
  */
 defineProps<{
-    pricing: { monthly: number; setup: number; currency: string };
+    pricing: {
+        monthly: number;
+        setup: number;
+        currency: string;
+        founding_setup?: number | null;
+    };
 }>();
 
 const included = [
@@ -49,15 +54,23 @@ const included = [
                     </p>
                     <p class="mt-2 flex items-baseline gap-1">
                         <span class="text-5xl font-semibold tracking-tight"
-                            >${{ pricing.monthly }}</span
+                            >US${{ pricing.monthly }}</span
                         >
                         <span class="text-sm text-marketing-ink-muted"
                             >/month</span
                         >
                     </p>
                     <p class="mt-2 text-xs text-marketing-ink-muted">
-                        + ${{ pricing.setup }} one-time setup ·
-                        {{ pricing.currency }} · cancel anytime
+                        +
+                        <template v-if="pricing.founding_setup">
+                            <span class="line-through">US${{ pricing.setup }}</span>
+                            US${{ pricing.founding_setup }} one-time setup for
+                            founding couriers
+                        </template>
+                        <template v-else
+                            >US${{ pricing.setup }} one-time setup</template
+                        >
+                        · cancel anytime
                     </p>
 
                     <div class="mt-7 flex flex-col gap-2.5 sm:flex-row">

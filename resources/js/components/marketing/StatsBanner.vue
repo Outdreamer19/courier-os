@@ -5,7 +5,7 @@ import ProductScreenshotFrame from './ProductScreenshotFrame.vue';
 const stats = [
     {
         prefix: '$',
-        target: 79,
+        target: 63,
         suffix: '/mo',
         label: 'Starting price, no hidden fees',
     },

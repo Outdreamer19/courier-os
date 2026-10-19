@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
 use App\Support\Demo\DemoMode;
+use App\Support\Pricing;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -86,14 +87,7 @@ class MarketingController extends Controller
      */
     private function basePricing(): array
     {
-        /** @var array{monthly: float|int, setup: float|int, currency: string} $config */
-        $config = config('courieros.pricing');
-
-        return [
-            'monthly' => (float) $config['monthly'],
-            'setup' => (float) $config['setup'],
-            'currency' => (string) $config['currency'],
-        ];
+        return Pricing::summary();
     }
 
     /**

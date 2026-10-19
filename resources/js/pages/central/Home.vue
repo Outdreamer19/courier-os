@@ -23,7 +23,12 @@ import TrustBar from '@/components/marketing/TrustBar.vue';
 import { useScrollReveal } from '@/composables/useScrollReveal';
 
 const props = defineProps<{
-    pricing: { monthly: number; setup: number; currency: string };
+    pricing: {
+        monthly: number;
+        setup: number;
+        currency: string;
+        founding_setup?: number | null;
+    };
     salesWhatsapp?: string | null;
 }>();
 
@@ -72,7 +77,7 @@ useScrollReveal();
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
         <AnnouncementBar
-            text="Now onboarding Caribbean courier businesses"
+            text="Now welcoming Caribbean courier businesses"
             href="/signup"
         />
         <MarketingNav />

@@ -5,7 +5,7 @@ import BlurRevealText from './BlurRevealText.vue';
 const features = [
     { icon: Receipt, title: 'Pre-Alert Management', body: 'Customers submit invoice and shipment details before packages ever arrive.' },
     { icon: Package, title: 'Package Tracking', body: 'A clear status timeline from warehouse intake through pickup.' },
-    { icon: MapPinned, title: 'Branded Subdomain', body: 'Your business live at yourname.courieros.co in minutes — a custom domain later.' },
+    { icon: MapPinned, title: 'Your Own Website Address', body: 'Your business live at yourname.courieros.co in minutes. Your own name, like www.myshippingcompany.com, can come later.' },
     { icon: BadgeCheck, title: 'Stripe Billing', body: 'Your platform subscription is billed automatically and securely.' },
     { icon: Bell, title: 'WhatsApp Notifications', body: 'Status updates sent by email and WhatsApp, where customers already are.' },
     { icon: Calculator, title: 'Rate Calculator', body: 'Transparent, weight-based pricing your customers can check themselves.' },

@@ -135,7 +135,7 @@ const answers = [
 
 const fullPackage = [
     'Your own branded website and web address',
-    'Hosting, security and updates included',
+    'We keep your website online, secure and up to date',
     'Customer portal with their own Miami address',
     'Pre-alerts that match to packages automatically',
     'Rate calculator using your prices',

@@ -67,6 +67,8 @@ blocks every tenant, not just the pilot.
 
 ### 4. Mail is unproven in production
 
+> **Done 2026-10-19.** `mail.courieros.co` verified in Resend (DKIM, SPF MX and TXT all verified). Real test sent from `noreply@mail.courieros.co` and delivered. Production `.env` must use `MAIL_FROM_ADDRESS="noreply@mail.courieros.co"` (the bare `courieros.co` domain is not verified). Optional: add a DMARC record on `_dmarc.courieros.co`.
+
 `/dashboard` sits behind Laravel's `verified` middleware. If Resend is not
 verified for the sending domain, a new customer registers, never receives the
 link, and is permanently stuck — which reads to the client as "the product is
@@ -173,7 +175,7 @@ Worth saying plainly, because it is the majority of the system:
 ## Suggested order of work
 
 1. Wildcard DNS + TLS (unblocks every tenant)
-2. Verify Resend sending domain, send a real test
+2. ~~Verify Resend sending domain, send a real test~~ (done 2026-10-19)
 3. Fix production `.env` (`APP_NAME`, `MAIL_FROM_ADDRESS`, `COURIEROS_PRICE_*`)
 4. Configure Stripe prices + webhook, walk one signup through in test mode
 5. Turn on the Forge scheduler

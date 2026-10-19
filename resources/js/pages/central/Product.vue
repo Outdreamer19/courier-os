@@ -221,8 +221,8 @@ const capabilities = [
     },
     {
         icon: Globe,
-        title: 'Your brand, your domain',
-        body: 'A branded subdomain out of the box, custom domain on Enterprise.',
+        title: 'Your brand, your website name',
+        body: 'Live at yourname.courieros.co from day one. Your own name, like www.myshippingcompany.com, on Enterprise.',
     },
     {
         icon: FileText,

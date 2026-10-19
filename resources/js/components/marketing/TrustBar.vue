@@ -19,8 +19,8 @@ const items = [
     },
     {
         icon: LockKeyhole,
-        title: 'Encrypted everywhere',
-        body: 'SSL on your site and every portal',
+        title: 'Secure website',
+        body: 'The padlock on every page and login',
     },
     {
         icon: DatabaseZap,
