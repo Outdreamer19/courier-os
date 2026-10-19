@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Central;
 use App\Actions\Tenancy\CreateTenant;
 use App\Concerns\PasswordValidationRules;
 use App\Http\Controllers\Controller;
+use App\Support\Pricing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -20,11 +21,7 @@ class TenantSignupController extends Controller
     {
         return Inertia::render('central/Signup', [
             'currencies' => ['USD', 'JMD'],
-            'pricing' => [
-                'monthly' => 79,
-                'setup' => 349,
-                'currency' => 'USD',
-            ],
+            'pricing' => Pricing::summary(),
             'centralDomain' => config('courieros.central_domain'),
         ]);
     }

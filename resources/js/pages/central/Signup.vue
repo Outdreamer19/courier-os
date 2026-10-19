@@ -9,7 +9,12 @@ import { Spinner } from '@/components/ui/spinner';
 
 const props = defineProps<{
     currencies: string[];
-    pricing: { monthly: number; setup: number; currency: string };
+    pricing: {
+        monthly: number;
+        setup: number;
+        currency: string;
+        founding_setup?: number | null;
+    };
     centralDomain: string;
 }>();
 </script>
@@ -55,7 +60,7 @@ const props = defineProps<{
                 <ul class="mt-8 space-y-3 text-sm text-white/80">
                     <li class="flex items-center gap-3">
                         <span class="text-[hsl(168_76%_55%)]">●</span>
-                        Your own subdomain and branding
+                        Your own website address and branding
                     </li>
                     <li class="flex items-center gap-3">
                         <span class="text-[hsl(168_76%_55%)]">●</span>
@@ -83,10 +88,18 @@ const props = defineProps<{
                         Create your courier platform
                     </h2>
                     <p class="mt-2 text-sm text-muted-foreground">
-                        {{ pricing.currency }} ${{ pricing.monthly }}/month + ${{
-                            pricing.setup
-                        }}
-                        one-time setup. Cancel anytime.
+                        US${{ pricing.monthly }} a month +
+                        <template v-if="pricing.founding_setup">
+                            <span class="line-through">US${{ pricing.setup }}</span>
+                            <strong class="text-foreground"
+                                >US${{ pricing.founding_setup }}</strong
+                            >
+                            one-time setup (founding price).
+                        </template>
+                        <template v-else
+                            >US${{ pricing.setup }} one-time setup.</template
+                        >
+                        Cancel anytime.
                     </p>
                 </div>
 

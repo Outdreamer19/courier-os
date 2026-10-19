@@ -14,6 +14,7 @@ const props = defineProps<{
     pricing: {
         monthly: number;
         setup: number;
+        founding_setup?: number | null;
         currency: string;
         annualMonthly: number;
         annualTotal: number;
@@ -32,12 +33,12 @@ const activeMonthly = computed(() =>
 
 const billingNote = computed(() =>
     yearly.value
-        ? `billed yearly at $${props.pricing.annualTotal.toLocaleString()}`
+        ? `billed yearly at US$${props.pricing.annualTotal.toLocaleString()}`
         : 'billed monthly',
 );
 
 const starterFeatures = [
-    'Your own branded subdomain',
+    'Your own website address, like yourname.courieros.co',
     'Unlimited customers & packages',
     'Pre-alerts with automatic package matching',
     'Customer self-serve portal',
@@ -50,8 +51,8 @@ const starterFeatures = [
 const enterpriseFeatures = [
     'Everything in Starter',
     'Multiple warehouse locations',
-    'Custom domain & SSL',
-    'Dedicated onboarding & data migration',
+    'Your own website name, like www.myshippingcompany.com',
+    'We set it up and bring your existing customers over for you',
     'Priority support with named contact',
     'Custom integrations & API access',
 ];
@@ -66,39 +67,91 @@ const comparisonGroups: { group: string; rows: Comparison[] }[] = [
     {
         group: 'Warehouse operations',
         rows: [
-            { feature: 'Packages tracked', starter: 'Unlimited', enterprise: 'Unlimited' },
-            { feature: 'Pre-alert intake & matching', starter: true, enterprise: true },
-            { feature: 'Status timeline & history', starter: true, enterprise: true },
-            { feature: 'Warehouse locations', starter: '1', enterprise: 'Unlimited' },
+            {
+                feature: 'Packages tracked',
+                starter: 'Unlimited',
+                enterprise: 'Unlimited',
+            },
+            {
+                feature: 'Pre-alert intake & matching',
+                starter: true,
+                enterprise: true,
+            },
+            {
+                feature: 'Status timeline & history',
+                starter: true,
+                enterprise: true,
+            },
+            {
+                feature: 'Warehouse locations',
+                starter: '1',
+                enterprise: 'Unlimited',
+            },
             { feature: 'Activity audit log', starter: true, enterprise: true },
         ],
     },
     {
         group: 'Customers & billing',
         rows: [
-            { feature: 'Customer self-serve portal', starter: true, enterprise: true },
-            { feature: 'Per-customer Florida address', starter: true, enterprise: true },
-            { feature: 'Weight-tier rate calculator', starter: true, enterprise: true },
-            { feature: 'Online card payments (Stripe)', starter: true, enterprise: true },
+            {
+                feature: 'Customer self-serve portal',
+                starter: true,
+                enterprise: true,
+            },
+            {
+                feature: 'Per-customer Florida address',
+                starter: true,
+                enterprise: true,
+            },
+            {
+                feature: 'Weight-tier rate calculator',
+                starter: true,
+                enterprise: true,
+            },
+            {
+                feature: 'Online card payments (Stripe)',
+                starter: true,
+                enterprise: true,
+            },
             { feature: 'Invoices & receipts', starter: true, enterprise: true },
         ],
     },
     {
         group: 'Brand & team',
         rows: [
-            { feature: 'Branded subdomain', starter: true, enterprise: true },
-            { feature: 'Custom domain', starter: false, enterprise: true },
+            {
+                feature: 'Website address (yourname.courieros.co)',
+                starter: true,
+                enterprise: true,
+            },
+            {
+                feature: 'Your own website name (www.myshippingcompany.com)',
+                starter: false,
+                enterprise: true,
+            },
             { feature: 'Admin & staff roles', starter: true, enterprise: true },
-            { feature: 'Team seats', starter: 'Unlimited', enterprise: 'Unlimited' },
+            {
+                feature: 'Team seats',
+                starter: 'Unlimited',
+                enterprise: 'Unlimited',
+            },
         ],
     },
     {
         group: 'Support',
         rows: [
             { feature: 'Email support', starter: true, enterprise: true },
-            { feature: 'Guided onboarding', starter: 'Self-serve', enterprise: 'Done for you' },
+            {
+                feature: 'Help getting set up',
+                starter: 'Step by step guide',
+                enterprise: 'Done for you',
+            },
             { feature: 'Data migration', starter: false, enterprise: true },
-            { feature: 'Named account contact', starter: false, enterprise: true },
+            {
+                feature: 'Named account contact',
+                starter: false,
+                enterprise: true,
+            },
         ],
     },
 ];
@@ -106,7 +159,7 @@ const comparisonGroups: { group: string; rows: Comparison[] }[] = [
 const faqs = [
     {
         q: 'What is the setup fee for?',
-        a: `The one-time $${props.pricing.setup} covers configuring your branded site, importing your rate tiers and warehouse address, and getting your first customers onboarded. You pay it once, on your first invoice.`,
+        a: `The one-time US$${props.pricing.founding_setup ?? props.pricing.setup} covers configuring your branded site, importing your rate tiers and warehouse address, and getting your first customers onboarded. You pay it once, on your first invoice.`,
     },
     {
         q: 'Do you charge per package or per customer?',
@@ -126,7 +179,7 @@ const faqs = [
     },
     {
         q: 'Is there a free trial?',
-        a: `Not a self-serve one yet — checkout happens right after you pick your business name and subdomain, before you get to branding or pricing setup. Want a look around first? Email us and we'll spin up a preview account for you.`,
+        a: `You can try the full product first, free, at demo.courieros.co. Log in as the courier or as a customer and click around. When you are ready, sign up and we set your own site up with you.`,
     },
 ];
 
@@ -137,13 +190,13 @@ const openFaq = ref<number | null>(0);
     <Head title="Pricing">
         <meta
             name="description"
-            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff — no per-parcel fees."
+            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff. No per-package fees."
         />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="CourierOS Pricing" />
         <meta
             property="og:description"
-            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff — no per-parcel fees."
+            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff. No per-package fees."
         />
         <meta
             property="og:image"
@@ -153,7 +206,7 @@ const openFaq = ref<number | null>(0);
         <meta name="twitter:title" content="CourierOS Pricing" />
         <meta
             name="twitter:description"
-            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff — no per-parcel fees."
+            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff. No per-package fees."
         />
         <meta
             name="twitter:image"
@@ -186,7 +239,7 @@ const openFaq = ref<number | null>(0);
                     class="mx-auto mt-5 max-w-xl text-base text-pretty text-marketing-ink-muted"
                 >
                     One flat price for the whole business. Unlimited packages,
-                    unlimited customers, unlimited staff — your bill never moves
+                    unlimited customers, unlimited staff. Your bill never moves
                     because you had a good month.
                 </p>
 
@@ -225,8 +278,9 @@ const openFaq = ref<number | null>(0);
                             </p>
 
                             <p class="mt-8 flex items-baseline gap-1">
-                                <span class="text-5xl font-semibold tracking-tight"
-                                    >$<AnimatedPrice :value="activeMonthly"
+                                <span
+                                    class="text-5xl font-semibold tracking-tight"
+                                    >US$<AnimatedPrice :value="activeMonthly"
                                 /></span>
                                 <span class="text-sm font-medium text-white/80"
                                     >/mo</span
@@ -236,8 +290,18 @@ const openFaq = ref<number | null>(0);
                                 {{ billingNote }}
                             </p>
                             <p class="mt-1 text-xs text-white/70">
-                                + ${{ pricing.setup.toLocaleString() }} one-time
-                                setup · {{ pricing.currency }} · cancel anytime
+                                +
+                                <template v-if="pricing.founding_setup">
+                                    <span class="line-through opacity-70"
+                                        >US${{ pricing.setup }}</span
+                                    >
+                                    US${{ pricing.founding_setup }} one-time
+                                    setup for founding couriers
+                                </template>
+                                <template v-else>
+                                    US${{ pricing.setup }} one-time setup
+                                </template>
+                                · cancel anytime
                             </p>
 
                             <Transition name="saving">
@@ -287,8 +351,9 @@ const openFaq = ref<number | null>(0);
                         <p
                             class="mt-2 max-w-xs text-sm text-marketing-ink-muted"
                         >
-                            For multi-location operations that need a custom
-                            domain and hands-on migration.
+                            For couriers with more than one location who want
+                            their own website name and their customers moved
+                            over for them.
                         </p>
 
                         <p class="mt-8 text-5xl font-semibold tracking-tight">
@@ -327,10 +392,8 @@ const openFaq = ref<number | null>(0);
                     </div>
                 </div>
 
-                <p
-                    class="mt-8 text-center text-sm text-marketing-ink-muted"
-                >
-                    Your customers never pay CourierOS — they pay you, through
+                <p class="mt-8 text-center text-sm text-marketing-ink-muted">
+                    Your customers never pay CourierOS. They pay you, through
                     your own Stripe account.
                 </p>
             </div>
@@ -404,7 +467,10 @@ const openFaq = ref<number | null>(0);
                                     {{ row.feature }}
                                 </th>
                                 <td
-                                    v-for="tier in ['starter', 'enterprise'] as const"
+                                    v-for="tier in [
+                                        'starter',
+                                        'enterprise',
+                                    ] as const"
                                     :key="tier"
                                     class="px-2 py-3.5 text-center sm:px-6"
                                 >
@@ -458,7 +524,9 @@ const openFaq = ref<number | null>(0);
                                 type="button"
                                 class="flex w-full items-center justify-between gap-4 px-6 py-4 text-left text-base font-semibold"
                                 :aria-expanded="openFaq === index"
-                                @click="openFaq = openFaq === index ? null : index"
+                                @click="
+                                    openFaq = openFaq === index ? null : index
+                                "
                             >
                                 {{ faq.q }}
                                 <span

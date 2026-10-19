@@ -34,8 +34,8 @@ class PlatformStatsService
      */
     public function overview(): array
     {
-        $monthlyPrice = (float) config('courieros.pricing.monthly', 79);
-        $setupFee = (float) config('courieros.pricing.setup', 349);
+        $monthlyPrice = (float) config('courieros.pricing.monthly', 63);
+        $setupFee = (float) config('courieros.pricing.setup', 149);
 
         $active = Subscription::query()->where('stripe_status', 'active')->count();
         $trialing = Subscription::query()->where('stripe_status', 'trialing')->count();

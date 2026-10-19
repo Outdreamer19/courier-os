@@ -67,8 +67,8 @@ return [
     */
 
     'pricing' => [
-        'monthly' => (float) env('COURIEROS_PRICE_MONTHLY', 79),
-        'setup' => (float) env('COURIEROS_PRICE_SETUP', 349),
+        'monthly' => (float) env('COURIEROS_PRICE_MONTHLY', 63),
+        'setup' => (float) env('COURIEROS_PRICE_SETUP', 149),
         'currency' => env('CASHIER_CURRENCY', 'usd') === 'usd'
             ? 'USD'
             : strtoupper((string) env('CASHIER_CURRENCY', 'USD')),
@@ -109,7 +109,7 @@ return [
     'marketing' => [
         'sales_whatsapp' => env('COURIEROS_SALES_WHATSAPP', '447565727032'),
         'founding' => [
-            'setup' => (float) env('COURIEROS_FOUNDING_SETUP', 149),
+            'setup' => (float) env('COURIEROS_FOUNDING_SETUP', 99),
             'spots_total' => (int) env('COURIEROS_FOUNDING_SPOTS', 10),
             'spots_left' => (int) env('COURIEROS_FOUNDING_SPOTS_LEFT', 10),
         ],

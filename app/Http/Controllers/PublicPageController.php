@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Pricing;
 use App\Support\ShippingRatePresenter;
 use App\Support\Tenancy\TenantManager;
 use Illuminate\Contracts\View\View;
@@ -44,11 +45,7 @@ class PublicPageController extends Controller
 
         if (! $this->tenants->hasTenant()) {
             return Inertia::render('central/Home', [
-                'pricing' => [
-                    'monthly' => 79,
-                    'setup' => 349,
-                    'currency' => 'USD',
-                ],
+                'pricing' => Pricing::summary(),
                 'salesWhatsapp' => (string) config('courieros.marketing.sales_whatsapp') ?: null,
             ]);
         }

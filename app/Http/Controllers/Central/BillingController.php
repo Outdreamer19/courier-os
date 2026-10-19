@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
+use App\Support\Pricing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -33,7 +34,7 @@ class BillingController extends Controller
         abort_unless($tenant->isPending(), 403, 'This account has already been set up.');
 
         $monthlyPrice = (string) config('services.stripe.price_monthly');
-        $setupPrice = (string) config('services.stripe.price_setup');
+        $setupPrice = $this->setupPrice();
 
         try {
             $checkout = $tenant->newSubscription('default', $monthlyPrice)
@@ -59,6 +60,21 @@ class BillingController extends Controller
         }
 
         return redirect($checkout->url);
+    }
+
+    /**
+     * The founding (discounted) setup price while founding spots remain and
+     * a Stripe price for it is configured; the standard setup otherwise.
+     */
+    private function setupPrice(): string
+    {
+        $founding = (string) config('services.stripe.price_setup_founding');
+
+        if ($founding !== '' && Pricing::foundingSetup() !== null) {
+            return $founding;
+        }
+
+        return (string) config('services.stripe.price_setup');
     }
 
     public function success(Request $request, Tenant $tenant): Response

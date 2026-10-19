@@ -6,9 +6,9 @@ import BlurRevealText from './BlurRevealText.vue';
 
 const faqs = [
     { q: 'What is CourierOS?', a: 'CourierOS is a platform for Caribbean courier and freight-forwarding businesses to run pre-alerts, package tracking, billing, and customer communication — all from one branded site.' },
-    { q: 'How fast can I launch?', a: 'Sign up, choose a subdomain, and your branded site is live in minutes. You can connect a custom domain later.' },
+    { q: 'How fast can I launch?', a: 'Sign up, pick your website address (like yourname.courieros.co) and your branded site is live in minutes. Want your own website name, like www.myshippingcompany.com? We can connect it for you later.' },
     { q: 'Do I need technical skills?', a: 'No. Branding, shipping rates, and your warehouse address are all configured from your admin dashboard — no code required.' },
-    { q: 'How does billing work?', a: `CourierOS is $79/month plus a one-time $349 setup fee, billed securely through Stripe. Cancel anytime.` },
+    { q: 'How does billing work?', a: `CourierOS is US$63 a month plus a one-time US$149 setup fee (US$99 for our founding couriers), paid securely by card through Stripe. Cancel anytime.` },
     { q: 'Can my customers get WhatsApp updates?', a: 'Yes — status notifications can be sent by email and WhatsApp.' },
     { q: 'Is my data separated from other courier businesses?', a: 'Yes. Every courier business on CourierOS has fully isolated data by design.' },
 ];
