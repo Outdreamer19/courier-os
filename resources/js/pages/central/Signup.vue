@@ -116,6 +116,14 @@ defineProps<{
                     >
                 </a>
                 <div class="mb-8">
+                    <p class="mb-3 text-right text-sm text-muted-foreground">
+                        Have an account?
+                        <a
+                            href="/login"
+                            class="font-semibold text-marketing-ink underline-offset-4 hover:underline"
+                            >Log in</a
+                        >
+                    </p>
                     <h2 class="text-2xl font-semibold tracking-tight">
                         Create your courier site
                     </h2>
@@ -284,6 +292,14 @@ defineProps<{
                     <p class="text-center text-xs text-muted-foreground">
                         You'll confirm payment securely with Stripe on the next
                         step.
+                    </p>
+                    <p class="text-center text-sm text-muted-foreground">
+                        Already have an account?
+                        <a
+                            href="/login"
+                            class="font-semibold text-marketing-ink underline underline-offset-4 hover:text-marketing-orange"
+                            >Log in</a
+                        >
                     </p>
                 </Form>
             </div>
