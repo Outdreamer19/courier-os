@@ -3,6 +3,11 @@ import { Head } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 
 defineOptions({ inheritAttrs: false });
+
+defineProps<{
+    /** Set when we know which unpaid courier this was, to go straight back. */
+    finishUrl?: string | null;
+}>();
 </script>
 
 <template>
@@ -22,11 +27,11 @@ defineOptions({ inheritAttrs: false });
             </p>
 
             <div class="mt-8">
-                <a href="/signup">
+                <a :href="finishUrl ?? '/signup'">
                     <Button
                         class="h-11 bg-marketing-ink px-8 text-marketing-cream hover:bg-marketing-ink/90"
                     >
-                        Return to signup
+                        {{ finishUrl ? 'Finish payment' : 'Return to signup' }}
                     </Button>
                 </a>
             </div>

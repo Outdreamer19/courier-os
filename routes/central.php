@@ -55,6 +55,9 @@ Route::name('central.')->group(function () {
             Route::get('checkout/{tenant}', [BillingController::class, 'checkout'])->name('checkout');
             Route::get('success/{tenant}', [BillingController::class, 'success'])->name('success');
             Route::get('cancelled', [BillingController::class, 'cancel'])->name('cancel');
+            // Where an unpaid (pending) courier's own site sends its visitors:
+            // a page to finish payment instead of a 403.
+            Route::get('finish/{tenant:subdomain}', [BillingController::class, 'finish'])->name('finish');
         });
     });
 

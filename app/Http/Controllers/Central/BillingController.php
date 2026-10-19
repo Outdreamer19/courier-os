@@ -40,7 +40,7 @@ class BillingController extends Controller
             $checkout = $tenant->newSubscription('default', $monthlyPrice)
                 ->checkout([
                     'success_url' => $this->successUrl($tenant),
-                    'cancel_url' => $this->cancelUrl(),
+                    'cancel_url' => $this->cancelUrl($tenant),
                     'line_items' => [
                         ['price' => $setupPrice, 'quantity' => 1],
                     ],
@@ -91,19 +91,53 @@ class BillingController extends Controller
         ]);
     }
 
-    public function cancel(): Response
+    public function cancel(Request $request): Response
     {
-        return Inertia::render('central/BillingCancelled');
+        $tenant = Tenant::query()
+            ->where('subdomain', (string) $request->query('tenant'))
+            ->first();
+
+        return Inertia::render('central/BillingCancelled', [
+            'finishUrl' => $tenant?->isPending()
+                ? route('central.billing.finish', ['tenant' => $tenant->subdomain])
+                : null,
+        ]);
+    }
+
+    /**
+     * "Finish setting up" page for a courier that signed up but has not paid.
+     *
+     * Their own site redirects here (see ResolveTenant) rather than showing a
+     * bare "not currently active" error, so an owner coming back later goes
+     * straight to payment. Anyone else who lands here sees the same page,
+     * which only names the business and offers checkout for it.
+     */
+    public function finish(Tenant $tenant): SymfonyResponse|Response
+    {
+        if (! $tenant->isPending()) {
+            return Inertia::location($tenant->url('/login'));
+        }
+
+        return Inertia::render('central/BillingFinish', [
+            'tenant' => [
+                'name' => $tenant->name,
+                'host' => $tenant->host(),
+                'checkout_url' => route('central.billing.checkout', ['tenant' => $tenant->id]),
+            ],
+            'pricing' => Pricing::summary(),
+        ]);
     }
 
     private function successUrl(Tenant $tenant): string
     {
-        return route('central.billing.success', ['tenant' => $tenant->id]).'&session_id={CHECKOUT_SESSION_ID}';
+        // `?`, not `&`: the route has no query string of its own, so `&` ended
+        // up inside the {tenant} path segment.
+        return route('central.billing.success', ['tenant' => $tenant->id]).'?session_id={CHECKOUT_SESSION_ID}';
     }
 
-    private function cancelUrl(): string
+    private function cancelUrl(Tenant $tenant): string
     {
-        return route('central.billing.cancel');
+        return route('central.billing.cancel', ['tenant' => $tenant->subdomain]);
     }
 
     private function tenantUrl(Tenant $tenant): string
