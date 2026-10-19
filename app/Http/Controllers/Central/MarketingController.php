@@ -28,6 +28,7 @@ class MarketingController extends Controller
     {
         return Inertia::render('central/Product', [
             'pricing' => $this->basePricing(),
+            'liveDemoUrl' => DemoMode::url(),
         ])->withViewData([
             'meta' => [
                 'title' => 'Product tour | CourierOS',

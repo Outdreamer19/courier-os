@@ -26,9 +26,25 @@ import WorkflowSteps from '@/components/marketing/WorkflowSteps.vue';
 import { useScrollReveal } from '@/composables/useScrollReveal';
 import type { TourStop, WorkflowStep } from '@/types/marketing';
 
-defineProps<{
-    pricing: { monthly: number; setup: number; currency: string };
+const props = defineProps<{
+    pricing: {
+        monthly: number;
+        setup: number;
+        currency: string;
+        founding_setup?: number | null;
+    };
+    liveDemoUrl?: string | null;
 }>();
+
+// Same price line as the home page hero, so the two never drift apart.
+const money = (value: number) =>
+    Number.isInteger(value) ? String(value) : value.toFixed(2);
+
+const setupLabel = props.pricing.founding_setup
+    ? `US$${money(props.pricing.founding_setup)} founding setup`
+    : `US$${money(props.pricing.setup)} one-time setup`;
+
+const priceLine = `US$${money(props.pricing.monthly)} a month + ${setupLabel} · Unlimited packages and customers · Cancel anytime`;
 
 const { itemDelay } = useScrollReveal();
 
@@ -68,26 +84,26 @@ const tourStops: TourStop[] = [
         id: 'portal',
         label: 'Customer portal',
         title: 'Your customers stop calling to ask',
-        body: 'Each customer gets their own branded login with their Florida address, their packages, their balance and a live status timeline. The questions that used to eat your afternoon answer themselves.',
+        body: 'Each customer gets their own branded login with their own Miami address, their packages, their balance and a live status timeline. The questions that used to eat your afternoon answer themselves.',
         bullets: [
-            'Personal Florida address with their suite reference',
+            'Their own Miami address with a personal suite reference',
             'Live status timeline on every package',
             'Pay online, or see exactly what to bring to pickup',
         ],
-        alt: 'The CourierOS customer dashboard showing a personal Florida shipping address, active packages and amount due',
+        alt: 'The CourierOS customer dashboard showing a personal Miami shipping address, active packages, pre-alerts and amount due',
         ...shot('customer-dashboard'),
     },
     {
         id: 'tracking',
         label: 'Tracking',
         title: 'A status timeline customers actually trust',
-        body: 'Received in Florida, shipped, arrived, ready for pickup, collected — each step timestamped and visible to the customer as it happens. No more "any update?" at nine at night.',
+        body: 'Received at the Miami warehouse, shipped, arrived, ready for pickup, collected. Each step is timestamped and visible to the customer as it happens. No more "any update?" at nine at night.',
         bullets: [
             'Timestamped step-by-step history',
             'Payment status and amount due alongside',
             'Works the same on a phone as on a laptop',
         ],
-        alt: 'A CourierOS package detail page showing the status timeline from Florida warehouse through to pickup',
+        alt: 'A CourierOS package detail page showing the amount due and the status timeline from the Miami warehouse through to pickup',
         ...shot('customer-package-detail'),
     },
     {
@@ -134,8 +150,8 @@ const tourStops: TourStop[] = [
 const workflow: WorkflowStep[] = [
     {
         actor: 'Your customer',
-        title: 'They shop online with their Florida address',
-        body: 'Every customer gets a Florida address with their own suite reference the moment they sign up. They copy it straight into checkout at Amazon, SHEIN or anywhere else.',
+        title: 'They shop online with their own Miami address',
+        body: 'Every customer gets their own Miami address with a personal suite reference the moment they sign up. They copy it straight into checkout at Amazon, SHEIN or anywhere else.',
     },
     {
         actor: 'Your customer',
@@ -207,7 +223,7 @@ const capabilities = [
     {
         icon: Users,
         title: 'Customer accounts',
-        body: 'Self-serve portal, personal Florida address, authorised pickup people.',
+        body: 'Self-serve portal, their own Miami address, authorised pickup people.',
     },
     {
         icon: Building2,
@@ -253,7 +269,7 @@ const objections = [
     },
     {
         q: 'How long does it take to get running?',
-        a: 'You can create your account, set your branding, add your rate tiers and your warehouse address inside an afternoon. Importing your existing customers is the longest part, and on Enterprise we do that migration for you.',
+        a: 'Your branded site is live in under 10 minutes from signup. Setting your branding, rate tiers and warehouse address takes an afternoon at most. Importing your existing customers is the longest part, and on Enterprise we do that migration for you.',
     },
     {
         q: 'Will my customers actually use the portal?',
@@ -330,9 +346,10 @@ const openObjection = ref<number | null>(0);
                     <p
                         class="mx-auto mt-6 max-w-2xl text-lg text-pretty text-marketing-ink-muted"
                     >
-                        Pre-alerts, package tracking, a branded customer portal,
-                        rate tiers, payments and reporting — built specifically
-                        for Caribbean courier and freight-forwarding
+                        Your customers get their own Miami address, send
+                        pre-alerts and track every package on your branded site.
+                        You receive, bill and update them from one dashboard.
+                        Built for Caribbean courier and freight forwarding
                         businesses.
                     </p>
 
@@ -346,6 +363,13 @@ const openObjection = ref<number | null>(0);
                             Get Started
                         </a>
                         <a
+                            v-if="liveDemoUrl"
+                            :href="liveDemoUrl"
+                            class="w-full rounded-xl border-2 border-marketing-orange/60 bg-white px-8 py-3 text-center text-sm font-semibold transition hover:-translate-y-0.5 hover:border-marketing-orange sm:w-auto"
+                        >
+                            Try the live demo
+                        </a>
+                        <a
                             href="#tour"
                             class="w-full rounded-xl border border-marketing-border bg-white px-8 py-3.5 text-center text-sm font-semibold transition hover:-translate-y-0.5 hover:border-marketing-ink/25 sm:w-auto"
                         >
@@ -354,8 +378,7 @@ const openObjection = ref<number | null>(0);
                     </div>
 
                     <p class="mt-4 text-xs text-marketing-ink-muted">
-                        ${{ pricing.monthly }}/month · unlimited packages and
-                        customers · cancel anytime
+                        {{ priceLine }}
                     </p>
                 </div>
 
@@ -384,7 +407,7 @@ const openObjection = ref<number | null>(0);
                             />
                             <img
                                 src="/images/marketing/admin-overview.png"
-                                alt="The CourierOS admin dashboard showing package counts, revenue and recent activity"
+                                alt="The CourierOS admin overview for the Blue Mahoe Express demo courier, showing customers, packages in flight, money collected and where every package is right now"
                                 width="1440"
                                 height="900"
                                 fetchpriority="high"
@@ -405,7 +428,7 @@ const openObjection = ref<number | null>(0);
                             Pre-alert matched
                         </p>
                         <p class="mt-1 text-sm font-semibold">
-                            TSL-TRK-001 → Andre C.
+                            Amazon → Tanisha C. · BME-000001
                         </p>
                     </div>
                     <div
@@ -505,9 +528,18 @@ const openObjection = ref<number | null>(0);
                         text="See the actual product"
                         class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
                     />
-                    <p class="mt-4 text-base text-pretty text-marketing-ink-muted">
-                        Not mockups — these are real screens from a live
-                        CourierOS courier business. Pick a tab, or let it run.
+                    <p
+                        class="mt-4 text-base text-pretty text-marketing-ink-muted"
+                    >
+                        Not mockups. These are real screens from Blue Mahoe
+                        Express, our live demo courier. Pick a tab, or let it
+                        run.
+                        <a
+                            v-if="liveDemoUrl"
+                            :href="liveDemoUrl"
+                            class="font-semibold text-marketing-orange underline-offset-4 hover:underline"
+                            >Or log in and click around yourself →</a
+                        >
                     </p>
                 </div>
 

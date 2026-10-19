@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Demo\DemoMode;
 use App\Support\Pricing;
 use App\Support\ShippingRatePresenter;
 use App\Support\Tenancy\TenantManager;
@@ -47,6 +48,7 @@ class PublicPageController extends Controller
             return Inertia::render('central/Home', [
                 'pricing' => Pricing::summary(),
                 'salesWhatsapp' => (string) config('courieros.marketing.sales_whatsapp') ?: null,
+                'liveDemoUrl' => DemoMode::url(),
             ]);
         }
 

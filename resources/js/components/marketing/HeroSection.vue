@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { BellRing, ClipboardCheck } from 'lucide-vue-next';
-import { onMounted, onUnmounted, ref } from 'vue';
+import {
+    ArrowRight,
+    BellRing,
+    ClipboardCheck,
+    MousePointerClick,
+} from 'lucide-vue-next';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import BlurRevealText from './BlurRevealText.vue';
 import FloatingFace from './FloatingFace.vue';
 import HeroBackdrop from './HeroBackdrop.vue';
@@ -12,6 +17,33 @@ import CustomerPortalMock from './jamaica/CustomerPortalMock.vue';
  * rather than screenshots: the old captures carried Today Shipping's navy and
  * red theme, which clashed with the marketing palette and blurred when scaled.
  */
+const props = defineProps<{
+    pricing?: {
+        monthly: number;
+        setup: number;
+        currency: string;
+        founding_setup?: number | null;
+    };
+    /** Public demo courier login, e.g. https://demo.courieros.co/login */
+    liveDemoUrl?: string | null;
+}>();
+
+const money = (value: number) =>
+    Number.isInteger(value) ? String(value) : value.toFixed(2);
+
+const priceLine = computed(() => {
+    if (!props.pricing) {
+        return 'US$63 a month + one-time setup · Cancel anytime';
+    }
+
+    const setup = props.pricing.founding_setup ?? props.pricing.setup;
+    const setupLabel = props.pricing.founding_setup
+        ? `US$${money(setup)} founding setup`
+        : `US$${money(setup)} one-time setup`;
+
+    return `US$${money(props.pricing.monthly)} a month + ${setupLabel} · Cancel anytime`;
+});
+
 const tabs = [
     { key: 'admin', label: 'Admin Dashboard' },
     { key: 'portal', label: 'Customer Portal' },
@@ -72,16 +104,39 @@ const proofPoints = [
         <div
             class="relative mx-auto max-w-5xl px-4 pt-20 pb-14 text-center sm:px-6 lg:px-8"
         >
-            <span
-                class="hero-rise inline-flex items-center gap-2 rounded-full border border-marketing-border bg-white/80 px-4 py-1.5 text-xs font-medium text-marketing-ink shadow-sm backdrop-blur"
+            <!--
+                Live demo pill replaces the old "New · Now welcoming..." badge,
+                which repeated the announcement bar word for word. Pointing at
+                the demo here makes it obvious there is something to try
+                without an account.
+            -->
+            <a
+                v-if="liveDemoUrl"
+                :href="liveDemoUrl"
+                class="hero-rise group inline-flex items-center gap-2.5 rounded-full border border-marketing-border bg-white/85 py-1.5 pr-3 pl-2 text-xs font-medium text-marketing-ink shadow-sm backdrop-blur transition hover:border-marketing-orange/40 hover:bg-white"
             >
                 <span
-                    class="rounded-full bg-marketing-orange px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase"
+                    class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold tracking-wide text-emerald-700 uppercase"
                 >
-                    New
+                    <span class="relative flex size-1.5">
+                        <span
+                            class="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:hidden"
+                        />
+                        <span
+                            class="relative inline-flex size-1.5 rounded-full bg-emerald-500"
+                        />
+                    </span>
+                    Live
                 </span>
-                Now welcoming Caribbean courier businesses
-            </span>
+                <span class="sm:hidden">Try the live demo. No signup</span>
+                <span class="hidden sm:inline"
+                    >Click around a real courier site. No signup needed</span
+                >
+                <ArrowRight
+                    class="size-3.5 text-marketing-ink-muted transition group-hover:translate-x-0.5 group-hover:text-marketing-orange"
+                    aria-hidden="true"
+                />
+            </a>
 
             <!--
                 `immediate` rather than the scroll observer: the h1 is above
@@ -90,14 +145,14 @@ const proofPoints = [
             -->
             <BlurRevealText
                 as="h1"
-                text="Run Your Courier Business"
+                text="Run your courier business"
                 immediate
                 :delay="80"
                 :stagger="90"
-                class="mx-auto mt-6 max-w-3xl text-5xl leading-[1.05] font-semibold tracking-tight text-balance text-marketing-ink sm:text-6xl"
+                class="mx-auto mt-6 max-w-4xl text-[2.6rem] leading-[1.05] font-semibold tracking-tight text-balance text-marketing-ink sm:text-6xl"
             >
-                <span class="relative inline-block">
-                    <span class="relative z-10">Like a Platform</span>
+                <span class="relative inline-block whitespace-nowrap">
+                    <span class="relative z-10">without the chaos</span>
                     <!-- Hand-drawn underline instead of a flat highlight -->
                     <svg
                         class="absolute -bottom-2 left-0 z-0 w-full"
@@ -119,28 +174,42 @@ const proofPoints = [
             </BlurRevealText>
 
             <p
-                class="hero-rise mx-auto mt-6 max-w-xl text-lg text-marketing-ink-muted"
+                class="hero-rise mx-auto mt-7 max-w-2xl text-lg text-pretty text-marketing-ink-muted sm:text-xl"
                 style="animation-delay: 0.16s"
             >
-                Pre-alerts, package tracking, billing, and customer updates — on
-                your own branded site. Launch in minutes, not months.
+                Your customers get their own Miami address, send pre-alerts and
+                track every package on your branded site. You receive, bill and
+                update them from one dashboard.
             </p>
 
             <div
-                class="hero-rise mt-8 flex flex-wrap items-center justify-center gap-3"
+                class="hero-rise mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
                 style="animation-delay: 0.24s"
             >
                 <a
                     href="/signup"
-                    class="inline-flex items-center gap-2 rounded-lg bg-marketing-ink px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-marketing-ink/15 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-marketing-ink/20"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-marketing-ink px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-marketing-ink/15 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-marketing-ink/20 sm:w-auto"
                 >
-                    Get Started →
+                    Get started
+                    <ArrowRight class="size-4" aria-hidden="true" />
                 </a>
                 <a
-                    href="#product"
-                    class="rounded-lg border border-marketing-border bg-white/70 px-6 py-3 text-sm font-semibold text-marketing-ink backdrop-blur transition hover:bg-white"
+                    v-if="liveDemoUrl"
+                    :href="liveDemoUrl"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-marketing-orange/60 bg-white px-7 py-3 text-sm font-semibold text-marketing-ink transition hover:-translate-y-0.5 hover:border-marketing-orange hover:shadow-lg hover:shadow-marketing-orange/15 sm:w-auto"
                 >
-                    See How It Works
+                    <MousePointerClick
+                        class="size-4 text-marketing-orange"
+                        aria-hidden="true"
+                    />
+                    Try the live demo
+                </a>
+                <a
+                    v-else
+                    href="#product"
+                    class="inline-flex w-full items-center justify-center rounded-xl border border-marketing-border bg-white/70 px-7 py-3.5 text-sm font-semibold text-marketing-ink backdrop-blur transition hover:bg-white sm:w-auto"
+                >
+                    See how it works
                 </a>
             </div>
 
@@ -148,7 +217,7 @@ const proofPoints = [
                 class="hero-rise mt-4 text-xs text-marketing-ink-muted"
                 style="animation-delay: 0.3s"
             >
-                US$63 a month + one-time setup · Cancel anytime
+                {{ priceLine }}
             </p>
         </div>
 
