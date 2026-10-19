@@ -44,6 +44,11 @@ class BillingController extends Controller
                     'line_items' => [
                         ['price' => $setupPrice, 'quantity' => 1],
                     ],
+                    // Charge in US dollars, the currency every price on the site
+                    // is shown in. Adaptive Pricing otherwise converts to the
+                    // buyer's local currency (GBP, JMD...) and adds a
+                    // conversion fee on top.
+                    'adaptive_pricing' => ['enabled' => false],
                     'metadata' => [
                         'tenant_id' => $tenant->id,
                         'tenant_subdomain' => $tenant->subdomain,
