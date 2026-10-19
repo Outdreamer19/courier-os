@@ -49,11 +49,18 @@ class TenantSignupController extends Controller
             'currency' => ['required', Rule::in(['USD', 'JMD'])],
             'customer_reference_prefix' => ['required', 'string', 'min:2', 'max:8', 'alpha'],
             'owner_name' => ['required', 'string', 'max:255'],
-            'owner_email' => ['required', 'string', 'email', 'max:255'],
+            // Emails are unique across every courier (users.email has a
+            // global unique index). Checking here turns what used to be a
+            // database exception into a normal form error.
+            'owner_email' => [
+                'required', 'string', 'email', 'max:255',
+                Rule::unique('users', 'email'),
+            ],
             'password' => $this->passwordRules(),
         ], [
             'subdomain.not_in' => 'That subdomain is reserved. Please choose another.',
             'subdomain.unique' => 'That subdomain is already taken.',
+            'owner_email.unique' => 'An account already uses this email. Log in instead, or sign up with a different email.',
         ]);
 
         $tenant = $createTenant->handle($validated);

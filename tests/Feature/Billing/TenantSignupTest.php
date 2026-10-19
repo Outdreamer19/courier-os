@@ -76,6 +76,19 @@ class TenantSignupTest extends TestCase
             ->assertSessionHasErrors('subdomain');
     }
 
+    public function test_owner_email_already_in_use_is_a_form_error_not_a_crash(): void
+    {
+        User::factory()->create(['email' => 'jane@acme.com']);
+
+        $this->from('http://courieros.co/signup')
+            ->post('http://courieros.co/signup', $this->validPayload())
+            ->assertRedirect('http://courieros.co/signup')
+            ->assertSessionHasErrors('owner_email');
+
+        // Nothing half-made: the tenant row is not left behind.
+        $this->assertNull(Tenant::query()->where('subdomain', 'acme')->first());
+    }
+
     public function test_reserved_subdomain_is_rejected(): void
     {
         $this->from('http://courieros.co/signup')
