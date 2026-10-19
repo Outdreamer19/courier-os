@@ -25,6 +25,8 @@ declare module '@inertiajs/core' {
             brand: BrandConfig;
             warehouse: WarehouseSnapshot | null;
             demo: DemoConfig | null;
+            /** True on the CourierOS platform domain, where no courier is bound. */
+            is_platform?: boolean;
             flash: {
                 success?: string | null;
                 error?: string | null;

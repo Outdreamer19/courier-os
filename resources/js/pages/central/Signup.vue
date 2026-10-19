@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import { ArrowRight, Check } from 'lucide-vue-next';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 
-const props = defineProps<{
+defineProps<{
     currencies: string[];
     pricing: {
         monthly: number;
@@ -16,81 +17,114 @@ const props = defineProps<{
         founding_setup?: number | null;
     };
     centralDomain: string;
+    liveDemoUrl?: string | null;
 }>();
 </script>
 
 <template>
     <Head title="Start your courier platform" />
 
-    <div class="min-h-screen bg-[hsl(222_47%_11%)] text-white lg:grid lg:grid-cols-2">
+    <!--
+        CourierOS palette (warm ink, cream, orange and amber) to match the
+        marketing site. `.courieros-brand` maps the shadcn tokens used by the
+        form controls onto the same palette.
+    -->
+    <div
+        class="courieros-brand min-h-screen bg-marketing-ink font-marketing text-white lg:grid lg:grid-cols-2"
+    >
         <!-- Left: the pitch -->
         <section
             class="relative hidden flex-col justify-between overflow-hidden px-12 py-14 lg:flex"
         >
             <div
-                class="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-[hsl(168_76%_42%)] opacity-20 blur-3xl"
+                class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-marketing-orange opacity-25 blur-3xl"
             />
             <div
-                class="pointer-events-none absolute -bottom-32 -left-16 h-96 w-96 rounded-full bg-[hsl(214_90%_60%)] opacity-15 blur-3xl"
+                class="pointer-events-none absolute -bottom-32 -left-16 h-96 w-96 rounded-full bg-marketing-amber opacity-15 blur-3xl"
             />
 
-            <div class="relative flex items-center gap-2.5">
-                <div
-                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(168_76%_42%)] font-bold text-[hsl(222_47%_11%)]"
+            <a href="/" class="relative flex items-center gap-2.5">
+                <span
+                    class="flex size-9 items-center justify-center rounded-lg bg-marketing-amber font-bold text-marketing-ink"
                 >
                     C
-                </div>
-                <span class="text-lg font-semibold tracking-tight">CourierOS</span>
-            </div>
+                </span>
+                <span class="text-lg font-semibold tracking-tight"
+                    >CourierOS</span
+                >
+            </a>
 
             <div class="relative max-w-md">
                 <p
-                    class="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-[hsl(168_76%_55%)]"
+                    class="mb-4 text-xs font-semibold tracking-[0.2em] text-marketing-orange uppercase"
                 >
                     Built for Caribbean couriers
                 </p>
-                <h1 class="text-4xl font-semibold leading-[1.1] tracking-tight">
-                    Run your whole shipping operation from one place.
+                <h1 class="text-4xl leading-[1.1] font-semibold tracking-tight">
+                    Run your courier business
+                    <span class="text-marketing-amber">without the chaos.</span>
                 </h1>
                 <p class="mt-5 text-base leading-relaxed text-white/70">
-                    Pre-alerts, package tracking, billing and customer pickups —
-                    on your own branded site. Launch in a day, not months.
+                    Your customers get their own Miami address, send pre-alerts
+                    and track every package on your branded site. You receive,
+                    bill and update them from one dashboard.
                 </p>
 
-                <ul class="mt-8 space-y-3 text-sm text-white/80">
-                    <li class="flex items-center gap-3">
-                        <span class="text-[hsl(168_76%_55%)]">●</span>
-                        Your own website address and branding
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="text-[hsl(168_76%_55%)]">●</span>
-                        Customer accounts, pre-alerts and tracking
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <span class="text-[hsl(168_76%_55%)]">●</span>
-                        Online invoicing and WhatsApp updates
+                <ul class="mt-8 space-y-3 text-sm text-white/85">
+                    <li
+                        v-for="point in [
+                            'Your branded site is live in minutes',
+                            'Customer accounts, pre-alerts and tracking',
+                            'Online payments and WhatsApp updates',
+                        ]"
+                        :key="point"
+                        class="flex items-center gap-3"
+                    >
+                        <span
+                            class="flex size-5 items-center justify-center rounded-full bg-marketing-orange/20 text-marketing-orange"
+                        >
+                            <Check class="size-3.5" aria-hidden="true" />
+                        </span>
+                        {{ point }}
                     </li>
                 </ul>
             </div>
 
-            <div class="relative text-sm text-white/50">
-                Trusted by growing courier businesses across Jamaica.
-            </div>
+            <a
+                v-if="liveDemoUrl"
+                :href="liveDemoUrl"
+                class="relative inline-flex w-fit items-center gap-2 text-sm text-white/60 transition hover:text-white"
+            >
+                Not ready yet? Click around the live demo first
+                <ArrowRight class="size-4" aria-hidden="true" />
+            </a>
         </section>
 
         <!-- Right: the form -->
         <section
-            class="flex items-center justify-center bg-[hsl(40_30%_99%)] px-6 py-12 text-[hsl(222_47%_11%)] lg:px-12"
+            class="flex min-h-screen items-center justify-center bg-marketing-cream px-6 py-12 text-marketing-ink lg:px-12"
         >
             <div class="w-full max-w-md">
+                <!-- Brand mark for phones, where the left panel is hidden -->
+                <a href="/" class="mb-8 flex items-center gap-2.5 lg:hidden">
+                    <span
+                        class="flex size-8 items-center justify-center rounded-lg bg-marketing-ink text-sm font-bold text-marketing-amber"
+                        >C</span
+                    >
+                    <span class="text-lg font-semibold tracking-tight"
+                        >CourierOS</span
+                    >
+                </a>
                 <div class="mb-8">
                     <h2 class="text-2xl font-semibold tracking-tight">
-                        Create your courier platform
+                        Create your courier site
                     </h2>
                     <p class="mt-2 text-sm text-muted-foreground">
                         US${{ pricing.monthly }} a month +
                         <template v-if="pricing.founding_setup">
-                            <span class="line-through">US${{ pricing.setup }}</span>
+                            <span class="line-through"
+                                >US${{ pricing.setup }}</span
+                            >{{ ' ' }}
                             <strong class="text-foreground"
                                 >US${{ pricing.founding_setup }}</strong
                             >
@@ -137,7 +171,7 @@ const props = defineProps<{
                                 class="border-0 focus-visible:ring-0"
                             />
                             <span
-                                class="flex items-center whitespace-nowrap bg-muted px-3 text-sm text-muted-foreground"
+                                class="flex items-center bg-muted px-3 text-sm whitespace-nowrap text-muted-foreground"
                             >
                                 .{{ centralDomain }}
                             </span>
@@ -152,7 +186,7 @@ const props = defineProps<{
                                 id="currency"
                                 name="currency"
                                 required
-                                class="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                                class="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:ring-2 focus:ring-ring focus:outline-none"
                             >
                                 <option
                                     v-for="c in currencies"
@@ -241,7 +275,7 @@ const props = defineProps<{
                     <Button
                         type="submit"
                         :disabled="processing"
-                        class="mt-2 h-11 bg-[hsl(168_76%_38%)] text-white hover:bg-[hsl(168_76%_32%)]"
+                        class="mt-2 h-11 bg-marketing-ink text-marketing-cream shadow-lg shadow-marketing-ink/15 hover:bg-marketing-ink/90"
                     >
                         <Spinner v-if="processing" class="mr-2" />
                         Continue to payment

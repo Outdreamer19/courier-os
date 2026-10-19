@@ -15,14 +15,14 @@ defineProps<{
     <Head title="Checkout is unavailable right now" />
 
     <div
-        class="flex min-h-screen items-center justify-center bg-[hsl(40_30%_99%)] px-6 py-12 text-[hsl(222_47%_11%)]"
+        class="courieros-brand flex min-h-screen items-center justify-center bg-marketing-cream px-6 py-12 font-marketing text-marketing-ink"
     >
         <div class="w-full max-w-lg text-center">
             <h1 class="text-2xl font-semibold tracking-tight">
                 We couldn't start checkout
             </h1>
             <p class="mt-3 text-base leading-relaxed text-muted-foreground">
-                This one's on us, not you — {{ tenant.name }}'s details are
+                This one's on us, not you. {{ tenant.name }}'s details are
                 saved, but payment isn't accepting new signups at the moment.
                 We've logged the problem and will follow up as soon as it's
                 sorted. No charge was made.
@@ -31,7 +31,7 @@ defineProps<{
             <div class="mt-8 flex flex-col items-center gap-3">
                 <a href="/signup">
                     <Button
-                        class="h-11 bg-[hsl(168_76%_38%)] px-8 text-white hover:bg-[hsl(168_76%_32%)]"
+                        class="h-11 bg-marketing-ink px-8 text-marketing-cream hover:bg-marketing-ink/90"
                     >
                         Try again later
                     </Button>

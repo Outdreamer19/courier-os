@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Central;
 use App\Actions\Tenancy\CreateTenant;
 use App\Concerns\PasswordValidationRules;
 use App\Http\Controllers\Controller;
+use App\Support\Demo\DemoMode;
 use App\Support\Pricing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ class TenantSignupController extends Controller
             'currencies' => ['USD', 'JMD'],
             'pricing' => Pricing::summary(),
             'centralDomain' => config('courieros.central_domain'),
+            'liveDemoUrl' => DemoMode::url(),
         ]);
     }
 
