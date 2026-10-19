@@ -4,6 +4,7 @@ const pages = [
     { name: 'Pricing', href: '/pricing' },
     { name: 'Jamaica', href: '/jamaica' },
     { name: 'FAQ', href: '/#faq' },
+    { name: 'Contact', href: '/contact' },
 ];
 
 const utility = [
