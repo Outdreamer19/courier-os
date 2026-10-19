@@ -13,16 +13,23 @@ import PackageJourney from '@/components/marketing/jamaica/PackageJourney.vue';
 import LogoMarquee from '@/components/marketing/LogoMarquee.vue';
 import MarketingFooter from '@/components/marketing/MarketingFooter.vue';
 import MarketingNav from '@/components/marketing/MarketingNav.vue';
+import PeopleSection from '@/components/marketing/PeopleSection.vue';
 import PricingSection from '@/components/marketing/PricingSection.vue';
 import ProductTeaser from '@/components/marketing/ProductTeaser.vue';
 import StackingFeatureCards from '@/components/marketing/StackingFeatureCards.vue';
 import StatsBanner from '@/components/marketing/StatsBanner.vue';
 import TestimonialSwitcher from '@/components/marketing/TestimonialSwitcher.vue';
+import TrustBar from '@/components/marketing/TrustBar.vue';
 import { useScrollReveal } from '@/composables/useScrollReveal';
 
-defineProps<{
+const props = defineProps<{
     pricing: { monthly: number; setup: number; currency: string };
+    salesWhatsapp?: string | null;
 }>();
+
+const salesWhatsappHref = props.salesWhatsapp
+    ? `https://wa.me/${props.salesWhatsapp}?text=${encodeURIComponent("Hi Shane, I'd like to know more about CourierOS.")}`
+    : null;
 
 useScrollReveal();
 </script>
@@ -72,6 +79,8 @@ useScrollReveal();
 
         <HeroSection />
 
+        <TrustBar />
+
         <LogoMarquee :logos="[]" />
 
         <TestimonialSwitcher :testimonials="[]" />
@@ -79,6 +88,8 @@ useScrollReveal();
         <IntegrationsGrid />
 
         <ProductTeaser />
+
+        <PeopleSection :whatsapp-href="salesWhatsappHref" />
 
         <StackingFeatureCards
             eyebrow="Capabilities"
