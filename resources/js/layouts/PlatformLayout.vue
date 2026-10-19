@@ -4,6 +4,7 @@ import {
     Building2,
     ChevronUp,
     Home,
+    Inbox,
     LifeBuoy,
     LogOut,
     Menu,
@@ -23,7 +24,7 @@ type AttentionItem = {
 
 withDefaults(
     defineProps<{
-        current: 'overview' | 'tenants' | 'support';
+        current: 'overview' | 'tenants' | 'leads' | 'support';
         attention?: AttentionItem[];
     }>(),
     { attention: () => [] },
@@ -31,8 +32,11 @@ withDefaults(
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user ?? null);
-const unread = computed(
-    () => Number((page.props as { platform_support_unread?: number }).platform_support_unread ?? 0),
+const unread = computed(() =>
+    Number(
+        (page.props as { platform_support_unread?: number })
+            .platform_support_unread ?? 0,
+    ),
 );
 const mobileOpen = ref(false);
 
@@ -43,6 +47,12 @@ const nav = [
         label: 'Tenants',
         href: '/platform/tenants',
         icon: Building2,
+    },
+    {
+        key: 'leads' as const,
+        label: 'Leads',
+        href: '/platform/leads',
+        icon: Inbox,
     },
     {
         key: 'support' as const,
@@ -113,9 +123,7 @@ const navClass = (active: boolean) =>
                         v-if="attention.length"
                         class="mt-8 flex flex-col gap-1"
                     >
-                        <h3
-                            class="px-2 text-xs/6 font-medium text-zinc-500"
-                        >
+                        <h3 class="px-2 text-xs/6 font-medium text-zinc-500">
                             Needs attention
                         </h3>
                         <Link
@@ -201,10 +209,7 @@ const navClass = (active: boolean) =>
         </div>
 
         <!-- Mobile drawer -->
-        <div
-            v-if="mobileOpen"
-            class="fixed inset-0 z-40 lg:hidden"
-        >
+        <div v-if="mobileOpen" class="fixed inset-0 z-40 lg:hidden">
             <div
                 class="fixed inset-0 bg-black/30"
                 @click="mobileOpen = false"

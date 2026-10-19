@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Central\BillingController;
+use App\Http\Controllers\Central\ContactController;
 use App\Http\Controllers\Central\MarketingController;
 use App\Http\Controllers\Central\PlatformAdmin\DashboardController as PlatformDashboardController;
+use App\Http\Controllers\Central\PlatformAdmin\LeadController as PlatformLeadController;
 use App\Http\Controllers\Central\PlatformAdmin\SupportController as PlatformSupportController;
 use App\Http\Controllers\Central\PlatformAdmin\TenantController as PlatformTenantController;
 use App\Http\Controllers\Central\TenantSignupController;
@@ -38,6 +40,12 @@ Route::name('central.')->group(function () {
         Route::get('pricing', [MarketingController::class, 'pricing'])->name('pricing');
         Route::get('jamaica', [MarketingController::class, 'jamaica'])->name('jamaica');
 
+        // GET /contact is shared with tenant sites (see the tenant
+        // ContactController), so the platform's enquiry form posts here.
+        Route::post('contact/enquiry', [ContactController::class, 'store'])
+            ->middleware('throttle:6,1')
+            ->name('contact.store');
+
         Route::get('signup', [TenantSignupController::class, 'show'])->name('signup.show');
         Route::post('signup', [TenantSignupController::class, 'store'])
             ->middleware('throttle:10,1')
@@ -60,6 +68,9 @@ Route::name('central.')->group(function () {
                 ->middleware('throttle:20,1')
                 ->name('tenants.store');
             Route::patch('tenants/{tenant}', [PlatformTenantController::class, 'update'])->name('tenants.update');
+
+            Route::get('leads', [PlatformLeadController::class, 'index'])->name('leads.index');
+            Route::patch('leads/{lead}', [PlatformLeadController::class, 'update'])->name('leads.update');
 
             Route::get('support', [PlatformSupportController::class, 'index'])->name('support.index');
             Route::post('support', [PlatformSupportController::class, 'store'])
