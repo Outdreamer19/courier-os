@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import BlurRevealText from './BlurRevealText.vue';
 
+defineProps<{ liveDemoUrl?: string | null }>();
+
 /**
  * Home-page bridge into /product: three real screens, side by side, with the
  * one-line reason each matters. The full guided tour lives on the product
@@ -17,7 +19,7 @@ const previews = [
         name: 'customer-package-detail',
         title: 'Customer tracking',
         body: 'A timestamped status timeline your customers check instead of messaging you.',
-        alt: 'A CourierOS package page showing a status timeline from Florida warehouse to pickup',
+        alt: 'A CourierOS customer package page showing the amount due and a status timeline from the Miami warehouse to pickup',
     },
     {
         name: 'admin-reports',
@@ -42,8 +44,8 @@ const previews = [
                     class="mt-2 text-3xl font-semibold tracking-tight text-balance text-marketing-ink sm:text-4xl"
                 />
                 <p class="mt-4 text-base text-pretty text-marketing-ink-muted">
-                    This is a live CourierOS courier business. Everything below
-                    ships on day one.
+                    Taken from Blue Mahoe Express, our live demo courier.
+                    Everything below ships on day one.
                 </p>
             </div>
 
@@ -87,12 +89,21 @@ const previews = [
                 </a>
             </div>
 
-            <div class="mt-10 text-center">
+            <div
+                class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
+            >
                 <a
                     href="/product"
                     class="inline-flex items-center gap-2 rounded-xl bg-marketing-ink px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-marketing-ink/20 transition hover:-translate-y-0.5 hover:shadow-xl"
                 >
                     Take the full product tour →
+                </a>
+                <a
+                    v-if="liveDemoUrl"
+                    :href="liveDemoUrl"
+                    class="inline-flex items-center gap-2 rounded-xl border border-marketing-border bg-white px-8 py-3.5 text-sm font-semibold text-marketing-ink transition hover:-translate-y-0.5 hover:border-marketing-orange/50"
+                >
+                    Try the live demo, no signup
                 </a>
             </div>
         </div>

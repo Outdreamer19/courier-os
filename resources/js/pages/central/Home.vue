@@ -30,6 +30,7 @@ const props = defineProps<{
         founding_setup?: number | null;
     };
     salesWhatsapp?: string | null;
+    liveDemoUrl?: string | null;
 }>();
 
 const salesWhatsappHref = props.salesWhatsapp
@@ -82,7 +83,7 @@ useScrollReveal();
         />
         <MarketingNav />
 
-        <HeroSection />
+        <HeroSection :pricing="pricing" :live-demo-url="liveDemoUrl" />
 
         <TrustBar />
 
@@ -92,7 +93,7 @@ useScrollReveal();
 
         <IntegrationsGrid />
 
-        <ProductTeaser />
+        <ProductTeaser :live-demo-url="liveDemoUrl" />
 
         <PeopleSection :whatsapp-href="salesWhatsappHref" />
 

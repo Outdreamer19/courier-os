@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Form, Head, router } from '@inertiajs/vue3';
+import { Form, Head, router, usePage } from '@inertiajs/vue3';
 import { Lock, Mail } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import DemoLoginPanel from '@/components/DemoLoginPanel.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
@@ -26,9 +27,28 @@ defineProps<{
     canResetPassword: boolean;
 }>();
 
+const page = usePage();
+
+/**
+ * On the public demo courier the one tap panel is the whole page. The email
+ * and password form is not rendered there at all, because visitors kept
+ * reading it as "create an account first". Real couriers' sites are
+ * unaffected: `demo` is only shared on the demo tenant.
+ */
+const isDemo = computed(() => Boolean(page.props.demo));
+const demoLoading = ref<string | null>(null);
+
 // Demo courier only: sign straight in with one of the public demo logins.
-const loginAsDemo = (credentials: { email: string; password: string }) => {
-    router.post(store().url, { ...credentials, remember: false });
+const loginAsDemo = (
+    key: string,
+    credentials: { email: string; password: string },
+) => {
+    demoLoading.value = key;
+    router.post(
+        store().url,
+        { ...credentials, remember: false },
+        { onFinish: () => (demoLoading.value = null) },
+    );
 };
 </script>
 
@@ -42,9 +62,10 @@ const loginAsDemo = (credentials: { email: string; password: string }) => {
         {{ status }}
     </div>
 
-    <DemoLoginPanel @login="loginAsDemo" />
+    <DemoLoginPanel v-if="isDemo" :loading="demoLoading" @login="loginAsDemo" />
 
     <Form
+        v-else
         v-bind="store.form()"
         :reset-on-success="['password']"
         v-slot="{ errors, processing }"
