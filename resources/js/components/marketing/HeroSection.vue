@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { BellRing, ClipboardCheck } from 'lucide-vue-next';
 import { onMounted, onUnmounted, ref } from 'vue';
 import BlurRevealText from './BlurRevealText.vue';
+import FloatingFace from './FloatingFace.vue';
 import HeroBackdrop from './HeroBackdrop.vue';
 import AdminDashboardMock from './jamaica/AdminDashboardMock.vue';
 import CustomerPortalMock from './jamaica/CustomerPortalMock.vue';
@@ -169,6 +171,25 @@ const proofPoints = [
                     {{ tab.label }}
                 </button>
             </div>
+
+            <!-- Real faces either side of the product (wide screens) -->
+            <FloatingFace
+                photo="owner-laptop"
+                alt="A smiling young woman working on a laptop"
+                label="New pre-alert"
+                sublabel="Matched to a package"
+                :icon="ClipboardCheck"
+                class="absolute top-24 -left-24 z-10 hidden xl:block"
+            />
+            <FloatingFace
+                photo="customer-phone"
+                alt="A smiling woman checking her phone outdoors"
+                label="Ready for pickup"
+                sublabel="WhatsApp update sent"
+                :icon="BellRing"
+                :delay="-3"
+                class="absolute -right-24 bottom-10 z-10 hidden xl:block"
+            />
 
             <!-- Browser chrome + live mock -->
             <div

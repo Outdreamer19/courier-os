@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { MapPin, PackageCheck, Plane, Warehouse } from 'lucide-vue-next';
+import {
+    BellRing,
+    LockKeyhole,
+    PackageCheck,
+    Plane,
+    ShieldCheck,
+    Warehouse,
+} from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
@@ -12,10 +19,26 @@ defineProps<{
 
 // Every courier on the platform shares this layout, so nothing here may name
 // a particular one. Colour comes from the courier's brand (useTenantTheme in
-// AuthLayout), the wordmark from the shared `brand` prop, and the artwork is
-// drawn in code: no stock photography that another courier might also wear.
+// AuthLayout) and the wordmark from the shared `brand` prop. The photo is a
+// licensed stock model (public/images/people/CREDITS.md) shown as a happy
+// shopper, never as a named customer, and washed in the courier's colour so
+// it reads as theirs.
 const page = usePage();
 const brandName = computed(() => page.props?.brand?.name ?? 'CourierOS');
+
+const photo = computed(() =>
+    page.component === 'auth/Register'
+        ? {
+              name: 'customer-phone',
+              alt: 'A smiling woman checking her phone outdoors',
+              position: '50% 20%',
+          }
+        : {
+              name: 'customer-smile',
+              alt: 'A smiling woman sitting in her car',
+              position: '50% 30%',
+          },
+);
 
 const steps = [
     { icon: Warehouse, label: 'Shop with your US address' },
@@ -42,23 +65,24 @@ const steps = [
         <div
             class="relative grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-border bg-card shadow-[0_40px_80px_-40px_rgba(15,23,42,0.35)] md:grid-cols-[1.05fr_1fr]"
         >
-            <!-- Left: brand panel, drawn in code -->
+            <!-- Left: a real, smiling face washed in the courier's colour -->
             <div
-                class="relative hidden min-h-[580px] overflow-hidden bg-primary md:block"
+                class="relative hidden min-h-[600px] overflow-hidden bg-primary md:block"
             >
+                <picture>
+                    <source
+                        :srcset="`/images/people/${photo.name}.webp`"
+                        type="image/webp"
+                    />
+                    <img
+                        :src="`/images/people/${photo.name}.jpg`"
+                        :alt="photo.alt"
+                        class="login-photo absolute inset-0 size-full object-cover"
+                        :style="{ objectPosition: photo.position }"
+                    />
+                </picture>
                 <div
-                    class="absolute inset-0 bg-[radial-gradient(120%_80%_at_0%_0%,rgba(255,255,255,0.22),transparent_60%),radial-gradient(90%_70%_at_100%_100%,rgba(0,0,0,0.28),transparent_60%)]"
-                    aria-hidden="true"
-                />
-                <div
-                    class="absolute inset-0 opacity-[0.10]"
-                    style="
-                        background-image: radial-gradient(
-                            white 1.2px,
-                            transparent 1.2px
-                        );
-                        background-size: 22px 22px;
-                    "
+                    class="absolute inset-0 bg-gradient-to-t from-primary from-15% via-primary/55 via-50% to-black/25"
                     aria-hidden="true"
                 />
 
@@ -71,99 +95,37 @@ const steps = [
                         >
                             <AppLogoIcon class="size-8" />
                         </span>
-                        <span class="text-xl font-bold tracking-tight">
+                        <span
+                            class="text-xl font-bold tracking-tight drop-shadow"
+                        >
                             {{ brandName }}
                         </span>
                     </Link>
 
-                    <!-- Route artwork: a plane rides the dashed line home -->
-                    <div class="relative mx-auto my-6 w-full max-w-sm">
-                        <svg
-                            viewBox="0 0 320 150"
-                            class="w-full overflow-visible"
-                            fill="none"
-                            aria-hidden="true"
+                    <!-- A notification the shopper is smiling about -->
+                    <div
+                        class="login-float ml-auto flex max-w-[16rem] items-center gap-3 rounded-2xl bg-white/95 p-3 text-foreground shadow-2xl backdrop-blur"
+                    >
+                        <span
+                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"
                         >
-                            <path
-                                id="login-route"
-                                d="M24 118 C 90 20, 220 10, 296 92"
-                                stroke="currentColor"
-                                stroke-opacity="0.55"
-                                stroke-width="2.5"
-                                stroke-dasharray="6 8"
-                                stroke-linecap="round"
-                                class="route-dash"
-                            />
-                            <circle cx="24" cy="118" r="7" fill="white" />
-                            <circle
-                                cx="24"
-                                cy="118"
-                                r="13"
-                                stroke="white"
-                                stroke-opacity="0.35"
-                                stroke-width="2"
-                            />
-                            <circle
-                                cx="296"
-                                cy="92"
-                                r="7"
-                                class="fill-brand-accent"
-                            />
-                            <circle
-                                cx="296"
-                                cy="92"
-                                r="14"
-                                class="stroke-brand-accent"
-                                stroke-opacity="0.45"
-                                stroke-width="2"
+                            <BellRing class="login-ring size-5" />
+                        </span>
+                        <span class="min-w-0">
+                            <span class="block text-sm font-semibold"
+                                >Your package is ready</span
                             >
-                                <animate
-                                    attributeName="r"
-                                    values="10;18;10"
-                                    dur="2.4s"
-                                    repeatCount="indefinite"
-                                />
-                                <animate
-                                    attributeName="stroke-opacity"
-                                    values="0.6;0;0.6"
-                                    dur="2.4s"
-                                    repeatCount="indefinite"
-                                />
-                            </circle>
-                            <g>
-                                <animateMotion
-                                    dur="5.5s"
-                                    repeatCount="indefinite"
-                                    rotate="auto"
-                                    keyPoints="0;1"
-                                    keyTimes="0;1"
-                                    calcMode="spline"
-                                    keySplines="0.45 0 0.55 1"
-                                >
-                                    <mpath href="#login-route" />
-                                </animateMotion>
-                                <circle r="15" fill="white" />
-                                <path
-                                    d="M-7 0 L7 0 M7 0 L2 -5 M7 0 L2 5"
-                                    class="stroke-primary"
-                                    stroke-width="2.4"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
-                            </g>
-                        </svg>
-                        <div
-                            class="mt-1 flex justify-between text-[11px] font-semibold tracking-[0.18em] uppercase opacity-80"
-                        >
-                            <span>US warehouse</span>
-                            <span class="flex items-center gap-1">
-                                <MapPin class="size-3.5" /> Home
-                            </span>
-                        </div>
+                            <span
+                                class="block truncate text-xs text-muted-foreground"
+                                >Collect it today or book delivery</span
+                            >
+                        </span>
                     </div>
 
                     <div class="space-y-5">
-                        <p class="text-[28px] leading-tight font-bold">
+                        <p
+                            class="text-[28px] leading-tight font-bold drop-shadow-sm"
+                        >
                             Shop the world.<br />
                             We'll bring it home.
                         </p>
@@ -171,10 +133,10 @@ const steps = [
                             <li
                                 v-for="step in steps"
                                 :key="step.label"
-                                class="flex items-center gap-3 text-sm font-medium opacity-90"
+                                class="flex items-center gap-3 text-sm font-medium"
                             >
                                 <span
-                                    class="flex size-8 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/25"
+                                    class="flex size-8 items-center justify-center rounded-lg bg-white/15 ring-1 ring-white/30 backdrop-blur-sm"
                                 >
                                     <component :is="step.icon" class="size-4" />
                                 </span>
@@ -217,8 +179,77 @@ const steps = [
                     </div>
 
                     <slot />
+
+                    <!-- Reassurance, kept to things that are simply true -->
+                    <ul
+                        class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-border pt-6 text-xs text-muted-foreground md:justify-start"
+                    >
+                        <li class="flex items-center gap-1.5">
+                            <LockKeyhole class="size-3.5 text-emerald-600" />
+                            Encrypted connection
+                        </li>
+                        <li class="flex items-center gap-1.5">
+                            <ShieldCheck class="size-3.5 text-emerald-600" />
+                            Your details are never shared
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+@keyframes login-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes login-ring {
+    0%,
+    80%,
+    100% {
+        transform: rotate(0);
+    }
+    86% {
+        transform: rotate(-16deg);
+    }
+    92% {
+        transform: rotate(12deg);
+    }
+}
+
+@keyframes login-zoom {
+    from {
+        transform: scale(1.08);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.login-float {
+    animation: login-float 5s ease-in-out infinite;
+}
+
+.login-ring {
+    animation: login-ring 3.5s ease-in-out infinite;
+}
+
+.login-photo {
+    animation: login-zoom 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-float,
+    .login-ring,
+    .login-photo {
+        animation: none;
+    }
+}
+</style>

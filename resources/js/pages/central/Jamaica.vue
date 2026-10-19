@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import {
+    BellRing,
     Check,
     ChevronDown,
     ExternalLink,
@@ -12,6 +13,7 @@ import {
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import BlurRevealText from '@/components/marketing/BlurRevealText.vue';
 import FeatureShowcase from '@/components/marketing/FeatureShowcase.vue';
+import FloatingFace from '@/components/marketing/FloatingFace.vue';
 import AdminDashboardMock from '@/components/marketing/jamaica/AdminDashboardMock.vue';
 import BrandSwitcherMock from '@/components/marketing/jamaica/BrandSwitcherMock.vue';
 import ChatPileUp from '@/components/marketing/jamaica/ChatPileUp.vue';
@@ -20,7 +22,9 @@ import PackageJourney from '@/components/marketing/jamaica/PackageJourney.vue';
 import RatesMock from '@/components/marketing/jamaica/RatesMock.vue';
 import MarketingFooter from '@/components/marketing/MarketingFooter.vue';
 import MarketingNav from '@/components/marketing/MarketingNav.vue';
+import PeopleSection from '@/components/marketing/PeopleSection.vue';
 import StackingFeatureCards from '@/components/marketing/StackingFeatureCards.vue';
+import TrustBar from '@/components/marketing/TrustBar.vue';
 import {
     Collapsible,
     CollapsibleContent,
@@ -322,9 +326,19 @@ const openFaq = ref<number | null>(0);
 
                 <div class="relative">
                     <PackageJourney />
+                    <FloatingFace
+                        photo="customer-smile"
+                        alt="A smiling woman sitting in her car"
+                        label="Package ready"
+                        sublabel="Sent to her on WhatsApp"
+                        :icon="BellRing"
+                        class="absolute -bottom-16 left-6 hidden sm:block"
+                    />
                 </div>
             </div>
         </section>
+
+        <TrustBar />
 
         <!-- 2. Pain -->
         <section class="bg-marketing-ink py-20 text-white sm:py-28">
@@ -441,6 +455,11 @@ const openFaq = ref<number | null>(0);
                 </template>
             </FeatureShowcase>
         </StackingFeatureCards>
+
+        <PeopleSection
+            :whatsapp-href="demoLink"
+            @whatsapp="onWhatsApp('founder')"
+        />
 
         <!-- 4. Live demo -->
         <section

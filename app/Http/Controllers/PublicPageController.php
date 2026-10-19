@@ -49,6 +49,7 @@ class PublicPageController extends Controller
                     'setup' => 349,
                     'currency' => 'USD',
                 ],
+                'salesWhatsapp' => (string) config('courieros.marketing.sales_whatsapp') ?: null,
             ]);
         }
 
