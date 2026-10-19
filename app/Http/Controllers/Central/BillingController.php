@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Webhooks\StripeWebhookController;
 use App\Models\Tenant;
 use App\Support\Pricing;
 use Illuminate\Http\Request;
@@ -29,9 +30,14 @@ class BillingController extends Controller
      * this does NOT fix Stripe being unconfigured, it just fails politely
      * until it is.
      */
-    public function checkout(Request $request, Tenant $tenant): SymfonyResponse|Response
+    public function checkout(Request $request, Tenant $tenant, StripeWebhookController $stripe): SymfonyResponse|Response
     {
-        abort_unless($tenant->isPending(), 403, 'This account has already been set up.');
+        // Never start a second Checkout for a courier that already paid.
+        $this->syncIfAlreadyPaid($tenant, $stripe);
+
+        if (! $tenant->isPending()) {
+            return Inertia::location($tenant->url('/login'));
+        }
 
         $monthlyPrice = (string) config('services.stripe.price_monthly');
         $setupPrice = $this->setupPrice();
@@ -85,8 +91,29 @@ class BillingController extends Controller
         return (string) config('services.stripe.price_setup');
     }
 
-    public function success(Request $request, Tenant $tenant): Response
+    public function success(Request $request, Tenant $tenant, StripeWebhookController $stripe): SymfonyResponse|Response
     {
+        $sessionId = (string) $request->query('session_id');
+
+        if ($tenant->isPending() && $sessionId !== '') {
+            try {
+                $stripe->confirmCheckout($tenant, $sessionId);
+            } catch (\Throwable $e) {
+                // Stripe unreachable or a bad session id: fall through and
+                // let the webhook activate the tenant when it arrives.
+                report($e);
+            }
+
+            $tenant->refresh();
+        }
+
+        // Still not confirmed (no session id, or payment not settled yet):
+        // send them back to the finish page rather than to a site that would
+        // only bounce them there anyway.
+        if ($tenant->isPending()) {
+            return Inertia::location(route('central.billing.finish', ['tenant' => $tenant->subdomain]).'?status=processing');
+        }
+
         return Inertia::render('central/BillingSuccess', [
             'tenant' => [
                 'name' => $tenant->name,
@@ -117,8 +144,10 @@ class BillingController extends Controller
      * straight to payment. Anyone else who lands here sees the same page,
      * which only names the business and offers checkout for it.
      */
-    public function finish(Tenant $tenant): SymfonyResponse|Response
+    public function finish(Request $request, Tenant $tenant, StripeWebhookController $stripe): SymfonyResponse|Response
     {
+        $this->syncIfAlreadyPaid($tenant, $stripe);
+
         if (! $tenant->isPending()) {
             return Inertia::location($tenant->url('/login'));
         }
@@ -130,7 +159,28 @@ class BillingController extends Controller
                 'checkout_url' => route('central.billing.checkout', ['tenant' => $tenant->id]),
             ],
             'pricing' => Pricing::summary(),
+            // Back from Checkout but Stripe has not confirmed the payment yet.
+            'processing' => $request->query('status') === 'processing',
         ]);
+    }
+
+    /**
+     * If Stripe already has an active subscription for this tenant (the
+     * webhook was missed), record it and activate the tenant.
+     */
+    private function syncIfAlreadyPaid(Tenant $tenant, StripeWebhookController $stripe): void
+    {
+        if (! $tenant->isPending() || ! $tenant->stripe_id) {
+            return;
+        }
+
+        try {
+            $stripe->syncExistingSubscription($tenant);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        $tenant->refresh();
     }
 
     private function successUrl(Tenant $tenant): string
@@ -147,9 +197,8 @@ class BillingController extends Controller
 
     private function tenantUrl(Tenant $tenant): string
     {
-        $scheme = request()->getScheme();
-        $central = config('courieros.central_domain');
-
-        return "{$scheme}://{$tenant->subdomain}.{$central}";
+        // Same scheme rule as every other cross-host link, and lands on the
+        // login page since sessions do not carry across hosts.
+        return $tenant->url('/login');
     }
 }

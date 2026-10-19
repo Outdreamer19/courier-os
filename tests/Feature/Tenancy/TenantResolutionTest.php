@@ -112,6 +112,26 @@ class TenantResolutionTest extends TestCase
             ->assertRedirect('https://paid.courieros.co/login');
     }
 
+    public function test_success_page_waits_for_confirmation_before_sending_owner_to_their_site(): void
+    {
+        $tenant = Tenant::factory()->pending()->create(['subdomain' => 'unpaid']);
+
+        // No session id to confirm with: back to the finish page, flagged as processing.
+        $this->get('http://courieros.co/billing/success/'.$tenant->id)
+            ->assertRedirect('https://courieros.co/billing/finish/unpaid?status=processing');
+    }
+
+    public function test_success_page_links_a_paid_owner_to_their_login(): void
+    {
+        $tenant = Tenant::factory()->create(['subdomain' => 'paid']);
+
+        $this->get('http://courieros.co/billing/success/'.$tenant->id)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('central/BillingSuccess')
+                ->where('tenant.portal_url', 'https://paid.courieros.co/login'));
+    }
+
     public function test_custom_domain_binds_the_tenant(): void
     {
         Tenant::factory()->create([
