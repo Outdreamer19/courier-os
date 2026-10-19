@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Central;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use App\Support\Pricing;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class BillingController extends Controller
 {
@@ -29,7 +29,7 @@ class BillingController extends Controller
      * this does NOT fix Stripe being unconfigured, it just fails politely
      * until it is.
      */
-    public function checkout(Request $request, Tenant $tenant): RedirectResponse|Response
+    public function checkout(Request $request, Tenant $tenant): SymfonyResponse|Response
     {
         abort_unless($tenant->isPending(), 403, 'This account has already been set up.');
 
@@ -59,7 +59,10 @@ class BillingController extends Controller
             ]);
         }
 
-        return redirect($checkout->url);
+        // The signup form posts over Inertia's XHR and lands here via its
+        // redirect. An XHR cannot follow a redirect onto checkout.stripe.com
+        // (CORS), so ask Inertia for a full page visit instead.
+        return Inertia::location($checkout->url);
     }
 
     /**

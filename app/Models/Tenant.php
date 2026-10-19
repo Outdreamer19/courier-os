@@ -118,9 +118,24 @@ class Tenant extends Model
      */
     public function url(string $path = '/'): string
     {
-        $scheme = config('app.env') === 'local' ? 'http' : 'https';
+        return self::urlScheme().'://'.$this->host().'/'.ltrim($path, '/');
+    }
 
-        return $scheme.'://'.$this->host().'/'.ltrim($path, '/');
+    /**
+     * Scheme for links between hosts (central to tenant, demo links).
+     *
+     * Always https outside local dev. Locally it follows the current request,
+     * because Herd can serve the site either way: hard coding http sent a
+     * login from https://courieros.test to http://{tenant}.courieros.test,
+     * which the browser blocked as mixed content.
+     */
+    public static function urlScheme(): string
+    {
+        if (config('app.env') !== 'local') {
+            return 'https';
+        }
+
+        return app()->runningInConsole() || ! request()->isSecure() ? 'http' : 'https';
     }
 
     /**

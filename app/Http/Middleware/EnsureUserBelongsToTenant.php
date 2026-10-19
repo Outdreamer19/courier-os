@@ -8,6 +8,7 @@ use App\Support\Tenancy\TenantManager;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -85,6 +86,11 @@ class EnsureUserBelongsToTenant
             throw new HttpException(Response::HTTP_FORBIDDEN, 'You do not have access to this courier account.');
         }
 
-        return redirect()->away($tenant->url('/login'));
+        // Inertia::location rather than redirect()->away(): this often runs
+        // on the Inertia XHR that submits the login form, and an XHR cannot
+        // follow a redirect to another host. Inertia::location answers 409 +
+        // X-Inertia-Location for those so the browser does a full page visit,
+        // and a normal redirect for everything else.
+        return Inertia::location($tenant->url('/login'));
     }
 }
