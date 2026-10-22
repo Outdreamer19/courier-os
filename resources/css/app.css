@@ -432,6 +432,37 @@
     --sidebar: hsl(0 0% 100%);
 }
 
+/*
+  CourierOS platform brand, as a scope rather than a theme.
+
+  Platform pages that reuse the shadcn components (signup, billing results,
+  the login page on courieros.co) wrap themselves in `.courieros-brand` so
+  buttons, inputs and focus rings pick up the marketing palette: warm ink,
+  cream and orange. Without it they fell back to the tenant default navy, or
+  to hand-rolled teal, neither of which is CourierOS.
+*/
+.courieros-brand {
+    --background: var(--marketing-cream);
+    --foreground: var(--marketing-ink);
+    --card: #ffffff;
+    --card-foreground: var(--marketing-ink);
+    --popover: #ffffff;
+    --popover-foreground: var(--marketing-ink);
+    --primary: var(--marketing-ink);
+    --primary-foreground: var(--marketing-cream);
+    --secondary: #f6f2e8;
+    --secondary-foreground: var(--marketing-ink);
+    --accent: #f6f2e8;
+    --accent-foreground: var(--marketing-ink);
+    --muted: var(--marketing-eggshell);
+    --muted-foreground: rgba(79, 77, 73, 0.88);
+    --border: rgba(33, 13, 2, 0.1);
+    --input: rgba(33, 13, 2, 0.16);
+    --ring: var(--marketing-orange);
+    --brand-accent: var(--marketing-orange);
+    --brand-accent-foreground: #ffffff;
+}
+
 .dark {
     --background: hsl(224 60% 9%);
     --foreground: hsl(40 30% 96%);

@@ -6,6 +6,7 @@ use App\Models\WarehouseAddress;
 use App\Services\Platform\PlatformSupportService;
 use App\Support\Demo\DemoMode;
 use App\Support\Tenancy\TenantConfig;
+use App\Support\Tenancy\TenantManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
@@ -29,6 +30,7 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
         $brand = app(TenantConfig::class);
+        $isPlatform = ! app(TenantManager::class)->hasTenant();
 
         return [
             ...parent::share($request),
@@ -70,6 +72,10 @@ class HandleInertiaRequests extends Middleware
                 'accent_color' => $brand->brandAccentColor(),
                 'default_rate_per_lb' => $brand->defaultRatePerLb(),
             ],
+            // True on courieros.co itself (no courier bound). Lets shared
+            // layouts such as the login page wear CourierOS colours there
+            // instead of the default tenant theme.
+            'is_platform' => $isPlatform,
             'warehouse' => fn () => $this->activeWarehouseSnapshot(),
             'demo' => DemoMode::sharedProps(),
             'flash' => [

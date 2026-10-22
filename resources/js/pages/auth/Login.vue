@@ -36,6 +36,7 @@ const page = usePage();
  * unaffected: `demo` is only shared on the demo tenant.
  */
 const isDemo = computed(() => Boolean(page.props.demo));
+const isPlatform = computed(() => Boolean(page.props.is_platform));
 const demoLoading = ref<string | null>(null);
 
 // Demo courier only: sign straight in with one of the public demo logins.
@@ -141,7 +142,16 @@ const loginAsDemo = (
             </Button>
         </div>
 
-        <div class="text-center text-sm text-muted-foreground">
+        <div
+            v-if="isPlatform"
+            class="text-center text-sm text-muted-foreground"
+        >
+            New to CourierOS?
+            <TextLink href="/signup" :tabindex="5"
+                >Start your courier site</TextLink
+            >
+        </div>
+        <div v-else class="text-center text-sm text-muted-foreground">
             Don't have an account?
             <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
         </div>

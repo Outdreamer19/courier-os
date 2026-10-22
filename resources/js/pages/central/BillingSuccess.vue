@@ -11,14 +11,14 @@ defineProps<{
     <Head title="You're all set" />
 
     <div
-        class="flex min-h-screen items-center justify-center bg-[hsl(222_47%_11%)] px-6 py-12 text-white"
+        class="courieros-brand flex min-h-screen items-center justify-center bg-marketing-ink px-6 py-12 font-marketing text-white"
     >
         <div class="w-full max-w-lg text-center">
             <div
-                class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(168_76%_42%)]/15"
+                class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-marketing-orange/15"
             >
                 <svg
-                    class="h-8 w-8 text-[hsl(168_76%_55%)]"
+                    class="h-8 w-8 text-marketing-orange"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -42,7 +42,7 @@ defineProps<{
             <div class="mt-8">
                 <a :href="tenant.portal_url">
                     <Button
-                        class="h-11 bg-[hsl(168_76%_38%)] px-8 text-white hover:bg-[hsl(168_76%_32%)]"
+                        class="h-11 bg-marketing-amber px-8 font-semibold text-marketing-ink hover:bg-marketing-amber/90"
                     >
                         Go to your dashboard
                     </Button>

@@ -78,6 +78,60 @@ class TenantResolutionTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_unpaid_tenant_is_sent_to_finish_payment(): void
+    {
+        Tenant::factory()->pending()->create(['subdomain' => 'unpaid']);
+
+        $this->get('http://unpaid.courieros.co/_tenant-probe')
+            ->assertRedirect('https://courieros.co/billing/finish/unpaid');
+
+        // Inertia XHRs (e.g. a login submit) get a full page visit instead.
+        $this->withHeaders(['X-Inertia' => 'true'])
+            ->get('http://unpaid.courieros.co/_tenant-probe')
+            ->assertStatus(409)
+            ->assertHeader('X-Inertia-Location', 'https://courieros.co/billing/finish/unpaid');
+    }
+
+    public function test_finish_page_offers_checkout_for_an_unpaid_tenant(): void
+    {
+        $tenant = Tenant::factory()->pending()->create(['subdomain' => 'unpaid', 'name' => 'Unpaid Courier']);
+
+        $this->get('http://courieros.co/billing/finish/unpaid')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('central/BillingFinish')
+                ->where('tenant.name', 'Unpaid Courier')
+                ->where('tenant.checkout_url', route('central.billing.checkout', ['tenant' => $tenant->id])));
+    }
+
+    public function test_finish_page_sends_a_paid_tenant_to_its_login(): void
+    {
+        Tenant::factory()->create(['subdomain' => 'paid']);
+
+        $this->get('http://courieros.co/billing/finish/paid')
+            ->assertRedirect('https://paid.courieros.co/login');
+    }
+
+    public function test_success_page_waits_for_confirmation_before_sending_owner_to_their_site(): void
+    {
+        $tenant = Tenant::factory()->pending()->create(['subdomain' => 'unpaid']);
+
+        // No session id to confirm with: back to the finish page, flagged as processing.
+        $this->get('http://courieros.co/billing/success/'.$tenant->id)
+            ->assertRedirect('https://courieros.co/billing/finish/unpaid?status=processing');
+    }
+
+    public function test_success_page_links_a_paid_owner_to_their_login(): void
+    {
+        $tenant = Tenant::factory()->create(['subdomain' => 'paid']);
+
+        $this->get('http://courieros.co/billing/success/'.$tenant->id)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('central/BillingSuccess')
+                ->where('tenant.portal_url', 'https://paid.courieros.co/login'));
+    }
+
     public function test_custom_domain_binds_the_tenant(): void
     {
         Tenant::factory()->create([

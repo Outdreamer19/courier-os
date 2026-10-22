@@ -7,6 +7,7 @@ use App\Support\Tenancy\CentralDomain;
 use App\Support\Tenancy\TenantManager;
 use Closure;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -66,8 +67,22 @@ class ResolveTenant
         return $this->bindAndContinue($tenant, $request, $next);
     }
 
+    private function platformUrl(string $path): string
+    {
+        return Tenant::urlScheme().'://'.$this->central->host().$path;
+    }
+
     private function bindAndContinue(Tenant $tenant, Request $request, Closure $next): Response
     {
+        // Signed up but not paid yet: send them to finish payment on the
+        // platform rather than a dead-end 403. Inertia::location so it also
+        // works when the request is an Inertia XHR (e.g. a login submit).
+        if ($tenant->isPending()) {
+            return Inertia::location(
+                $this->platformUrl('/billing/finish/'.$tenant->subdomain)
+            );
+        }
+
         if (! $tenant->isActive()) {
             throw new HttpException(
                 Response::HTTP_FORBIDDEN,

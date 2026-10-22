@@ -35,6 +35,10 @@ const description = computed(() =>
         : (props.description ?? ''),
 );
 
+// courieros.co itself: no courier is bound, so dress the page in the
+// CourierOS palette rather than the default tenant navy.
+const isPlatform = computed(() => Boolean(page.props.is_platform));
+
 const layout = computed(() =>
     SPLIT_LAYOUT_PAGES.includes(page.component)
         ? AuthLoginSplitLayout
@@ -45,7 +49,9 @@ const layout = computed(() =>
 <template>
     <DemoBanner />
     <Toaster richColors position="top-center" />
-    <component :is="layout" :title="title" :description="description">
-        <slot />
-    </component>
+    <div :class="isPlatform ? 'courieros-brand font-marketing' : 'contents'">
+        <component :is="layout" :title="title" :description="description">
+            <slot />
+        </component>
+    </div>
 </template>

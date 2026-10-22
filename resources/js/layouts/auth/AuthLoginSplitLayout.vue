@@ -2,7 +2,10 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import {
     BellRing,
+    ClipboardCheck,
+    LineChart,
     LockKeyhole,
+    MessageCircle,
     PackageCheck,
     Plane,
     ShieldCheck,
@@ -26,25 +29,58 @@ defineProps<{
 const page = usePage();
 const brandName = computed(() => page.props?.brand?.name ?? 'CourierOS');
 
+// courieros.co itself: the people logging in here run courier businesses,
+// so the panel talks to owners and wears the CourierOS palette (the
+// `.courieros-brand` scope set in AuthLayout maps primary to CourierOS ink).
+const isPlatform = computed(() => Boolean(page.props.is_platform));
+
 const photo = computed(() =>
-    page.component === 'auth/Register'
+    isPlatform.value
         ? {
-              name: 'customer-phone',
-              alt: 'A smiling woman checking her phone outdoors',
-              position: '50% 20%',
-          }
-        : {
-              name: 'customer-smile',
-              alt: 'A smiling woman sitting in her car',
+              name: 'owner-laptop',
+              alt: 'A smiling courier business owner working on a laptop',
               position: '50% 30%',
-          },
+          }
+        : page.component === 'auth/Register'
+          ? {
+                name: 'customer-phone',
+                alt: 'A smiling woman checking her phone outdoors',
+                position: '50% 20%',
+            }
+          : {
+                name: 'customer-smile',
+                alt: 'A smiling woman sitting in her car',
+                position: '50% 30%',
+            },
 );
 
-const steps = [
-    { icon: Warehouse, label: 'Shop with your US address' },
-    { icon: Plane, label: 'We fly it home' },
-    { icon: PackageCheck, label: 'Collect or get it delivered' },
-];
+const steps = computed(() =>
+    isPlatform.value
+        ? [
+              { icon: ClipboardCheck, label: 'Pre-alerts matched to packages' },
+              { icon: MessageCircle, label: 'Customers updated automatically' },
+              { icon: LineChart, label: 'Get paid and see your numbers' },
+          ]
+        : [
+              { icon: Warehouse, label: 'Shop with your US address' },
+              { icon: Plane, label: 'We fly it home' },
+              { icon: PackageCheck, label: 'Collect or get it delivered' },
+          ],
+);
+
+const notice = computed(() =>
+    isPlatform.value
+        ? {
+              icon: ClipboardCheck,
+              title: 'New pre-alert matched',
+              body: 'Customer notified on WhatsApp',
+          }
+        : {
+              icon: BellRing,
+              title: 'Your package is ready',
+              body: 'Collect it today or book delivery',
+          },
+);
 </script>
 
 <template>
@@ -63,7 +99,7 @@ const steps = [
         />
 
         <div
-            class="relative grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-border bg-card shadow-[0_40px_80px_-40px_rgba(15,23,42,0.35)] md:grid-cols-[1.05fr_1fr]"
+            class="relative grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-border bg-card shadow-[0_40px_80px_-40px_rgba(33,13,2,0.35)] md:grid-cols-[1.05fr_1fr]"
         >
             <!-- Left: a real, smiling face washed in the courier's colour -->
             <div
@@ -91,6 +127,13 @@ const steps = [
                 >
                     <Link :href="home()" class="flex items-center gap-3">
                         <span
+                            v-if="isPlatform"
+                            class="flex size-12 items-center justify-center rounded-2xl bg-marketing-amber text-xl font-bold text-marketing-ink shadow-lg shadow-black/20"
+                        >
+                            C
+                        </span>
+                        <span
+                            v-else
                             class="flex size-12 items-center justify-center rounded-2xl bg-white shadow-lg shadow-black/10"
                         >
                             <AppLogoIcon class="size-8" />
@@ -107,17 +150,25 @@ const steps = [
                         class="login-float ml-auto flex max-w-[16rem] items-center gap-3 rounded-2xl bg-white/95 p-3 text-foreground shadow-2xl backdrop-blur"
                     >
                         <span
-                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"
+                            class="flex size-10 shrink-0 items-center justify-center rounded-xl text-primary-foreground"
+                            :class="
+                                isPlatform
+                                    ? 'bg-marketing-orange'
+                                    : 'bg-primary'
+                            "
                         >
-                            <BellRing class="login-ring size-5" />
+                            <component
+                                :is="notice.icon"
+                                class="login-ring size-5"
+                            />
                         </span>
                         <span class="min-w-0">
-                            <span class="block text-sm font-semibold"
-                                >Your package is ready</span
-                            >
+                            <span class="block text-sm font-semibold">{{
+                                notice.title
+                            }}</span>
                             <span
                                 class="block truncate text-xs text-muted-foreground"
-                                >Collect it today or book delivery</span
+                                >{{ notice.body }}</span
                             >
                         </span>
                     </div>
@@ -126,8 +177,14 @@ const steps = [
                         <p
                             class="text-[28px] leading-tight font-bold drop-shadow-sm"
                         >
-                            Shop the world.<br />
-                            We'll bring it home.
+                            <template v-if="isPlatform">
+                                Your courier business,<br />
+                                all in one place.
+                            </template>
+                            <template v-else>
+                                Shop the world.<br />
+                                We'll bring it home.
+                            </template>
                         </p>
                         <ul class="grid gap-2.5">
                             <li
@@ -154,7 +211,12 @@ const steps = [
                     :href="home()"
                     class="mb-8 flex items-center justify-center gap-2.5 md:hidden"
                 >
-                    <AppLogoIcon class="size-9" />
+                    <span
+                        v-if="isPlatform"
+                        class="flex size-9 items-center justify-center rounded-lg bg-marketing-ink text-base font-bold text-marketing-amber"
+                        >C</span
+                    >
+                    <AppLogoIcon v-else class="size-9" />
                     <span
                         class="text-lg font-bold tracking-tight text-foreground"
                     >

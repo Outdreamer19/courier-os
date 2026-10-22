@@ -31,7 +31,7 @@ class DemoMode
             return null;
         }
 
-        $scheme = app()->environment('local') ? 'http' : 'https';
+        $scheme = Tenant::urlScheme();
 
         return $scheme.'://'.$subdomain.'.'.config('courieros.central_domain').'/'.ltrim($path, '/');
     }
@@ -89,7 +89,7 @@ class DemoMode
         }
 
         $central = (string) config('courieros.central_domain');
-        $scheme = app()->environment('local') ? 'http' : 'https';
+        $scheme = Tenant::urlScheme();
 
         return [
             'password' => (string) config('courieros.demo.password'),
