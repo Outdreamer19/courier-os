@@ -65,6 +65,7 @@ export type BrandConfig = {
     primary_color: string | null;
     accent_color: string | null;
     default_rate_per_lb: number;
+    whatsapp_url?: string | null;
 };
 
 /** Present only on the public demo courier (demo.courieros.co). */

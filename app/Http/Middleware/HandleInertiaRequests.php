@@ -7,6 +7,7 @@ use App\Services\Platform\PlatformSupportService;
 use App\Support\Demo\DemoMode;
 use App\Support\Tenancy\TenantConfig;
 use App\Support\Tenancy\TenantManager;
+use App\Support\WhatsappLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
@@ -71,6 +72,12 @@ class HandleInertiaRequests extends Middleware
                 'primary_color' => $brand->brandPrimaryColor(),
                 'accent_color' => $brand->brandAccentColor(),
                 'default_rate_per_lb' => $brand->defaultRatePerLb(),
+                // Public click-to-chat link for the courier's own WhatsApp,
+                // used on their public site. Null when they have not set one.
+                'whatsapp_url' => WhatsappLink::forPhone(
+                    $brand->whatsappNumber(),
+                    'Hi '.$brand->name().', I have a question about shipping.',
+                ),
             ],
             // True on courieros.co itself (no courier bound). Lets shared
             // layouts such as the login page wear CourierOS colours there
