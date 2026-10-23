@@ -97,10 +97,9 @@ watch(weight, (value) => {
                 Estimate your shipping cost
             </h1>
             <p class="mt-4 max-w-2xl text-brand-cream/80">
-                Our MVP rate is a single shipping method. Enter the weight of
-                your package to see the estimated cost. Final charges are
-                confirmed by our team after the package is processed at the
-                Florida warehouse.
+                Enter the weight of your package to see what it will cost.
+                We weigh every package at our US warehouse and confirm the
+                final amount before you pay.
             </p>
         </div>
     </section>
@@ -112,9 +111,8 @@ watch(weight, (value) => {
                     <CardHeader>
                         <CardTitle>Shipping calculator</CardTitle>
                         <CardDescription>
-                            Estimates use the active database rate, not a
-                            hard-coded value, so admin changes appear here
-                            automatically.
+                            Enter a weight to see an estimate at today's
+                            rate.
                         </CardDescription>
                     </CardHeader>
                     <CardContent class="space-y-6">
@@ -197,8 +195,7 @@ watch(weight, (value) => {
                                 props.rate?.name ?? 'Standard Air Shipping'
                             }}</CardTitle>
                             <CardDescription>
-                                One shipping method for MVP — weight tiers are
-                                wired up and ready to be expanded.
+                                Our standard air rate, charged by weight.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -256,8 +253,8 @@ watch(weight, (value) => {
                                 >Weight tiers</CardTitle
                             >
                             <CardDescription>
-                                Active rates from the database — managed in
-                                admin.
+                                What you pay depends on how much your package
+                                weighs.
                             </CardDescription>
                         </CardHeader>
                         <CardContent

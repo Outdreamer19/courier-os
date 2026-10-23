@@ -223,6 +223,21 @@
         @apply text-xs font-semibold tracking-[0.18em] text-brand-green-soft uppercase;
     }
 
+    /* Tenant public site: colours come from PublicLayout's scoped vars */
+    .site-btn-accent {
+        background-color: var(--site-accent, var(--brand-gold));
+        color: var(--site-accent-on, #111418);
+        transition: filter 150ms ease;
+    }
+
+    .site-btn-accent:hover {
+        filter: brightness(1.06);
+    }
+
+    .site-eyebrow {
+        @apply text-sm font-semibold text-brand-green;
+    }
+
     @keyframes marketing-marquee {
         from {
             transform: translateX(0);

@@ -1,248 +1,397 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
-    CircleCheck,
-    Clipboard,
+    ArrowRight,
+    Bell,
+    Check,
+    ChevronDown,
+    FileText,
+    MapPin,
+    MessageCircle,
     PackageCheck,
-    Receipt,
+    Plane,
+    ShoppingBag,
     UserPlus,
+    Warehouse,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
-import { Button } from '@/components/ui/button';
 import { useBrand } from '@/composables/useBrand';
-import { useScrollReveal } from '@/composables/useScrollReveal';
+import { estimateShipping, formatMoney } from '@/lib/shippingEstimate';
+import type { RateTier } from '@/lib/shippingEstimate';
 import { rates, register } from '@/routes';
-import type { RateSnapshot } from '@/types/auth';
+import type { RateSnapshot, WarehouseSnapshot } from '@/types/auth';
 
+/**
+ * The public homepage every courier gets on their own subdomain.
+ *
+ * Nothing here may name a courier, a country or a city literally: the name,
+ * colours, warehouse, rates and WhatsApp number all come from the tenant, so
+ * the same page reads as Blue Mahoe Express on the demo and as each real
+ * courier on theirs. Colours arrive through the brand-* tokens, which
+ * PublicLayout rescopes to the tenant's own primary and accent.
+ */
 const props = defineProps<{
     rate: RateSnapshot | null;
+    rateTiers?: RateTier[];
 }>();
 
+const page = usePage();
 const { brand, name: brandName } = useBrand();
 
-const ratePerLbDisplay = computed(() => {
-    const value = props.rate?.rate_per_lb ?? 0;
-    const currency = props.rate?.currency ?? brand.value?.currency ?? 'USD';
+const warehouse = computed(
+    () => (page.props.warehouse as WarehouseSnapshot | null) ?? null,
+);
+const whatsappUrl = computed(() => brand.value?.whatsapp_url ?? null);
 
-    return `${currency} $${value.toLocaleString()}`;
+const currency = computed(
+    () => props.rate?.currency ?? brand.value?.currency ?? 'USD',
+);
+
+const tiers = computed<RateTier[]>(() => {
+    if (props.rateTiers?.length) {
+        return props.rateTiers;
+    }
+
+    return props.rate ? [props.rate as RateTier] : [];
 });
 
-// This is the tenant's own public site, so every string that used to name the
-// courier it was written for now interpolates the resolved brand instead.
-const howItWorks = computed(() => [
+const perLb = computed(() =>
+    formatMoney(currency.value, props.rate?.rate_per_lb ?? 0),
+);
+
+const warehouseArea = computed(() =>
+    warehouse.value ? `${warehouse.value.city}, ${warehouse.value.state}` : null,
+);
+
+const examples = computed(() =>
+    [1, 3, 5, 10].map((lbs) => ({
+        lbs,
+        amount: formatMoney(
+            currency.value,
+            estimateShipping(lbs, tiers.value).amount,
+        ),
+    })),
+);
+
+const stores = [
+    'Amazon',
+    'SHEIN',
+    'Walmart',
+    'Target',
+    'eBay',
+    'Best Buy',
+    'Nike',
+    'Temu',
+];
+
+const steps = computed(() => [
     {
         icon: UserPlus,
-        title: 'Create your account',
-        body: `Sign up in minutes and get your unique ${brandName.value} reference number.`,
+        title: 'Sign up free',
+        body: `Create your ${brandName.value} account and get your own customer number and US address straight away.`,
     },
     {
-        icon: Clipboard,
-        title: 'Shop online as normal',
-        body: 'Buy from your favorite stores and place your orders like you usually do.',
+        icon: ShoppingBag,
+        title: 'Shop any US store',
+        body: 'Check out as normal and use your US address as the delivery address.',
     },
     {
-        icon: Receipt,
-        title: 'Submit your pre-alert',
-        body: 'Upload your invoice and shipment details so our team can match your package quickly.',
+        icon: FileText,
+        title: 'Send a pre-alert',
+        body: 'Upload the invoice in your account so we can match the package the moment it lands.',
     },
     {
         icon: PackageCheck,
-        title: 'Track updates and collect',
-        body: 'Follow status updates in your dashboard and pick up once your package is ready.',
+        title: 'Collect it',
+        body: 'Follow every step in your account and we will message you when it is ready.',
     },
 ]);
 
-const whyChooseUs = computed(() => [
+const faqs = computed(() => [
     {
-        title: 'Clear package visibility from day one',
-        body: 'Track pre-alerts and package updates in one timeline so you always know what is happening next.',
-        image: '/img/shipdjm-tracking.png',
-        imageWebp: '/img/shipdjm-tracking.webp',
-        imageAlt: 'Logistics warehouse shelves with organized parcels',
+        q: 'How much does it cost to sign up?',
+        a: `Nothing. Your ${brandName.value} account and US address are free. You only pay shipping when a package comes through.`,
     },
     {
-        title: 'Pre-alert workflow that is actually simple',
-        body: `Submit invoice details in minutes and let the ${brandName.value} team handle package matching behind the scenes.`,
-        image: '/img/shipdjm-prealert-workflow.png',
-        imageWebp: '/img/shipdjm-prealert-workflow.webp',
-        imageAlt: 'Customer reviewing order and shipment details on laptop',
+        q: 'What address do I use when I shop?',
+        a: warehouseArea.value
+            ? `Your account shows our warehouse address in ${warehouseArea.value}, with your customer number on it. Use that as the delivery address at checkout.`
+            : 'Your account shows our US warehouse address with your customer number on it. Use that as the delivery address at checkout.',
     },
     {
-        title: 'Built for your customers, not retrofitted',
-        body: 'From account references to pickup-first operations, the platform is designed around local customer reality.',
-        image: '/img/shipdjm-jamaica.png',
-        imageWebp: '/img/shipdjm-jamaica.webp',
-        imageAlt: 'Urban Caribbean-style street scene with vibrant tones',
+        q: 'How is shipping worked out?',
+        a: `By weight. The current rate is ${perLb.value} per lb${props.rate?.minimum_charge ? `, with a minimum of ${formatMoney(currency.value, props.rate.minimum_charge)}` : ''}. We weigh every package and confirm the final amount before you pay.`,
     },
     {
-        title: 'Support you can actually reach',
-        body: 'Get timely updates by email and WhatsApp, plus responsive help when you need clarity on a shipment.',
-        image: '/img/shipdjm-support.png',
-        imageWebp: '/img/shipdjm-support.webp',
-        imageAlt: 'Customer support professional wearing headset and smiling',
+        q: 'What is a pre-alert and do I need one?',
+        a: 'A pre-alert tells us a package is on its way. Upload the invoice from your order and we match it to you as soon as it arrives, which keeps things moving quickly.',
+    },
+    {
+        q: 'How will I know when my package is ready?',
+        a: 'Every status change shows in your account, and we send you an update by email and WhatsApp when your package is ready.',
     },
 ]);
 
-const faqs = [
-    {
-        q: 'What is a pre-alert?',
-        a: 'A pre-alert tells us a package is on the way. You share the invoice and shipment details so we can match it to your account as soon as it lands at the warehouse.',
-    },
-    {
-        q: 'What address do I ship to?',
-        a: 'Once you sign up, your customer dashboard shows the Florida warehouse address that you use at checkout — with your customer reference attached so nothing gets lost.',
-    },
-    {
-        q: 'How are rates calculated?',
-        a: `Our current MVP rate is ${ratePerLbDisplay.value} per lb on a single shipping method. Pricing updates may include weight tiers later — admin always sets the final charge after weighing.`,
-    },
-    {
-        q: 'When do I pay?',
-        a: 'Once your package is processed we calculate the amount due. You can pay online (coming soon) or in person at pickup.',
-    },
-    {
-        q: 'Where do I collect packages?',
-        a: 'Pickup-only for now. Once your shipment is ready you will see the pickup location and instructions in your dashboard.',
-    },
+const timeline = [
+    { label: 'Received in warehouse', done: true },
+    { label: 'On the plane', done: true },
+    { label: 'Arrived and sorted', done: true },
+    { label: 'Ready for you', done: false, current: true },
 ];
-
-const { sectionDelay, itemDelay } = useScrollReveal();
 </script>
 
 <template>
-    <Head title="Shop Online. We'll Ship It Home.">
-        <link
-            rel="preload"
-            as="image"
-            href="/img/shipdjm-hero.webp"
-            type="image/webp"
-            fetchpriority="high"
-        />
-    </Head>
+    <Head title="Shop any US store. We'll bring it home." />
 
-    <div>
+    <div class="overflow-x-clip">
         <!-- Hero -->
-        <section
-            class="fade-in-section relative flex min-h-[min(560px,78vh)] items-start overflow-hidden bg-brand-ink text-brand-cream sm:min-h-[min(620px,82vh)]"
-            :style="sectionDelay(0)"
-        >
-            <div aria-hidden="true" class="absolute inset-0">
-                <picture>
-                    <source srcset="/img/shipdjm-hero.webp" type="image/webp" />
-                    <img
-                        src="/img/shipdjm-hero.png"
-                        alt="Customer support team helping shoppers with package forwarding"
-                        width="1774"
-                        height="887"
-                        fetchpriority="high"
-                        decoding="async"
-                        class="h-full w-full object-cover object-[72%_center] sm:object-[68%_center]"
-                    />
-                </picture>
+        <section class="relative overflow-hidden bg-brand-ink text-white">
+            <div aria-hidden="true" class="pointer-events-none absolute inset-0">
                 <div
-                    class="absolute inset-0 bg-gradient-to-r from-brand-ink/90 via-brand-ink/45 to-brand-ink/20 sm:from-brand-ink/88 sm:via-brand-ink/35 sm:to-brand-ink/15"
+                    class="absolute -top-40 -right-32 size-[620px] rounded-full bg-brand-green opacity-50 blur-[120px]"
                 />
                 <div
-                    class="absolute inset-0 bg-[radial-gradient(circle_at_12%_40%,rgba(30,142,62,0.28),transparent_45%),radial-gradient(circle_at_85%_35%,rgba(30,142,62,0.18),transparent_50%),radial-gradient(circle_at_50%_100%,rgba(255,220,80,0.12),transparent_40%)]"
+                    class="absolute -bottom-48 -left-40 size-[520px] rounded-full bg-brand-gold opacity-[0.14] blur-[120px]"
                 />
                 <div
-                    class="absolute inset-y-0 left-0 w-[58%] max-w-3xl bg-gradient-to-r from-black/35 to-transparent sm:w-[52%]"
+                    class="absolute inset-0 opacity-[0.07] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:22px_22px] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
                 />
             </div>
+
             <div
-                class="relative mx-auto w-full max-w-7xl pt-6 pr-6 pb-14 pl-2 sm:pt-8 sm:pl-3 lg:pt-10 lg:pl-4"
+                class="relative mx-auto grid max-w-7xl gap-14 px-4 pt-16 pb-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10 lg:px-8 lg:pt-24 lg:pb-28"
             >
-                <div class="max-w-2xl space-y-5 text-left sm:space-y-6">
-                    <h1
-                        class="text-4xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
-                    >
-                        <span class="text-brand-gold-soft">Shop Online.</span>
-                        <span class="text-brand-green-soft">
-                            We'll ship it home.</span
-                        >
-                        <br />
-                        Track everything in one place.
-                    </h1>
+                <div class="hero-rise max-w-xl">
                     <p
-                        class="max-w-xl text-base text-brand-cream/80 sm:text-lg"
+                        v-if="warehouseArea"
+                        class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm text-white/80"
                     >
-                        {{ brandName }} helps you shop from stores like Amazon,
-                        Walmart, SHEIN and more, then ships your packages
-                        through our overseas warehouse to your local branch for
-                        pickup.
+                        <span class="size-2 rounded-full bg-brand-gold" />
+                        US warehouse in {{ warehouseArea }}
                     </p>
-                    <div class="flex flex-wrap gap-3">
-                        <Button as-child size="lg" class="public-cta">
-                            <Link :href="register()">Create account</Link>
-                        </Button>
-                        <Button
-                            as-child
-                            size="lg"
-                            variant="outline"
-                            class="border-brand-green/40 bg-transparent text-brand-cream hover:bg-brand-green/15"
+
+                    <h1
+                        class="mt-6 text-[2.75rem] leading-[1.02] font-bold tracking-tight text-balance sm:text-6xl lg:text-[4.25rem]"
+                    >
+                        Shop any US store.
+                        <span class="text-brand-gold">We'll bring it home.</span>
+                    </h1>
+
+                    <p class="mt-6 text-lg leading-relaxed text-white/75">
+                        {{ brandName }} gives you your own US shipping address.
+                        Shop Amazon, SHEIN, Walmart and more, then follow every
+                        package from our warehouse right to you.
+                    </p>
+
+                    <div class="mt-9 flex flex-wrap gap-3">
+                        <Link
+                            :href="register()"
+                            class="site-btn-accent inline-flex h-12 items-center gap-2 rounded-full px-6 text-base font-semibold"
                         >
-                            <Link :href="rates()">Calculate shipping</Link>
-                        </Button>
+                            Get your free US address
+                            <ArrowRight class="size-4" />
+                        </Link>
+                        <Link
+                            :href="rates()"
+                            class="inline-flex h-12 items-center rounded-full border border-white/25 px-6 text-base font-semibold text-white transition hover:bg-white/10"
+                        >
+                            Work out shipping
+                        </Link>
                     </div>
-                    <dl class="flex flex-wrap gap-x-8 gap-y-2 pt-4 text-sm">
-                        <div>
-                            <dt class="text-brand-cream/60">Base rate</dt>
-                            <dd class="font-semibold text-brand-green-soft">
-                                {{ ratePerLbDisplay }} / lb
-                            </dd>
+
+                    <ul
+                        class="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm text-white/70"
+                    >
+                        <li class="flex items-center gap-2">
+                            <Check class="size-4 text-brand-gold" />
+                            From {{ perLb }} per lb
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <Check class="size-4 text-brand-gold" />
+                            Free to sign up
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <Check class="size-4 text-brand-gold" />
+                            Updates on WhatsApp
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Product picture: their address and a package on its way -->
+                <div
+                    class="hero-rise relative mx-auto w-full max-w-md lg:mr-0"
+                    style="animation-delay: 120ms"
+                    aria-hidden="true"
+                >
+                    <div
+                        class="rounded-3xl bg-white p-6 text-slate-900 shadow-2xl shadow-black/30"
+                    >
+                        <div class="flex items-center justify-between">
+                            <p
+                                class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase"
+                            >
+                                Your US address
+                            </p>
+                            <span
+                                class="rounded-full bg-brand-green-muted px-2.5 py-1 text-xs font-semibold text-brand-green"
+                            >
+                                Active
+                            </span>
                         </div>
-                        <div>
-                            <dt class="text-brand-cream/60">Collection</dt>
-                            <dd class="font-semibold">
-                                Pickup available · Selected-area delivery
-                            </dd>
+                        <div class="mt-4 space-y-1 text-[15px] leading-snug">
+                            <p class="font-semibold">Your name</p>
+                            <template v-if="warehouse">
+                                <p>{{ warehouse.address_line_1 }}</p>
+                                <p v-if="warehouse.address_line_2">
+                                    {{ warehouse.address_line_2 }}
+                                    <span
+                                        class="ml-1 rounded-md bg-brand-gold/20 px-1.5 py-0.5 font-mono text-[13px] font-semibold"
+                                        >+ your number</span
+                                    >
+                                </p>
+                                <p>
+                                    {{ warehouse.city }}, {{ warehouse.state }}
+                                    {{ warehouse.zip }}
+                                </p>
+                            </template>
+                            <template v-else>
+                                <p>Our US warehouse</p>
+                                <p>
+                                    Suite
+                                    <span
+                                        class="rounded-md bg-brand-gold/20 px-1.5 py-0.5 font-mono text-[13px] font-semibold"
+                                        >your number</span
+                                    >
+                                </p>
+                            </template>
                         </div>
-                    </dl>
+                    </div>
+
+                    <div
+                        class="relative -mt-4 ml-6 rounded-3xl bg-white p-6 text-slate-900 shadow-2xl shadow-black/30 sm:ml-12"
+                    >
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-sm text-slate-500">
+                                    Amazon order · 3.2 lb
+                                </p>
+                                <p class="mt-0.5 text-lg font-semibold">
+                                    Running shoes
+                                </p>
+                            </div>
+                            <span
+                                class="site-btn-accent rounded-full px-2.5 py-1 text-xs font-semibold"
+                            >
+                                Ready
+                            </span>
+                        </div>
+                        <ol class="mt-5 space-y-3.5">
+                            <li
+                                v-for="step in timeline"
+                                :key="step.label"
+                                class="flex items-center gap-3 text-sm"
+                            >
+                                <span
+                                    class="flex size-6 shrink-0 items-center justify-center rounded-full"
+                                    :class="
+                                        step.done
+                                            ? 'bg-brand-green text-white'
+                                            : 'site-btn-accent ring-4 ring-brand-gold/25'
+                                    "
+                                >
+                                    <Check v-if="step.done" class="size-3.5" />
+                                    <MapPin v-else class="size-3.5" />
+                                </span>
+                                <span
+                                    :class="
+                                        step.current
+                                            ? 'font-semibold'
+                                            : 'text-slate-600'
+                                    "
+                                >
+                                    {{ step.label }}
+                                </span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div
+                        class="absolute -bottom-11 -left-2 flex items-center gap-2.5 rounded-2xl bg-white px-3.5 py-2.5 text-slate-900 shadow-xl shadow-black/25 ring-1 ring-black/5 sm:-left-8"
+                    >
+                        <span
+                            class="flex size-8 items-center justify-center rounded-full bg-[#25D366] text-white"
+                        >
+                            <MessageCircle class="size-4" />
+                        </span>
+                        <div class="leading-tight">
+                            <p class="text-xs text-slate-500">{{ brandName }}</p>
+                            <p class="text-sm font-semibold">
+                                Your package is ready
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- How it works -->
-        <section class="fade-in-section bg-background" :style="sectionDelay(1)">
-            <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                    <p class="public-section-label">How it works</p>
-                    <h2
-                        class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+        <!-- Stores -->
+        <section class="border-b border-border bg-background">
+            <div
+                class="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-8 sm:px-6 lg:flex-row lg:gap-10 lg:px-8"
+            >
+                <p
+                    class="shrink-0 text-sm font-medium whitespace-nowrap text-muted-foreground"
+                >
+                    Shop from the stores you love
+                </p>
+                <ul
+                    class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 lg:justify-between lg:flex-1"
+                >
+                    <li
+                        v-for="store in stores"
+                        :key="store"
+                        class="text-lg font-bold tracking-tight text-foreground/35"
                     >
-                        Four practical steps,
-                        <span class="text-brand-gold"> start to finish</span>
+                        {{ store }}
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- How it works -->
+        <section class="bg-background">
+            <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+                <div class="max-w-2xl">
+                    <p class="site-eyebrow">How it works</p>
+                    <h2
+                        class="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-5xl"
+                    >
+                        From checkout to your hands in four steps
                     </h2>
-                    <p class="mt-4 text-muted-foreground">
-                        Everything is streamlined for customers: register, shop,
-                        pre-alert, and collect with clear status visibility.
-                    </p>
                 </div>
 
-                <ol class="mt-12 grid gap-5 sm:grid-cols-2">
+                <ol class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     <li
-                        v-for="(step, index) in howItWorks"
+                        v-for="(step, index) in steps"
                         :key="step.title"
-                        class="group fade-in-item relative overflow-hidden rounded-2xl border border-border bg-card p-7 transition hover:border-brand-gold/25 hover:shadow-xl"
-                        :style="itemDelay(index)"
+                        class="relative rounded-3xl border border-border bg-card p-7"
                     >
-                        <div
-                            class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-gold/60 via-brand-green/35 to-transparent"
-                        />
-                        <div
-                            class="flex size-12 items-center justify-center rounded-lg bg-brand-green/12 text-brand-green ring-1 ring-brand-green/25 group-hover:ring-brand-gold/30"
-                        >
-                            <component :is="step.icon" class="size-5" />
+                        <div class="flex items-center justify-between">
+                            <span
+                                class="flex size-12 items-center justify-center rounded-2xl bg-brand-green-muted text-brand-green"
+                            >
+                                <component :is="step.icon" class="size-5" />
+                            </span>
+                            <span
+                                class="text-5xl font-bold tracking-tight text-foreground/[0.07]"
+                            >
+                                {{ index + 1 }}
+                            </span>
                         </div>
-                        <p
-                            class="mt-4 text-xs font-semibold tracking-[0.18em] text-brand-gold/80 uppercase"
-                        >
-                            Step {{ index + 1 }}
-                        </p>
-                        <h3 class="mt-1 text-lg font-semibold">
+                        <h3 class="mt-6 text-lg font-semibold">
                             {{ step.title }}
                         </h3>
-                        <p class="mt-2 text-sm text-muted-foreground">
+                        <p class="mt-2 leading-relaxed text-muted-foreground">
                             {{ step.body }}
                         </p>
                     </li>
@@ -250,237 +399,209 @@ const { sectionDelay, itemDelay } = useScrollReveal();
             </div>
         </section>
 
-        <!-- Why -->
-        <section
-            class="fade-in-section bg-brand-green-muted/50"
-            :style="sectionDelay(2)"
-        >
-            <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                    <p
-                        class="text-xs font-semibold tracking-[0.18em] text-brand-green uppercase"
-                    >
-                        Why {{ brandName }}
-                    </p>
+        <!-- What you get -->
+        <section class="bg-brand-green-muted">
+            <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+                <div class="max-w-2xl">
+                    <p class="site-eyebrow">Why {{ brandName }}</p>
                     <h2
-                        class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                        class="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-5xl"
                     >
-                        Built for
-                        <span class="text-brand-gold"> online shoppers</span>
-                        — not bolted on
+                        You always know where your package is
                     </h2>
                 </div>
-                <div class="mt-12 grid gap-8 lg:grid-cols-2">
-                    <article
-                        v-for="(item, index) in whyChooseUs"
-                        :key="item.title"
-                        class="group fade-in-item overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
-                        :style="itemDelay(index, 120)"
-                    >
-                        <div class="relative aspect-[16/10] overflow-hidden">
-                            <picture>
-                                <source
-                                    :srcset="item.imageWebp"
-                                    type="image/webp"
-                                />
-                                <img
-                                    :src="item.image"
-                                    :alt="item.imageAlt"
-                                    width="1448"
-                                    height="1086"
-                                    loading="lazy"
-                                    decoding="async"
-                                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                                />
-                            </picture>
-                            <div
-                                class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent"
-                            />
-                            <p
-                                class="absolute bottom-3 left-3 rounded-full border border-brand-gold/30 bg-black/35 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-brand-gold-soft uppercase"
-                            >
-                                {{ brandName }} advantage
-                            </p>
-                        </div>
-                        <div class="space-y-3 p-6">
-                            <h3 class="text-xl font-semibold tracking-tight">
-                                {{ item.title }}
-                            </h3>
-                            <p
-                                class="text-sm leading-relaxed text-muted-foreground"
-                            >
-                                {{ item.body }}
-                            </p>
-                        </div>
+
+                <div class="mt-14 grid gap-6 lg:grid-cols-3">
+                    <article class="rounded-3xl bg-card p-8 shadow-sm">
+                        <span
+                            class="flex size-12 items-center justify-center rounded-2xl bg-brand-green text-white"
+                        >
+                            <Plane class="size-5" />
+                        </span>
+                        <h3 class="mt-6 text-xl font-semibold">
+                            Track every step
+                        </h3>
+                        <p class="mt-2 leading-relaxed text-muted-foreground">
+                            See when your package lands in the warehouse, gets
+                            on the plane and is ready for you. No chasing, no
+                            guessing.
+                        </p>
+                    </article>
+
+                    <article class="rounded-3xl bg-card p-8 shadow-sm">
+                        <span
+                            class="flex size-12 items-center justify-center rounded-2xl bg-brand-green text-white"
+                        >
+                            <Bell class="size-5" />
+                        </span>
+                        <h3 class="mt-6 text-xl font-semibold">
+                            Updates on WhatsApp and email
+                        </h3>
+                        <p class="mt-2 leading-relaxed text-muted-foreground">
+                            We tell you the moment something changes, so you
+                            find out your package is ready before you think to
+                            ask.
+                        </p>
+                    </article>
+
+                    <article class="rounded-3xl bg-card p-8 shadow-sm">
+                        <span
+                            class="flex size-12 items-center justify-center rounded-2xl bg-brand-green text-white"
+                        >
+                            <Warehouse class="size-5" />
+                        </span>
+                        <h3 class="mt-6 text-xl font-semibold">
+                            One account for everything
+                        </h3>
+                        <p class="mt-2 leading-relaxed text-muted-foreground">
+                            Your address, pre-alerts, invoices and what you owe,
+                            all in one place you can open on your phone.
+                        </p>
                     </article>
                 </div>
             </div>
         </section>
 
-        <!-- Rate preview -->
-        <section class="fade-in-section bg-background" :style="sectionDelay(3)">
-            <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <!-- Rates -->
+        <section class="bg-background">
+            <div
+                class="mx-auto grid max-w-7xl gap-12 px-4 py-24 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8"
+            >
+                <div class="max-w-xl">
+                    <p class="site-eyebrow">Simple pricing</p>
+                    <h2
+                        class="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-5xl"
+                    >
+                        Pay by the pound. Nothing hidden.
+                    </h2>
+                    <p class="mt-5 text-lg leading-relaxed text-muted-foreground">
+                        Signing up is free. When a package comes through we
+                        weigh it and you pay for the weight, at the rate you can
+                        see right here.
+                    </p>
+                    <Link
+                        :href="rates()"
+                        class="mt-8 inline-flex items-center gap-2 font-semibold text-brand-green hover:underline"
+                    >
+                        Work out your exact cost
+                        <ArrowRight class="size-4" />
+                    </Link>
+                </div>
+
                 <div
-                    class="grid gap-10 rounded-2xl border border-brand-green/25 bg-gradient-to-br from-brand-green/10 via-brand-green-muted/40 to-brand-gold/10 p-10 lg:grid-cols-2 lg:items-center"
+                    class="rounded-3xl bg-brand-ink p-8 text-white shadow-xl sm:p-10"
                 >
-                    <div>
-                        <p class="public-section-label">Transparent pricing</p>
-                        <h2
-                            class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    <p class="text-sm text-white/60">
+                        {{ props.rate?.name ?? 'Standard air' }}
+                    </p>
+                    <p class="mt-2 text-5xl font-bold tracking-tight">
+                        {{ perLb }}
+                        <span class="text-lg font-medium text-white/60"
+                            >per lb</span
                         >
-                            Simple,
-                            <span class="text-brand-gold"> weight-based</span>
-                            rates
-                        </h2>
-                        <p class="mt-4 text-muted-foreground">
-                            Our base rate for MVP is
-                            <span class="font-semibold text-brand-gold">
-                                {{ ratePerLbDisplay }} per lb
-                            </span>
-                            on a single shipping method. Pricing for heavier
-                            packages will be tuned by our admin team — and rates
-                            always come from the database, not hard-coded.
-                        </p>
-                        <div class="mt-6 flex flex-wrap gap-3">
-                            <Button
-                                as-child
-                                class="bg-brand-ink text-brand-cream hover:bg-brand-ink-soft"
-                            >
-                                <Link :href="rates()">Calculate shipping</Link>
-                            </Button>
-                            <Button as-child variant="outline">
-                                <Link :href="register()">Create account</Link>
-                            </Button>
+                    </p>
+
+                    <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        <div
+                            v-for="example in examples"
+                            :key="example.lbs"
+                            class="rounded-2xl bg-white/[0.07] p-4"
+                        >
+                            <p class="text-sm text-white/60">
+                                {{ example.lbs }} lb
+                            </p>
+                            <p class="mt-1 font-semibold">
+                                {{ example.amount }}
+                            </p>
                         </div>
                     </div>
-                    <div
-                        class="rounded-xl border border-border bg-card p-6 shadow-sm"
-                    >
-                        <p
-                            class="text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase"
-                        >
-                            {{ props.rate?.name ?? 'Standard Air Shipping' }}
-                        </p>
-                        <p
-                            class="mt-2 text-4xl font-semibold tracking-tight text-brand-gold"
-                        >
-                            {{ ratePerLbDisplay }}
-                            <span class="text-base text-muted-foreground">
-                                / lb
-                            </span>
-                        </p>
-                        <ul class="mt-6 space-y-3 text-sm">
-                            <li class="flex items-start gap-2">
-                                <CircleCheck
-                                    class="mt-0.5 size-4 text-brand-gold"
-                                />
-                                <span>One shipping method for MVP</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <CircleCheck
-                                    class="mt-0.5 size-4 text-brand-green"
-                                />
-                                <span
-                                    >Minimum charge
-                                    {{
-                                        props.rate?.currency ??
-                                        brand?.currency ??
-                                        'USD'
-                                    }}
-                                    ${{
-                                        (
-                                            props.rate?.minimum_charge ?? 0
-                                        ).toLocaleString()
-                                    }}</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <CircleCheck
-                                    class="mt-0.5 size-4 text-brand-green"
-                                />
-                                <span>Weight tiers coming soon</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <CircleCheck
-                                    class="mt-0.5 size-4 text-brand-green"
-                                />
-                                <span>Pickup only for now</span>
-                            </li>
-                        </ul>
-                    </div>
+
+                    <p class="mt-6 text-sm text-white/55">
+                        Examples are estimates. We confirm the final amount
+                        after weighing.
+                    </p>
                 </div>
             </div>
         </section>
 
         <!-- FAQ -->
-        <section
-            class="fade-in-section bg-brand-green-muted/40"
-            :style="sectionDelay(4)"
-        >
-            <div class="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                    <p class="public-section-label">Quick answers</p>
+        <section class="border-t border-border bg-background">
+            <div
+                class="mx-auto grid max-w-7xl gap-12 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_1.4fr] lg:px-8"
+            >
+                <div>
+                    <p class="site-eyebrow">Questions</p>
                     <h2
-                        class="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                        class="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-5xl"
                     >
-                        Frequently asked
-                        <span class="text-brand-gold"> questions</span>
+                        Good to know
                     </h2>
+                    <p class="mt-5 text-lg text-muted-foreground">
+                        Anything else, just ask. We reply fast.
+                    </p>
                 </div>
 
-                <dl class="mt-10 space-y-4">
-                    <div
+                <div class="divide-y divide-border border-y border-border">
+                    <details
                         v-for="(faq, index) in faqs"
                         :key="faq.q"
-                        class="fade-in-item rounded-xl border border-l-2 border-border border-l-brand-gold/50 bg-card p-6"
-                        :style="itemDelay(index, 100)"
+                        class="group py-5"
+                        :open="index === 0"
                     >
-                        <dt class="text-base font-semibold">{{ faq.q }}</dt>
-                        <dd class="mt-2 text-sm text-muted-foreground">
+                        <summary
+                            class="flex cursor-pointer list-none items-center justify-between gap-6 text-lg font-semibold [&::-webkit-details-marker]:hidden"
+                        >
+                            {{ faq.q }}
+                            <ChevronDown
+                                class="size-5 shrink-0 text-muted-foreground transition group-open:rotate-180"
+                            />
+                        </summary>
+                        <p
+                            class="mt-3 max-w-2xl leading-relaxed text-muted-foreground"
+                        >
                             {{ faq.a }}
-                        </dd>
-                    </div>
-                </dl>
+                        </p>
+                    </details>
+                </div>
             </div>
         </section>
 
-        <!-- Final CTA -->
-        <section
-            class="fade-in-section relative overflow-hidden bg-brand-ink text-brand-cream"
-            :style="sectionDelay(5)"
-        >
+        <!-- Final call -->
+        <section class="bg-background px-4 pb-24 sm:px-6 lg:px-8">
             <div
-                class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(30,142,62,0.15),transparent_50%),radial-gradient(circle_at_80%_40%,rgba(255,220,80,0.08),transparent_45%)]"
-                aria-hidden="true"
-            />
-            <div
-                class="relative mx-auto max-w-5xl px-4 py-20 text-center sm:px-6 lg:px-8"
+                class="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-brand-green px-6 py-16 text-center text-white sm:px-12 sm:py-20"
             >
+                <div
+                    aria-hidden="true"
+                    class="pointer-events-none absolute -top-32 -right-24 size-96 rounded-full bg-white opacity-10 blur-3xl"
+                />
                 <h2
-                    class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl"
+                    class="relative mx-auto max-w-2xl text-3xl font-bold tracking-tight text-balance sm:text-5xl"
                 >
-                    Start shipping with
-                    <span class="text-brand-gold-soft">{{ brandName }}</span
-                    >.
+                    Your next order could be on its way to you
                 </h2>
-                <p
-                    class="mx-auto mt-4 max-w-2xl text-base text-brand-cream/70 sm:text-lg"
-                >
-                    Create your free account, get your overseas warehouse
-                    address, and never lose track of an online order again.
+                <p class="relative mx-auto mt-5 max-w-xl text-lg text-white/80">
+                    Get your free US address with {{ brandName }} in under a
+                    minute.
                 </p>
-                <div class="mt-8 flex flex-wrap justify-center gap-3">
-                    <Button as-child size="lg" class="public-cta">
-                        <Link :href="register()">Create account</Link>
-                    </Button>
-                    <Button
-                        as-child
-                        size="lg"
-                        variant="outline"
-                        class="border-brand-green/40 bg-transparent text-brand-cream hover:bg-brand-green/15"
+                <div class="relative mt-9 flex flex-wrap justify-center gap-3">
+                    <Link
+                        :href="register()"
+                        class="site-btn-accent inline-flex h-12 items-center gap-2 rounded-full px-6 text-base font-semibold"
                     >
-                        <Link :href="rates()">See rates</Link>
-                    </Button>
+                        Create free account
+                        <ArrowRight class="size-4" />
+                    </Link>
+                    <a
+                        v-if="whatsappUrl"
+                        :href="whatsappUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex h-12 items-center gap-2 rounded-full border border-white/30 px-6 text-base font-semibold text-white transition hover:bg-white/10"
+                    >
+                        <MessageCircle class="size-4" />
+                        Chat on WhatsApp
+                    </a>
                 </div>
             </div>
         </section>
