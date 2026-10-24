@@ -1,27 +1,37 @@
-# Jamaica launch tracker
+# CourierOS launch tracker
 
-Branch: `marketing/jamaica-launch` (not merged yet — review then merge or tell me to).
+Updated 23 Oct 2026
 
-## Done (Claude)
+## Blockers
 
-- [x] GTM strategy: `CourierOS-Jamaica-GTM-Strategy.docx`
-- [x] `/jamaica` landing page — segments, Full Package, founding cohort banner, FAQ (`resources/js/pages/central/Jamaica.vue`)
-- [x] Wired into nav + footer + routes + controller
-- [x] Smoke test: `tests/Feature/Central/MarketingJamaicaTest.php`
-- [x] Outreach copy + target list: `marketing/jamaica-outreach.md`
-- [x] `vue-tsc` type-check clean on all changed files
+- [ ] **One real signup end to end** on courieros.co with a real card, confirm tenant goes active and subdomain loads, then refund.
 
-## Needs you (can't do these myself)
+## First week
 
-- [ ] **Stripe isn't connected** (`.env` keys are blank) — nobody can actually pay until this is set up. Biggest blocker.
-- [ ] Run `npm run build` and `php artisan test` locally before deploying — this sandbox can't build (native binary mismatch) or run PHP at all
-- [ ] Review the branch, merge it (or tell me to)
-- [ ] Decide founding cohort terms: how many spots, how much off the $349 setup
-- [ ] Get a real quote/numbers from Today Shipping — swap into the TODO comment in `Jamaica.vue`'s case study section
-- [ ] Send the WhatsApp/IG/FB/email messages in `marketing/jamaica-outreach.md` — I can draft, not message people from your accounts
-- [ ] Actually talk to Shipping Association of Jamaica + one creator about a partnership
+- [ ] Forge database backups on, and one test restore
+- [ ] Error monitoring (Sentry or Flare)
+- [ ] Queue the 4 customer notifications (welcome, package status, ready for pickup, pre alert) and start a Forge queue worker in the same deploy
+- [ ] DMARC record on `_dmarc.courieros.co` (optional)
 
-## Next up if you want me to keep going
+## Sales
 
-- Miami/Florida warehouse partner referral for Segment A
-- Split-pay option for the setup fee (code change, once you confirm terms)
+- [ ] Decide founding cohort size for the US$99 setup
+- [ ] Send messages in `marketing/jamaica-outreach.md`
+- [ ] Post the network story (`marketing/ads/network-story.png`)
+- [ ] Talk to Shipping Association of Jamaica and one creator about a partnership
+
+## Done
+
+- [x] Stripe live mode in production: live keys, live price IDs and live webhook secret in the Forge `.env` (24 Oct 2026)
+
+- [x] Stripe checkout work merged to main (PR #24)
+- [x] New UK Stripe account "CourierOS" (acct_1UTr2LIF74BraqWE) under the Quantara Digital org. Test mode: Starter US$63/mo, Setup Fee US$149, Founding Setup Fee US$99, webhook to `https://courieros.co/stripe/webhook`
+
+- [x] `/jamaica` landing page, nav, routes, smoke test
+- [x] GTM strategy doc and outreach copy
+- [x] Wildcard subdomains live (any `*.courieros.co` reaches the app)
+- [x] Resend verified, mail delivering from `noreply@mail.courieros.co`
+- [x] Free access hole closed (tenants need a subscription or trial)
+- [x] Public demo at demo.courieros.co (Blue Mahoe Express)
+- [x] Prices lowered to US$63/mo + US$149 setup (US$99 founding)
+- [x] Branded error pages, white label leaks fixed, proxy trust, reserved subdomains
