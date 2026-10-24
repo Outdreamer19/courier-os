@@ -55,6 +55,10 @@ class BillingController extends Controller
                     // buyer's local currency (GBP, JMD...) and adds a
                     // conversion fee on top.
                     'adaptive_pricing' => ['enabled' => false],
+                    // Stripe Managed Payments (merchant of record) is on by
+                    // default for new accounts and refuses Checkout when
+                    // Adaptive Pricing is off. We are the merchant of record.
+                    'managed_payments' => ['enabled' => false],
                     'metadata' => [
                         'tenant_id' => $tenant->id,
                         'tenant_subdomain' => $tenant->subdomain,
