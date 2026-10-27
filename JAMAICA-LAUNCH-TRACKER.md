@@ -1,6 +1,6 @@
 # CourierOS launch tracker
 
-Updated 23 Oct 2026
+Updated 27 Oct 2026
 
 ## Blockers
 
@@ -9,16 +9,22 @@ Updated 23 Oct 2026
 ## First week
 
 - [ ] Forge database backups on, and one test restore
-- [ ] Error monitoring (Sentry or Flare)
-- [ ] Queue the 4 customer notifications (welcome, package status, ready for pickup, pre alert) and start a Forge queue worker in the same deploy
+- [ ] Error monitoring: code ready on `feature/error-monitoring` (Sentry). Merge, create a free sentry.io Laravel project, set `SENTRY_LARAVEL_DSN` in Forge, run `php artisan sentry:test`
+- [ ] Queue the 4 customer notifications: code ready on `feature/queue-customer-notifications`. Add a Forge queue worker (connection `database`) and `php artisan queue:restart` in the deploy script BEFORE merging
 - [ ] DMARC record on `_dmarc.courieros.co` (optional)
 
 ## Sales
 
 - [ ] Decide founding cohort size for the US$99 setup
-- [ ] Send messages in `marketing/jamaica-outreach.md`
+- [ ] Send messages in `marketing/jamaica-outreach.md` (copy refreshed 27 Oct: pricing, contact details, follow up)
 - [ ] Post the network story (`marketing/ads/network-story.png`)
 - [ ] Talk to Shipping Association of Jamaica and one creator about a partnership
+
+## Notes
+
+- courieros.com is registered by someone else (IONOS, since Dec 2020, expires 22 Dec 2026). A redirect isn't possible; watch for it dropping or make an offer.
+- Higgsfield voice: ToS do not restrict commercial use of outputs and there is no separate licence. Use a paid plan for watermark free downloads. IP indemnity is Enterprise only.
+- Copy now says Florida, not Miami (`copy/florida-not-miami`).
 
 ## Done
 
