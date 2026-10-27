@@ -8,7 +8,11 @@ Updated 27 Oct 2026
 
 ## First week
 
-- [ ] Forge database backups on, and one test restore
+- [ ] **Turn on the Scheduler for courieros.co in Forge.** It is off, so `demo:reset` (nightly) and the hourly InvoiceFeed payment sync have never run in production
+- [ ] **Add a queue worker for courieros.co** (`queue:work database`). None exists, so lead and support notifications already sit unsent in the `jobs` table
+- [ ] DMARC: record filled in on Cloudflare (`_dmarc`, `v=DMARC1; p=none;`), needs Save
+
+- [ ] Database backups: Forge needs the Business plan for this. Either upgrade, or add free backups to R2 with spatie/laravel-backup. Then one test restore
 - [ ] Error monitoring: code ready on `feature/error-monitoring` (Sentry). Merge, create a free sentry.io Laravel project, set `SENTRY_LARAVEL_DSN` in Forge, run `php artisan sentry:test`
 - [ ] Queue the 4 customer notifications: code ready on `feature/queue-customer-notifications`. Add a Forge queue worker (connection `database`) and `php artisan queue:restart` in the deploy script BEFORE merging
 - [ ] DMARC record on `_dmarc.courieros.co` (optional)
