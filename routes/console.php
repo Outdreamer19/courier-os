@@ -39,3 +39,10 @@ if (config('courieros.demo.enabled', true)) {
         ->timezone((string) config('courieros.demo.reset_timezone', 'America/Jamaica'))
         ->withoutOverlapping();
 }
+
+// Nightly database backup to Cloudflare R2 (see config/backup.php). Old
+// backups are pruned first, and a morning health check emails the owner if
+// the newest backup is missing or more than a day old. Times are UTC.
+Schedule::command('backup:clean')->dailyAt('01:30')->withoutOverlapping();
+Schedule::command('backup:run --only-db')->dailyAt('02:00')->withoutOverlapping();
+Schedule::command('backup:monitor')->dailyAt('08:00');
