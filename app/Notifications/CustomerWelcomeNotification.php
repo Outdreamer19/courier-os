@@ -6,10 +6,11 @@ use App\Models\User;
 use App\Support\CustomerWarehouseAddress;
 use App\Support\Tenancy\TenantConfig;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CustomerWelcomeNotification extends Notification
+class CustomerWelcomeNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

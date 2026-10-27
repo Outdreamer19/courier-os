@@ -7,10 +7,11 @@ use App\Enums\PreAlertStatus;
 use App\Models\PreAlert;
 use App\Support\Tenancy\TenantConfig;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PreAlertStatusChangedNotification extends Notification
+class PreAlertStatusChangedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
