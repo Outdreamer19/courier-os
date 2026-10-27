@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Channels\WhatsApp\WhatsAppChannel;
 use App\Models\User;
 use App\Support\Demo\DemoMode;
+use App\Support\Tenancy\TenantAwareQueue;
 use Carbon\CarbonImmutable;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Notifications\ChannelManager;
@@ -34,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureRouteBindings();
         $this->configureNotificationChannels();
+        TenantAwareQueue::register($this->app['events']);
         $this->silenceDemoCourier();
     }
 

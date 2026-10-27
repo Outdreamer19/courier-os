@@ -6,10 +6,11 @@ use App\Channels\WhatsApp\WhatsAppMessage;
 use App\Models\Package;
 use App\Support\Tenancy\TenantConfig;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PackageReadyForPickupNotification extends Notification
+class PackageReadyForPickupNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
