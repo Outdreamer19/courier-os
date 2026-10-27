@@ -84,26 +84,26 @@ const tourStops: TourStop[] = [
         id: 'portal',
         label: 'Customer portal',
         title: 'Your customers stop calling to ask',
-        body: 'Each customer gets their own branded login with their own Miami address, their packages, their balance and a live status timeline. The questions that used to eat your afternoon answer themselves.',
+        body: 'Each customer gets their own branded login with their own Florida address, their packages, their balance and a live status timeline. The questions that used to eat your afternoon answer themselves.',
         bullets: [
-            'Their own Miami address with a personal suite reference',
+            'Their own Florida address with a personal suite reference',
             'Live status timeline on every package',
             'Pay online, or see exactly what to bring to pickup',
         ],
-        alt: 'The CourierOS customer dashboard showing a personal Miami shipping address, active packages, pre-alerts and amount due',
+        alt: 'The CourierOS customer dashboard showing a personal Florida shipping address, active packages, pre-alerts and amount due',
         ...shot('customer-dashboard'),
     },
     {
         id: 'tracking',
         label: 'Tracking',
         title: 'A status timeline customers actually trust',
-        body: 'Received at the Miami warehouse, shipped, arrived, ready for pickup, collected. Each step is timestamped and visible to the customer as it happens. No more "any update?" at nine at night.',
+        body: 'Received at the Florida warehouse, shipped, arrived, ready for pickup, collected. Each step is timestamped and visible to the customer as it happens. No more "any update?" at nine at night.',
         bullets: [
             'Timestamped step-by-step history',
             'Payment status and amount due alongside',
             'Works the same on a phone as on a laptop',
         ],
-        alt: 'A CourierOS package detail page showing the amount due and the status timeline from the Miami warehouse through to pickup',
+        alt: 'A CourierOS package detail page showing the amount due and the status timeline from the Florida warehouse through to pickup',
         ...shot('customer-package-detail'),
     },
     {
@@ -150,8 +150,8 @@ const tourStops: TourStop[] = [
 const workflow: WorkflowStep[] = [
     {
         actor: 'Your customer',
-        title: 'They shop online with their own Miami address',
-        body: 'Every customer gets their own Miami address with a personal suite reference the moment they sign up. They copy it straight into checkout at Amazon, SHEIN or anywhere else.',
+        title: 'They shop online with their own Florida address',
+        body: 'Every customer gets their own Florida address with a personal suite reference the moment they sign up. They copy it straight into checkout at Amazon, SHEIN or anywhere else.',
     },
     {
         actor: 'Your customer',
@@ -223,7 +223,7 @@ const capabilities = [
     {
         icon: Users,
         title: 'Customer accounts',
-        body: 'Self-serve portal, their own Miami address, authorised pickup people.',
+        body: 'Self-serve portal, their own Florida address, authorised pickup people.',
     },
     {
         icon: Building2,
@@ -346,7 +346,7 @@ const openObjection = ref<number | null>(0);
                     <p
                         class="mx-auto mt-6 max-w-2xl text-lg text-pretty text-marketing-ink-muted"
                     >
-                        Your customers get their own Miami address, send
+                        Your customers get their own Florida address, send
                         pre-alerts and track every package on your branded site.
                         You receive, bill and update them from one dashboard.
                         Built for Caribbean courier and freight forwarding

@@ -21,7 +21,7 @@ const messages = [
         text: 'I sent the invoice yesterday, you get it?',
         time: '7:31',
     },
-    { from: 'Marlon', text: "What's the Miami address again?", time: '8:04' },
+    { from: 'Marlon', text: "What's the Florida address again?", time: '8:04' },
     { from: 'Kerry-Ann', text: 'Hello??', time: '8:20' },
     {
         from: 'Tash',

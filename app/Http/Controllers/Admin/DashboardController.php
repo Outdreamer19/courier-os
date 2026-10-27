@@ -108,7 +108,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Packages grouped by where they physically are on the Miami to
+     * Packages grouped by where they physically are on the Florida to
      * Jamaica run, for the journey strip on the dashboard.
      *
      * @return list<array{key: string, label: string, count: int}>
@@ -127,7 +127,7 @@ class DashboardController extends Controller
 
         return [
             ['key' => 'expected', 'label' => 'Expected', 'count' => $sum(PackageStatus::AwaitingArrival)],
-            ['key' => 'warehouse', 'label' => 'At Miami warehouse', 'count' => $sum(PackageStatus::ReceivedAtFloridaWarehouse, PackageStatus::Processing)],
+            ['key' => 'warehouse', 'label' => 'At Florida warehouse', 'count' => $sum(PackageStatus::ReceivedAtFloridaWarehouse, PackageStatus::Processing)],
             ['key' => 'transit', 'label' => 'In transit', 'count' => $sum(PackageStatus::InTransitToJamaica)],
             ['key' => 'customs', 'label' => 'Landed and customs', 'count' => $sum(PackageStatus::ArrivedInJamaica, PackageStatus::CustomsProcessing, PackageStatus::OnHold)],
             ['key' => 'ready', 'label' => 'Ready for pickup', 'count' => $sum(PackageStatus::ReadyForPickup)],

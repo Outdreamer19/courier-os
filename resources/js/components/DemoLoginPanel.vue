@@ -38,7 +38,7 @@ const accounts = computed(() =>
                   key: 'customer',
                   title: 'Customer view',
                   who: 'See it as a shopper',
-                  body: 'Their own Miami address, pre-alerts, package tracking and what they owe.',
+                  body: 'Their own Florida address, pre-alerts, package tracking and what they owe.',
                   cta: 'Open customer view',
                   email: demo.value.customer_email,
                   icon: Package,

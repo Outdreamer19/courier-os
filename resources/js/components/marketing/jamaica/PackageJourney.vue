@@ -6,7 +6,7 @@ import PhoneFrame from './PhoneFrame.vue';
 import ScaleToFit from './ScaleToFit.vue';
 
 /**
- * Hero visual for the Jamaica funnel: one parcel travelling Miami to Kingston
+ * Hero visual for the Jamaica funnel: one parcel travelling Florida to Kingston
  * while the customer's phone (on a fictional courier's branded portal) ticks
  * through each status, ending on the WhatsApp "ready for pickup" message.
  *
@@ -17,7 +17,7 @@ const root = ref<HTMLElement | null>(null);
 
 const steps = [
     { label: 'Pre-alert submitted', time: 'Mon 9:14am' },
-    { label: 'Received at Miami warehouse', time: 'Tue 2:40pm' },
+    { label: 'Received at Florida warehouse', time: 'Tue 2:40pm' },
     { label: 'On the flight to Kingston', time: 'Wed 6:05am' },
     { label: 'Cleared customs', time: 'Thu 11:30am' },
     { label: 'Ready for pickup', time: 'Thu 3:12pm' },
@@ -32,7 +32,7 @@ const { step } = useInViewLoop(root, {
 const ready = computed(() => step.value === steps.length - 1);
 const flying = computed(() => step.value >= 2);
 
-/** Miami (top left) to Kingston on Jamaica's south coast, in canvas pixels. */
+/** Florida (top left) to Kingston on Jamaica's south coast, in canvas pixels. */
 const route = 'M 110 190 C 60 330, 230 380, 166 486';
 </script>
 
@@ -122,7 +122,7 @@ const route = 'M 110 190 C 60 330, 230 380, 166 486';
                     class="absolute top-[190px] left-[110px] size-[12px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-marketing-amber"
                 />
                 <div class="absolute top-[160px] left-[132px]">
-                    <p class="text-[13px] font-semibold text-white">Miami</p>
+                    <p class="text-[13px] font-semibold text-white">Florida</p>
                     <p class="text-[11px] text-white/45">Your US warehouse</p>
                 </div>
                 <div class="absolute top-[522px] left-[120px]">

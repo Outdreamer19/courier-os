@@ -6,7 +6,7 @@ import PhoneFrame from './PhoneFrame.vue';
 import ScaleToFit from './ScaleToFit.vue';
 
 /**
- * The customer's side, on the phone they actually use: their own Miami
+ * The customer's side, on the phone they actually use: their own Florida
  * address to paste at checkout, and a pre-alert filled in and sent without a
  * single message to the courier.
  */
@@ -29,7 +29,7 @@ const sent = computed(() => step.value >= 5);
             <div
                 class="h-full w-full"
                 role="img"
-                aria-label="A customer's phone showing their personal Miami shipping address and a pre-alert being submitted for an Amazon order"
+                aria-label="A customer's phone showing their personal Florida shipping address and a pre-alert being submitted for an Amazon order"
             >
                 <PhoneFrame>
                     <div
@@ -49,7 +49,7 @@ const sent = computed(() => step.value >= 5);
                         >
                             <div class="flex items-center justify-between">
                                 <p class="text-[11px] text-white/60">
-                                    Your Miami address
+                                    Your Florida address
                                 </p>
                                 <span
                                     class="flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold transition-colors duration-300"

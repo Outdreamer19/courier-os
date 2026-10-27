@@ -271,7 +271,7 @@ const stageIcons: Record<string, unknown> = {
             />
         </section>
 
-        <!-- Journey: Miami to pickup -->
+        <!-- Journey: Florida to pickup -->
         <section
             class="dash-rise rounded-2xl border border-border bg-card p-5 sm:p-6"
             style="--rise-delay: 300ms"
@@ -282,7 +282,7 @@ const stageIcons: Record<string, unknown> = {
                         Where packages are right now
                     </h2>
                     <p class="text-sm text-muted-foreground">
-                        From the Miami warehouse to your pickup counter
+                        From the Florida warehouse to your pickup counter
                     </p>
                 </div>
                 <Link

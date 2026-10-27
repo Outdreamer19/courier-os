@@ -124,13 +124,13 @@ const brand = computed(() => brands[step.value]);
                                 <p
                                     class="mt-3 text-[14px] text-marketing-ink/70"
                                 >
-                                    Your own Miami address, live tracking and
+                                    Your own Florida address, live tracking and
                                     WhatsApp updates.
                                 </p>
                                 <span
                                     class="mt-5 inline-block rounded-xl px-5 py-3 text-[14px] font-semibold text-white"
                                     :style="{ background: brand.color }"
-                                    >Get my Miami address</span
+                                    >Get my Florida address</span
                                 >
                             </div>
                             <div

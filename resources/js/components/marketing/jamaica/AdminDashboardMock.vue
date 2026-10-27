@@ -28,7 +28,7 @@ const incoming = [
         name: 'Kerry-Ann Brown',
         from: 'Amazon',
         lb: '2.4',
-        status: 'At Miami',
+        status: 'In Florida',
     },
     {
         ref: 'PKG-1050',
@@ -87,7 +87,7 @@ const rows = computed(() => {
 });
 
 const statusTone: Record<string, string> = {
-    'At Miami': 'bg-[#c6dffa]/70 text-[#1e4f80]',
+    'In Florida': 'bg-[#c6dffa]/70 text-[#1e4f80]',
     'In transit': 'bg-marketing-amber/35 text-marketing-olive',
     Customs: 'bg-marketing-lavender/80 text-[#4c3a8a]',
     Ready: 'bg-[#25d366]/15 text-[#128c4a]',

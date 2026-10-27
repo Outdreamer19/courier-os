@@ -63,7 +63,7 @@ const table = [
                         class="mt-auto rounded-xl border border-marketing-ink/8 px-3.5 py-3"
                     >
                         <p class="text-[11px] text-marketing-ink-muted">
-                            Miami warehouse
+                            Florida warehouse
                         </p>
                         <p class="text-[13px] font-medium">
                             1234 Logistics Way, Miami, FL 33101
