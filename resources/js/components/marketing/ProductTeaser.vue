@@ -19,7 +19,7 @@ const previews = [
         name: 'customer-package-detail',
         title: 'Customer tracking',
         body: 'A timestamped status timeline your customers check instead of messaging you.',
-        alt: 'A CourierOS customer package page showing the amount due and a status timeline from the Miami warehouse to pickup',
+        alt: 'A CourierOS customer package page showing the amount due and a status timeline from the Florida warehouse to pickup',
     },
     {
         name: 'admin-reports',

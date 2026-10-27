@@ -132,7 +132,7 @@ const emit = defineEmits<{ (e: 'whatsapp'): void }>();
                             >For your customers</span
                         >
                         <span class="block text-sm text-white/85">
-                            Their own Miami address, live tracking and a
+                            Their own Florida address, live tracking and a
                             WhatsApp update at every step.
                         </span>
                     </figcaption>

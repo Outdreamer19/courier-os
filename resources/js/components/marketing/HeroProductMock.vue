@@ -72,7 +72,7 @@ const adminRows = [
 
 const timeline = [
     { label: 'Pre-alert submitted', done: true },
-    { label: 'Received at Miami warehouse', done: true },
+    { label: 'Received at Florida warehouse', done: true },
     { label: 'In transit to Jamaica', done: true },
     { label: 'Ready for pickup', done: false },
 ];
@@ -251,7 +251,7 @@ const bars = [38, 52, 44, 67, 58, 81, 72, 94];
                 <div
                     class="rounded-lg border border-marketing-border bg-white p-2.5 lg:col-span-2"
                 >
-                    <p class="text-[8px] font-semibold">Your Miami address</p>
+                    <p class="text-[8px] font-semibold">Your Florida address</p>
                     <div
                         class="mt-1.5 space-y-0.5 text-[7.5px] leading-relaxed text-marketing-ink-muted"
                     >

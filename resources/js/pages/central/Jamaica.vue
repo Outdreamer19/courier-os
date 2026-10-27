@@ -124,8 +124,8 @@ const answers = [
         answer: 'A rate calculator on your site, using your own prices.',
     },
     {
-        asked: "What's the Miami address again?",
-        answer: 'Every customer gets their own Miami address, saved in their account.',
+        asked: "What's the Florida address again?",
+        answer: 'Every customer gets their own Florida address, saved in their account.',
     },
     {
         asked: 'How much I owe you?',
@@ -136,7 +136,7 @@ const answers = [
 const fullPackage = [
     'Your own branded website and web address',
     'We keep your website online, secure and up to date',
-    'Customer portal with their own Miami address',
+    'Customer portal with their own Florida address',
     'Pre-alerts that match to packages automatically',
     'Rate calculator using your prices',
     'WhatsApp and email status updates',
@@ -174,19 +174,19 @@ const comparisonLabels = [
 const faqs = computed(() => [
     {
         q: 'I have never run a courier business. Can I still do this?',
-        a: "Yes. That is exactly who the setup call is for. We set up your site, rates and Miami address with you, and walk you through receiving your first package. You don't need a developer or a course.",
+        a: "Yes. That is exactly who the setup call is for. We set up your site, rates and Florida address with you, and walk you through receiving your first package. You don't need a developer or a course.",
     },
     {
         q: 'I already have customers on WhatsApp. Do I lose them?',
-        a: 'No. You send them your new link, they register in a minute and get their own Miami address. Your business name, your customers, just without the chaos.',
+        a: 'No. You send them your new link, they register in a minute and get their own Florida address. Your business name, your customers, just without the chaos.',
     },
     {
         q: 'How much does it cost, really?',
         a: `${money(props.pricing.monthly)} a month and a one-time setup fee of ${money(setupNow.value)}${foundingOpen.value ? ` (normally ${money(props.pricing.setup)})` : ''}. That covers the whole platform with unlimited customers, packages and staff. No per-package fees, and no cut of what your customers pay you.`,
     },
     {
-        q: 'Do I need a Miami warehouse?',
-        a: "You need a US address where packages are received, usually a freight forwarder's warehouse in Miami. If you don't have one yet, ask us on WhatsApp and we'll point you to options.",
+        q: 'Do I need a Florida warehouse?',
+        a: "You need a US address where packages are received, usually a freight forwarder's warehouse in Florida. If you don't have one yet, ask us on WhatsApp and we'll point you to options.",
     },
     {
         q: 'How do my customers pay me?',
@@ -209,7 +209,7 @@ const openFaq = ref<number | null>(0);
     <Head title="Start or grow your shipping business in Jamaica">
         <meta
             name="description"
-            content="Your own branded courier website, customer portal with Miami address, tracking, WhatsApp updates and payments. Set up with you this week."
+            content="Your own branded courier website, customer portal with Florida address, tracking, WhatsApp updates and payments. Set up with you this week."
         />
     </Head>
 
@@ -272,7 +272,7 @@ const openFaq = ref<number | null>(0);
                         class="mt-6 max-w-xl text-lg leading-relaxed text-pretty text-marketing-ink-muted"
                     >
                         Your own branded website, a portal where customers get
-                        their Miami address and track every package, WhatsApp
+                        their Florida address and track every package, WhatsApp
                         updates and online payments. Starting out or already
                         shipping from a WhatsApp group, we set it up with you.
                     </p>
@@ -413,7 +413,7 @@ const openFaq = ref<number | null>(0);
             <FeatureShowcase
                 reverse
                 eyebrow="Day 1"
-                title="Set your rates and Miami address"
+                title="Set your rates and Florida address"
                 body="Put in your per-pound prices and your warehouse address. Change them whenever you like and your site updates straight away."
                 :bullets="[
                     'Rate calculator for customers',
@@ -428,9 +428,9 @@ const openFaq = ref<number | null>(0);
             <FeatureShowcase
                 eyebrow="This week"
                 title="Customers sign themselves up"
-                body="Share your link on WhatsApp and Instagram. Customers register, copy their Miami address and send pre-alerts without messaging you."
+                body="Share your link on WhatsApp and Instagram. Customers register, copy their Florida address and send pre-alerts without messaging you."
                 :bullets="[
-                    'Their own Miami address',
+                    'Their own Florida address',
                     'Pre-alerts with invoice upload',
                 ]"
             >
@@ -444,7 +444,7 @@ const openFaq = ref<number | null>(0);
                 wide-visual
                 eyebrow="Every day after"
                 title="Run it like a real business"
-                body="See every package from Miami to pickup, who has paid, and what you made this month, all in one place."
+                body="See every package from Florida to pickup, who has paid, and what you made this month, all in one place."
                 :bullets="[
                     'Every package, one screen',
                     'Money collected, month by month',

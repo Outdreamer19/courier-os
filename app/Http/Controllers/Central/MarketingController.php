@@ -75,7 +75,7 @@ class MarketingController extends Controller
         ])->withViewData([
             'meta' => [
                 'title' => 'Start or grow your shipping business in Jamaica | CourierOS',
-                'description' => 'Your own branded courier website, customer portal with Miami address, tracking, WhatsApp updates and payments. Set up with you this week.',
+                'description' => 'Your own branded courier website, customer portal with Florida address, tracking, WhatsApp updates and payments. Set up with you this week.',
                 'image' => '/images/marketing/og/courieros-jamaica-og.png',
             ],
         ]);

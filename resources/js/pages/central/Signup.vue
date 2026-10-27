@@ -65,7 +65,7 @@ defineProps<{
                     <span class="text-marketing-amber">without the chaos.</span>
                 </h1>
                 <p class="mt-5 text-base leading-relaxed text-white/70">
-                    Your customers get their own Miami address, send pre-alerts
+                    Your customers get their own Florida address, send pre-alerts
                     and track every package on your branded site. You receive,
                     bill and update them from one dashboard.
                 </p>

@@ -177,7 +177,7 @@ const proofPoints = [
                 class="hero-rise mx-auto mt-7 max-w-2xl text-lg text-pretty text-marketing-ink-muted sm:text-xl"
                 style="animation-delay: 0.16s"
             >
-                Your customers get their own Miami address, send pre-alerts and
+                Your customers get their own Florida address, send pre-alerts and
                 track every package on your branded site. You receive, bill and
                 update them from one dashboard.
             </p>
@@ -315,7 +315,7 @@ const proofPoints = [
                                 <p
                                     class="text-2xl font-semibold tracking-tight"
                                 >
-                                    Their own Miami address, in their pocket.
+                                    Their own Florida address, in their pocket.
                                 </p>
                                 <p class="mt-3 text-sm text-white/65">
                                     Customers copy their address, send
