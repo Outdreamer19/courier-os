@@ -1,6 +1,6 @@
 # CourierOS launch tracker
 
-Updated 23 Oct 2026
+Updated 27 Oct 2026
 
 ## Blockers
 
@@ -8,19 +8,30 @@ Updated 23 Oct 2026
 
 ## First week
 
-- [ ] Forge database backups on, and one test restore
-- [ ] Error monitoring (Sentry or Flare)
-- [ ] Queue the 4 customer notifications (welcome, package status, ready for pickup, pre alert) and start a Forge queue worker in the same deploy
+- [ ] **Turn on the Scheduler for courieros.co in Forge.** It is off, so `demo:reset` (nightly) and the hourly InvoiceFeed payment sync have never run in production
+- [ ] **Add a queue worker for courieros.co** (`queue:work database`). None exists, so lead and support notifications already sit unsent in the `jobs` table
+
+- [ ] Database backups: Forge needs the Business plan for this. Either upgrade, or add free backups to R2 with spatie/laravel-backup. Then one test restore
+- [ ] Error monitoring: Nightwatch app CourierOS (Production, EU) created. Merge `feature/error-monitoring`, deploy, then Forge > courieros.co > Connect Nightwatch with the environment token
+- [ ] Queue the 4 customer notifications: code ready on `feature/queue-customer-notifications`. Add a Forge queue worker (connection `database`) and `php artisan queue:restart` in the deploy script BEFORE merging
 - [ ] DMARC record on `_dmarc.courieros.co` (optional)
 
 ## Sales
 
 - [ ] Decide founding cohort size for the US$99 setup
-- [ ] Send messages in `marketing/jamaica-outreach.md`
+- [ ] Send messages in `marketing/jamaica-outreach.md` (copy refreshed 27 Oct: pricing, contact details, follow up)
 - [ ] Post the network story (`marketing/ads/network-story.png`)
 - [ ] Talk to Shipping Association of Jamaica and one creator about a partnership
 
+## Notes
+
+- courieros.com is registered by someone else (IONOS, since Dec 2020, expires 22 Dec 2026). A redirect isn't possible; watch for it dropping or make an offer.
+- Higgsfield voice: ToS do not restrict commercial use of outputs and there is no separate licence. Use a paid plan for watermark free downloads. IP indemnity is Enterprise only.
+- Copy now says Florida, not Miami (`copy/florida-not-miami`).
+
 ## Done
+
+- [x] DMARC record `_dmarc.courieros.co` = `v=DMARC1; p=none;` (27 Oct 2026)
 
 - [x] Stripe live mode in production: live keys, live price IDs and live webhook secret in the Forge `.env` (24 Oct 2026)
 
