@@ -40,7 +40,7 @@ const sections = computed(() => [
     <LegalPage
         eyebrow="Legal"
         title="Terms and Conditions"
-        :intro="`Please review these terms before using ${brandName}. This is placeholder content for MVP.`"
+        :intro="`Please review these terms before using ${brandName}.`"
         :sections="sections"
     />
 </template>

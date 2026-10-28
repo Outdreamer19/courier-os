@@ -106,6 +106,19 @@ return [
     |
     */
 
+    /*
+    | The legal entity behind CourierOS, shown on the platform's own terms,
+    | privacy and refund pages (courieros.co/legal/*). Tenant sites keep
+    | their own legal pages.
+    */
+    'company' => [
+        'name' => env('COURIEROS_COMPANY_NAME', 'Quantara Digital Ltd'),
+        'number' => env('COURIEROS_COMPANY_NUMBER', '17220029'),
+        'address' => env('COURIEROS_COMPANY_ADDRESS', '2 Howard Close, Luton, LU3 2PG, United Kingdom'),
+        'email' => env('COURIEROS_COMPANY_EMAIL', 'hello@courieros.co'),
+        'legal_updated' => '28 October 2026',
+    ],
+
     'marketing' => [
         'sales_whatsapp' => env('COURIEROS_SALES_WHATSAPP', '447565727032'),
         'founding' => [

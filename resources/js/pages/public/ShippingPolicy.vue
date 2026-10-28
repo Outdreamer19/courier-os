@@ -16,7 +16,7 @@ const ratePerLb = computed(() => format(brand.value?.default_rate_per_lb ?? 0));
 const sections = computed(() => [
     {
         heading: '1. Shipping route',
-        body: 'Packages are received at our overseas warehouse, processed, and forwarded to your local branch for pickup. Delivery options are not available during the MVP phase.',
+        body: 'Packages are received at our overseas warehouse, processed, and forwarded to your local branch for pickup. Ask us about home delivery in your area.',
     },
     {
         heading: '2. Pre-alerts',
@@ -43,7 +43,7 @@ const sections = computed(() => [
     <LegalPage
         eyebrow="Legal"
         title="Shipping Policy"
-        :intro="`How ${brandName} moves packages from our overseas warehouse to pickup. Placeholder content for MVP.`"
+        :intro="`How ${brandName} moves packages from our overseas warehouse to pickup.`"
         :sections="sections"
     />
 </template>

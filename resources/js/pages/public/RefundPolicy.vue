@@ -32,7 +32,7 @@ const sections = computed(() => [
     <LegalPage
         eyebrow="Legal"
         title="Refund and Claims Policy"
-        :intro="`How ${brandName} handles damaged, missing, or disputed packages. Placeholder content for MVP.`"
+        :intro="`How ${brandName} handles damaged, missing, or disputed packages.`"
         :sections="sections"
     />
 </template>

@@ -9,7 +9,8 @@ const pages = [
 
 const utility = [
     { name: 'Privacy Policy', href: '/legal/privacy' },
-    { name: 'Terms & Conditions', href: '/legal/terms' },
+    { name: 'Terms of Service', href: '/legal/terms' },
+    { name: 'Refunds & Cancellation', href: '/legal/refund' },
 ];
 </script>
 

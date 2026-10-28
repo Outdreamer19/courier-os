@@ -291,7 +291,20 @@ defineProps<{
 
                     <p class="text-center text-xs text-muted-foreground">
                         You'll confirm payment securely with Stripe on the next
-                        step.
+                        step. By continuing you agree to our
+                        <a
+                            href="/legal/terms"
+                            target="_blank"
+                            class="underline underline-offset-2 hover:text-marketing-ink"
+                            >Terms of Service</a
+                        >
+                        and
+                        <a
+                            href="/legal/privacy"
+                            target="_blank"
+                            class="underline underline-offset-2 hover:text-marketing-ink"
+                            >Privacy Policy</a
+                        >.
                     </p>
                     <p class="text-center text-sm text-muted-foreground">
                         Already have an account?
