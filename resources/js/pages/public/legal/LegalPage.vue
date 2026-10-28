@@ -61,7 +61,7 @@ const legalNav = [
 
             <article class="prose prose-neutral max-w-none space-y-6">
                 <div
-                    v-if="showPlaceholderNotice ?? true"
+                    v-if="showPlaceholderNotice ?? false"
                     class="flex items-start gap-3 rounded-lg border border-brand-green/30 bg-brand-green/5 p-4 text-sm"
                 >
                     <Info class="mt-0.5 size-4 text-brand-green" />

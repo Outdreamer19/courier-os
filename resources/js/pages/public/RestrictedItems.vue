@@ -32,7 +32,7 @@ const sections = computed(() => [
     <LegalPage
         eyebrow="Legal"
         title="Restricted Items Policy"
-        intro="Some items may not be accepted at our warehouse or in transit. This page is a placeholder until the official list is confirmed."
+        intro="Some items cannot be accepted at our warehouse or shipped. If you are unsure about an item, contact us before you order it."
         :sections="sections"
     />
 </template>
