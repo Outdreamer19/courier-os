@@ -14,6 +14,7 @@
 .DS_Store
 .env
 .env.backup
+.env.bak
 .env.production
 .phpactor.json
 .phpunit.result.cache
@@ -32,3 +33,6 @@ courieros.bundle
 .claude/
 .playwright-mcp/
 /_to_delete
+
+# Rendered ad videos: large, rebuildable from marketing/ads/*/source
+/marketing/ads/motion-ad/**/*.mp4

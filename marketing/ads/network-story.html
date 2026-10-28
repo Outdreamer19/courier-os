@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+:root{--ink:#210d02;--cream:#fffbf5;--amber:#fcd519;--orange:#ff7a00;--deep:#e2530a;--egg:#efecdf}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px}
+body{background:var(--ink);font-family:Inter,sans-serif;color:var(--cream);position:relative;overflow:hidden}
+.glow{position:absolute;width:1100px;height:1100px;border-radius:50%;right:-520px;top:-380px;background:radial-gradient(circle,rgba(255,122,0,.28),rgba(255,122,0,0) 65%)}
+.glow2{position:absolute;width:900px;height:900px;border-radius:50%;left:-460px;bottom:-200px;background:radial-gradient(circle,rgba(252,213,25,.12),rgba(252,213,25,0) 65%)}
+.wrap{position:absolute;inset:0;padding:210px 88px 0}
+.who{display:flex;align-items:center;gap:22px}
+.av{width:84px;height:84px;border-radius:50%;background:var(--amber);color:var(--ink);font-weight:800;font-size:32px;display:flex;align-items:center;justify-content:center;letter-spacing:-.5px}
+.who b{display:block;font-size:34px;font-weight:700}
+.who span{font-size:27px;color:rgba(255,251,245,.6)}
+h1{font-family:"Inter Display",Inter,sans-serif;font-weight:800;font-size:104px;line-height:1.02;letter-spacing:-1.5px;margin-top:90px}
+h1 em{font-style:normal;color:var(--orange)}
+p.lead{font-size:38px;line-height:1.45;color:rgba(255,251,245,.82);margin-top:56px;max-width:880px}
+p.lead strong{color:var(--cream);font-weight:700}
+ul{list-style:none;margin-top:60px;display:grid;gap:26px}
+li{display:flex;align-items:center;gap:24px;font-size:36px;font-weight:600}
+li i{flex:none;width:52px;height:52px;border-radius:14px;background:rgba(252,213,25,.14);display:flex;align-items:center;justify-content:center}
+li i svg{width:28px;height:28px}
+.cta{margin-top:72px;display:inline-flex;align-items:center;gap:20px;background:var(--orange);color:#fff;font-weight:800;font-size:42px;padding:34px 52px;border-radius:999px;box-shadow:0 20px 60px rgba(255,122,0,.35)}
+.cta svg{width:40px;height:40px}
+.sign{margin-top:40px;font-size:30px;color:rgba(255,251,245,.6)}
+.foot{position:absolute;left:0;right:0;bottom:170px;display:flex;justify-content:center;align-items:center;gap:20px}
+.logo{width:60px;height:60px;border-radius:15px;background:var(--amber);color:var(--ink);font-weight:800;font-size:34px;display:flex;align-items:center;justify-content:center}
+.foot span{font-size:36px;font-weight:600}
+</style></head>
+<body>
+<div class="glow"></div><div class="glow2"></div>
+<div class="wrap">
+  <div class="who"><div class="av">SB</div><div><b>Shane Bell</b><span>A quick one from me</span></div></div>
+  <h1>Ever thought about running your <em>own shipping business?</em></h1>
+  <p class="lead">I build the tech that powers courier companies. If you, or someone you know, has been thinking about it, <strong>I'd love to help you get started.</strong></p>
+  <ul>
+    <li><i><svg viewBox="0 0 24 24" fill="none" stroke="#fcd519" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Your own branded website</li>
+    <li><i><svg viewBox="0 0 24 24" fill="none" stroke="#fcd519" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Package tracking and invoicing</li>
+    <li><i><svg viewBox="0 0 24 24" fill="none" stroke="#fcd519" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Set up with you, step by step</li>
+  </ul>
+  <div class="cta">Message me, let's talk
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6l-6 6"/></svg></div>
+  <div class="sign">Or share this with someone who should see it</div>
+</div>
+<div class="foot"><div class="logo">C</div><span>courieros.co</span></div>
+</body></html>
