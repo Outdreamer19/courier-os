@@ -1,20 +1,15 @@
 # CourierOS launch tracker
 
-Updated 27 Oct 2026
+Updated 28 Oct 2026
 
 ## Blockers
 
 - [ ] **One real signup end to end** on courieros.co with a real card, confirm tenant goes active and subdomain loads, then refund.
 
-## First week
+## Before ads go out
 
-- [ ] **Turn on the Scheduler for courieros.co in Forge.** It is off, so `demo:reset` (nightly) and the hourly InvoiceFeed payment sync have never run in production
-- [ ] **Add a queue worker for courieros.co** (`queue:work database`). None exists, so lead and support notifications already sit unsent in the `jobs` table
-
-- [ ] Database backups: Forge needs the Business plan for this. Either upgrade, or add free backups to R2 with spatie/laravel-backup. Then one test restore
-- [ ] Error monitoring: Nightwatch app CourierOS (Production, EU) created. Merge `feature/error-monitoring`, deploy, then Forge > courieros.co > Connect Nightwatch with the environment token
-- [ ] Queue the 4 customer notifications: code ready on `feature/queue-customer-notifications`. Add a Forge queue worker (connection `database`) and `php artisan queue:restart` in the deploy script BEFORE merging
-- [ ] DMARC record on `_dmarc.courieros.co` (optional)
+- [ ] Set `META_PIXEL_ID` in production (Forge env)
+- [ ] SEO: no SSR on marketing pages, and the page template has no meta description or social preview tags (sitemap exists)
 
 ## Sales
 
@@ -25,19 +20,23 @@ Updated 27 Oct 2026
 
 ## Notes
 
-- courieros.com is registered by someone else (IONOS, since Dec 2020, expires 22 Dec 2026). A redirect isn't possible; watch for it dropping or make an offer.
-- Higgsfield voice: ToS do not restrict commercial use of outputs and there is no separate licence. Use a paid plan for watermark free downloads. IP indemnity is Enterprise only.
-- Copy now says Florida, not Miami (`copy/florida-not-miami`).
+- courieros.com is registered by someone else (IONOS, since Dec 2020, expires 22 Dec 2026). A redirect isn't possible; watch for it dropping or make an offer. Ads use courieros.co.
+- Higgsfield voice: terms allow commercial use of outputs on any plan, no separate licence. Paid plans give watermark free downloads. IP indemnity is Enterprise only.
+- Nightwatch agent for courieros.co listens on port 2408 (`NIGHTWATCH_INGEST_URI=127.0.0.1:2408`) because something else on the server holds 2407.
 
 ## Done
 
+- [x] Test restore of an R2 backup into a scratch database: all 28 tables, real data (28 Oct 2026)
+- [x] Nightly database backups to Cloudflare R2 bucket `courieros-backups` at 02:00 UTC, failure emails only, first backup verified (27 Oct 2026, PR #28)
+- [x] Error monitoring with Laravel Nightwatch (CourierOS, Production, EU), agent running in Forge (27 Oct 2026, PR #32)
+- [x] Customer notifications queued, tenant carried into jobs, Forge "CourierOS queue worker" running (27 Oct 2026, PR #30)
+- [x] Forge Scheduler enabled for courieros.co, so demo reset, InvoiceFeed payment sync and backups run (27 Oct 2026)
 - [x] DMARC record `_dmarc.courieros.co` = `v=DMARC1; p=none;` (27 Oct 2026)
-
+- [x] Site copy says Florida, not Miami (27 Oct 2026, PR #31)
+- [x] Outreach copy refreshed (27 Oct 2026, PR #27)
 - [x] Stripe live mode in production: live keys, live price IDs and live webhook secret in the Forge `.env` (24 Oct 2026)
-
 - [x] Stripe checkout work merged to main (PR #24)
-- [x] New UK Stripe account "CourierOS" (acct_1UTr2LIF74BraqWE) under the Quantara Digital org. Test mode: Starter US$63/mo, Setup Fee US$149, Founding Setup Fee US$99, webhook to `https://courieros.co/stripe/webhook`
-
+- [x] New UK Stripe account "CourierOS" (acct_1UTr2LIF74BraqWE) under the Quantara Digital org
 - [x] `/jamaica` landing page, nav, routes, smoke test
 - [x] GTM strategy doc and outreach copy
 - [x] Wildcard subdomains live (any `*.courieros.co` reaches the app)
@@ -46,3 +45,4 @@ Updated 27 Oct 2026
 - [x] Public demo at demo.courieros.co (Blue Mahoe Express)
 - [x] Prices lowered to US$63/mo + US$149 setup (US$99 founding)
 - [x] Branded error pages, white label leaks fixed, proxy trust, reserved subdomains
+- [x] Motion ad set built (30s, 15s, three hook tests)
