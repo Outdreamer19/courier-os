@@ -19,6 +19,25 @@ class HandleInertiaRequests extends Middleware
      */
     protected $rootView = 'app';
 
+    /**
+     * Server-side rendering is for crawlers and link previews, so it only
+     * runs on the public pages. Signed-in areas stay client rendered: nobody
+     * indexes them, and it keeps SSR from ever touching staff or customer
+     * dashboards. If the SSR server is down, every page falls back to client
+     * rendering on its own.
+     *
+     * @var array<int, string>
+     */
+    protected $withoutSsr = [
+        'dashboard*',
+        'portal*',
+        'admin*',
+        'platform*',
+        'platform-support*',
+        'settings*',
+        'billing*',
+    ];
+
     public function version(Request $request): ?string
     {
         return parent::version($request);

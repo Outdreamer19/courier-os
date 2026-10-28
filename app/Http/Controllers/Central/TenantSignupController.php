@@ -25,6 +25,11 @@ class TenantSignupController extends Controller
             'pricing' => Pricing::summary(),
             'centralDomain' => config('courieros.central_domain'),
             'liveDemoUrl' => DemoMode::url(),
+        ])->withViewData([
+            'meta' => [
+                'title' => 'Start your courier platform | CourierOS',
+                'description' => 'Set up your branded courier website, customer portal and admin console. One flat monthly price, no per-package fees.',
+            ],
         ]);
     }
 

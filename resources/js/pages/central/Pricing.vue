@@ -187,32 +187,11 @@ const openFaq = ref<number | null>(0);
 </script>
 
 <template>
-    <Head title="Pricing">
-        <meta
-            name="description"
-            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff. No per-package fees."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="CourierOS Pricing" />
-        <meta
-            property="og:description"
-            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff. No per-package fees."
-        />
-        <meta
-            property="og:image"
-            content="/images/marketing/og/courieros-og.png"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="CourierOS Pricing" />
-        <meta
-            name="twitter:description"
-            content="One flat price to run your entire courier business on CourierOS. Unlimited packages, customers and staff. No per-package fees."
-        />
-        <meta
-            name="twitter:image"
-            content="/images/marketing/og/courieros-og.png"
-        />
-    </Head>
+    <!-- Description, Open Graph and Twitter tags come from the server
+         (partials/central-head.blade.php, fed by the controller's "meta"),
+         so crawlers and link previews see them without JavaScript. Only the
+         title lives here; app.ts appends " | CourierOS". -->
+    <Head title="Pricing" />
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
         <MarketingNav />

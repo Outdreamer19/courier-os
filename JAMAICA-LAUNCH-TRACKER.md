@@ -9,7 +9,7 @@ Updated 28 Oct 2026
 ## Before ads go out
 
 - [ ] Set `META_PIXEL_ID` in production (Forge env)
-- [ ] SEO: no SSR on marketing pages, and the page template has no meta description or social preview tags (sitemap exists)
+- [ ] SEO: code done (`feature/seo-ssr`). On Forge: deploy script `npm run build` becomes `npm run build:ssr`, add `php artisan inertia:stop-ssr` at the end, add a daemon `php artisan inertia:start-ssr`. Then check with curl that page text is in the HTML
 
 ## Sales
 

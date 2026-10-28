@@ -49,6 +49,11 @@ class PublicPageController extends Controller
                 'pricing' => Pricing::summary(),
                 'salesWhatsapp' => (string) config('courieros.marketing.sales_whatsapp') ?: null,
                 'liveDemoUrl' => DemoMode::url(),
+            ])->withViewData([
+                'meta' => [
+                    'title' => 'Courier software for Caribbean shop-and-ship businesses | CourierOS',
+                    'description' => 'Your own branded courier website, customer portal with a Florida address, pre-alerts, package tracking, billing and WhatsApp updates. One flat monthly price.',
+                ],
             ]);
         }
 
