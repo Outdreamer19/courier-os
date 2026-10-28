@@ -33,3 +33,6 @@ courieros.bundle
 .claude/
 .playwright-mcp/
 /_to_delete
+
+# Rendered ad videos: large, rebuildable from marketing/ads/*/source
+/marketing/ads/motion-ad/**/*.mp4
