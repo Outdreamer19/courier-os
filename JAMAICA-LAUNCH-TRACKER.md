@@ -8,7 +8,6 @@ Updated 28 Oct 2026
 
 ## Before ads go out
 
-- [ ] Set `META_PIXEL_ID` in production (Forge env)
 - [ ] SEO: code done (`feature/seo-ssr`). On Forge: deploy script `npm run build` becomes `npm run build:ssr`, add `php artisan inertia:stop-ssr` at the end, add a daemon `php artisan inertia:start-ssr`. Then check with curl that page text is in the HTML
 
 ## Sales
@@ -26,6 +25,7 @@ Updated 28 Oct 2026
 
 ## Done
 
+- [x] Meta Pixel live in production, `META_PIXEL_ID` 936155402707882, automatic advanced matching on (28 Oct 2026)
 - [x] Test restore of an R2 backup into a scratch database: all 28 tables, real data (28 Oct 2026)
 - [x] Nightly database backups to Cloudflare R2 bucket `courieros-backups` at 02:00 UTC, failure emails only, first backup verified (27 Oct 2026, PR #28)
 - [x] Error monitoring with Laravel Nightwatch (CourierOS, Production, EU), agent running in Forge (27 Oct 2026, PR #32)
