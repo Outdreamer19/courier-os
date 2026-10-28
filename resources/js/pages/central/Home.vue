@@ -41,40 +41,11 @@ useScrollReveal();
 </script>
 
 <template>
-    <!-- The brand name is appended automatically by the title callback in
-         app.ts, so leaving "CourierOS" here duplicated it in the tab. -->
-    <Head title="Run Your Courier Business Like a Platform">
-        <meta
-            name="description"
-            content="CourierOS is the branded website and back-office software behind a modern courier business: pre-alerts, package tracking, billing and customer updates, all in one place."
-        />
-        <meta property="og:type" content="website" />
-        <meta
-            property="og:title"
-            content="CourierOS — Run Your Courier Business Like a Platform"
-        />
-        <meta
-            property="og:description"
-            content="Pre-alerts, package tracking, billing and customer updates — on your own branded site. Launch in minutes, not months."
-        />
-        <meta
-            property="og:image"
-            content="/images/marketing/og/courieros-og.png"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-            name="twitter:title"
-            content="CourierOS — Run Your Courier Business Like a Platform"
-        />
-        <meta
-            name="twitter:description"
-            content="Pre-alerts, package tracking, billing and customer updates — on your own branded site. Launch in minutes, not months."
-        />
-        <meta
-            name="twitter:image"
-            content="/images/marketing/og/courieros-og.png"
-        />
-    </Head>
+    <!-- Description, Open Graph and Twitter tags come from the server
+         (partials/central-head.blade.php, fed by the controller's "meta"),
+         so crawlers and link previews see them without JavaScript. Only the
+         title lives here; app.ts appends " | CourierOS". -->
+    <Head title="Courier software for Caribbean shop-and-ship businesses" />
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
         <AnnouncementBar

@@ -293,32 +293,11 @@ const openObjection = ref<number | null>(0);
 </script>
 
 <template>
-    <Head title="Product">
-        <meta
-            name="description"
-            content="See exactly what CourierOS gives you: pre-alert matching, package tracking, a branded customer portal, rate tiers, payments and revenue reporting."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="CourierOS Product" />
-        <meta
-            property="og:description"
-            content="See exactly what CourierOS gives you: pre-alert matching, package tracking, a branded customer portal, rate tiers, payments and revenue reporting."
-        />
-        <meta
-            property="og:image"
-            content="/images/marketing/og/courieros-og.png"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="CourierOS Product" />
-        <meta
-            name="twitter:description"
-            content="See exactly what CourierOS gives you: pre-alert matching, package tracking, a branded customer portal, rate tiers, payments and revenue reporting."
-        />
-        <meta
-            name="twitter:image"
-            content="/images/marketing/og/courieros-og.png"
-        />
-    </Head>
+    <!-- Description, Open Graph and Twitter tags come from the server
+         (partials/central-head.blade.php, fed by the controller's "meta"),
+         so crawlers and link previews see them without JavaScript. Only the
+         title lives here; app.ts appends " | CourierOS". -->
+    <Head title="Product tour" />
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
         <MarketingNav />

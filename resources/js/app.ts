@@ -32,7 +32,9 @@ createInertiaApp({
     title: (title) => {
         const name = brandName();
 
-        return title ? `${title} - ${name}` : name;
+        // Same " | " separator the server-rendered fallback title uses
+        // (MarketingController meta), so the tab never flips on hydration.
+        return title ? `${title} | ${name}` : name;
     },
     layout: (name) => {
         switch (true) {

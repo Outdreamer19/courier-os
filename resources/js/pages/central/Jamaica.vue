@@ -206,12 +206,11 @@ const openFaq = ref<number | null>(0);
 </script>
 
 <template>
-    <Head title="Start or grow your shipping business in Jamaica">
-        <meta
-            name="description"
-            content="Your own branded courier website, customer portal with Florida address, tracking, WhatsApp updates and payments. Set up with you this week."
-        />
-    </Head>
+    <!-- Description, Open Graph and Twitter tags come from the server
+         (partials/central-head.blade.php, fed by the controller's "meta"),
+         so crawlers and link previews see them without JavaScript. Only the
+         title lives here; app.ts appends " | CourierOS". -->
+    <Head title="Start or grow your shipping business in Jamaica" />
 
     <div class="bg-marketing-cream font-marketing text-marketing-ink">
         <!-- Founding offer bar -->

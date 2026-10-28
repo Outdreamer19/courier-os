@@ -630,23 +630,11 @@ const inputClass =
 </script>
 
 <template>
-    <Head title="Contact us">
-        <meta
-            name="description"
-            content="Tell us about your courier business in three quick steps and we will come back with the right setup, pricing and next steps."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="Contact CourierOS" />
-        <meta
-            property="og:description"
-            content="Tell us about your courier business in three quick steps and we will come back with the right setup, pricing and next steps."
-        />
-        <meta
-            property="og:image"
-            content="/images/marketing/og/courieros-og.png"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-    </Head>
+    <!-- Description, Open Graph and Twitter tags come from the server
+         (partials/central-head.blade.php, fed by the controller's "meta"),
+         so crawlers and link previews see them without JavaScript. Only the
+         title lives here; app.ts appends " | CourierOS". -->
+    <Head title="Contact us" />
 
     <div
         class="min-h-screen bg-marketing-cream font-marketing text-marketing-ink"
