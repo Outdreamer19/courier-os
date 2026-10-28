@@ -17,7 +17,9 @@ return [
 
     'ssr' => [
         'enabled' => true,
-        'url' => 'http://127.0.0.1:13714',
+        // 13716, not the default 13714, which another app on the server
+        // uses. Must match the ssr port in vite.config.ts.
+        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:13716'),
         // 'bundle' => base_path('bootstrap/ssr/ssr.mjs'),
 
     ],

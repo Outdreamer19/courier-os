@@ -18,7 +18,10 @@ export default defineConfig({
                 bunny('Inter', { weights: [400, 500, 600, 700] }),
             ],
         }),
-        inertia(),
+        // Own port: another app on the same Forge server already runs an
+        // Inertia SSR server on the default 13714. Must match inertia.ssr.url.
+        // Localhost only, so the SSR server is never reachable from outside.
+        inertia({ ssr: { port: 13716, host: '127.0.0.1' } }),
         tailwindcss(),
         vue({
             template: {
